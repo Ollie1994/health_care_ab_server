@@ -1,0 +1,35 @@
+name: Java CI with Maven
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      # Test with Coverage
+      # - name: Build and test with coverage
+      #  run: mvn verify jacoco:report
+      # Security scan of dependencies.
+      - name: Security scan
+        run: mvn org.owasp:dependency-check-maven:check
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      # Deploy JaCoCo HTML report to GitHub Pages
+      #- name: Deploy JaCoCo report to Pages
+      #  uses: peaceiris/actions-gh-pages@v4
+      #  with:
+      #    github_token: ${{ secrets.GITHUB_TOKEN }}
+      #    publish_dir: target/site/jacoco
+      # Print the URL to access the report
+      #- name: Show coverage report URL
+      #  run: |
+      #    echo "Coverage report URL: https://Ollie1994.github.io/j_unit_test_with_ci_serveractions_ollie94/index.html"
