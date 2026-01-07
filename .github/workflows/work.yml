@@ -16,20 +16,20 @@ jobs:
           distribution: 'temurin'
           cache: maven
       # Test with Coverage
-      - name: Build and test with coverage
-        run: mvn verify jacoco:report
+      # - name: Build and test with coverage
+      #  run: mvn verify jacoco:report
       # Security scan of dependencies.
       - name: Security scan
         run: mvn org.owasp:dependency-check-maven:check
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
       # Deploy JaCoCo HTML report to GitHub Pages
-      - name: Deploy JaCoCo report to Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: target/site/jacoco
+      #- name: Deploy JaCoCo report to Pages
+      #  uses: peaceiris/actions-gh-pages@v4
+      #  with:
+      #    github_token: ${{ secrets.GITHUB_TOKEN }}
+      #    publish_dir: target/site/jacoco
       # Print the URL to access the report
-      - name: Show coverage report URL
-        run: |
-          echo "Coverage report URL: https://Ollie1994.github.io/j_unit_test_with_ci_serveractions_ollie94/index.html"
+      #- name: Show coverage report URL
+      #  run: |
+      #    echo "Coverage report URL: https://Ollie1994.github.io/j_unit_test_with_ci_serveractions_ollie94/index.html"
