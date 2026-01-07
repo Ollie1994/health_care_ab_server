@@ -17,7 +17,7 @@ jobs:
           cache: maven
       # Security scan of dependencies.
       - name: Security scan
-        run: mvn org.owasp:dependency-check-maven:check
+        run: mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
       - name: Upload Dependency-Check report
