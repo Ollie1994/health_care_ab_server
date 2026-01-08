@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">healthcare_booking_app</a> &gt; <a href="index.source.html" class="el_package">healthcareab.project.healthcare_booking_app.services</a> &gt; <span class="el_source">AuthService.java</span></div><h1>AuthService.java</h1><pre class="source lang-java linenums">package healthcareab.project.healthcare_booking_app.services;
+
+import healthcareab.project.healthcare_booking_app.models.Role;
+import healthcareab.project.healthcare_booking_app.models.User;
+import healthcareab.project.healthcare_booking_app.repository.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
+
+@Service
+public class AuthService {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    // TEST REMOVE AFTER IT FAILS A CHECK
+<span class="fc" id="L17">    String awsSecret = &quot;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&quot;;</span>
+
+<span class="fc" id="L19">    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {</span>
+<span class="fc" id="L20">        this.userRepository = userRepository;</span>
+<span class="fc" id="L21">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L22">    }</span>
+
+    // register user
+    public void registerUser(User user) {
+        // hash password
+<span class="fc" id="L27">        String encodedPassword = passwordEncoder.encode(user.getPassword());</span>
+<span class="fc" id="L28">        user.setPassword(encodedPassword);</span>
+
+        // ensure the user has at least default role USER
+<span class="pc bpc" id="L31" title="3 of 4 branches missed.">        if(user.getRoles() == null || user.getRoles().isEmpty()) {</span>
+<span class="fc" id="L32">            user.setRoles(Set.of(Role.USER));</span>
+        }
+
+<span class="fc" id="L35">        userRepository.save(user);</span>
+<span class="fc" id="L36">    }</span>
+
+    // find user by username
+    public User findByUsername(String username) {
+<span class="fc" id="L40">        return userRepository.findByUsername(username)</span>
+<span class="fc" id="L41">                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;User not found&quot;));</span>
+    }
+
+    // check if username already exists
+    public boolean existsByUsername(String username) {
+<span class="fc" id="L46">        return userRepository.findByUsername(username).isPresent();</span>
+    }
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

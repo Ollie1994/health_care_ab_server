@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">healthcare_booking_app</a> &gt; <a href="index.source.html" class="el_package">healthcareab.project.healthcare_booking_app.config</a> &gt; <span class="el_source">SecurityConfig.java</span></div><h1>SecurityConfig.java</h1><pre class="source lang-java linenums">package healthcareab.project.healthcare_booking_app.config;
+
+import healthcareab.project.healthcare_booking_app.filters.JwtAuthenticationFilter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+public class SecurityConfig {
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+<span class="nc" id="L28">    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {</span>
+<span class="nc" id="L29">        this.jwtAuthenticationFilter = jwtAuthenticationFilter;</span>
+<span class="nc" id="L30">    }</span>
+    // add jwt filter before standard filter
+    // create AuthenticationManager which is the &quot;boss&quot; of the authentication process
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+<span class="nc" id="L36">        return authenticationConfiguration.getAuthenticationManager();</span>
+    }
+
+    // main config for security filter and rules
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+<span class="nc" id="L42">        http</span>
+                // CORS config
+<span class="nc" id="L44">                .cors(cors -&gt; cors.configurationSource(corsConfigurationSource()))</span>
+                // CSRF, disable in dev
+                // OBS! should not be disabled in production
+<span class="nc" id="L47">                .csrf(csrf -&gt; csrf.disable())</span>
+                // define URL based rules
+<span class="nc" id="L49">                .authorizeHttpRequests(auth -&gt; auth</span>
+<span class="nc" id="L50">                        .requestMatchers(&quot;/auth/**&quot;).permitAll()</span>
+                        // any other requests the user need to be logged
+<span class="nc" id="L52">                        .anyRequest().authenticated()</span>
+                )
+                // disable session due to jwt statelessness
+<span class="nc" id="L55">                .sessionManagement(session -&gt; session</span>
+<span class="nc" id="L56">                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)</span>
+                )
+                // add jwt filter before standard filter
+<span class="nc" id="L59">                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);</span>
+<span class="nc" id="L60">        return  http.build();</span>
+    }
+
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+<span class="nc" id="L66">        CorsConfiguration configuration = new CorsConfiguration();</span>
+<span class="nc" id="L67">        configuration.setAllowedOrigins(Arrays.asList(&quot;http://localhost:5173&quot;));</span>
+<span class="nc" id="L68">        configuration.setAllowedMethods(Arrays.asList(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;PATCH&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;));</span>
+<span class="nc" id="L69">        configuration.setAllowedHeaders(Arrays.asList(&quot;Authorization&quot;, &quot;Content-Type&quot;, &quot;Cookie&quot;));</span>
+
+<span class="nc" id="L71">        configuration.setAllowCredentials(true);</span>
+
+<span class="nc" id="L73">        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
+<span class="nc" id="L74">        source.registerCorsConfiguration(&quot;/**&quot;, configuration);</span>
+
+<span class="nc" id="L76">        return source;</span>
+    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+<span class="nc" id="L80">        return new BCryptPasswordEncoder(12);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
