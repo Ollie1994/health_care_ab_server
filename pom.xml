@@ -96,7 +96,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.14</version>
 				<executions>
-					<!-- Prepare agent to collect coverage -->
+					<!-- Collect coverage -->
 					<execution>
 						<id>prepare-agent</id>
 						<goals>
@@ -113,7 +113,7 @@
 						</goals>
 					</execution>
 
-					<!-- Check coverage -->
+					<!-- Enforce coverage rules -->
 					<execution>
 						<id>check</id>
 						<phase>verify</phase>
