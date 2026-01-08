@@ -1,10 +1,3 @@
----
-name: Issue Template
-description: Create issue for project
-title: "[ISSUE TEMPLATE]"
-labels: issue template
-assignees: ""
----
 
 ISSUE STANDARD EX:
 
