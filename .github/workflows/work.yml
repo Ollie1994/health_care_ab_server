@@ -23,7 +23,7 @@ jobs:
           cache: maven
       # Test with coverage
       - name: Run tests
-        run: mvn clean verify jacoco:report
+        run: mvn clean verify
       # Security scan of dependencies.
       - name: Security scan
         run: mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7
