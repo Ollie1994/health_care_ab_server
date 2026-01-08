@@ -21,11 +21,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+      # Test with coverage
+      - name: Test with coverage (fail < 80%)
+        run: mvn test jacoco:report jacoco:check -Djacoco.check.rule.minimum=0.80
       # Security scan of dependencies.
       - name: Security scan
         run: mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      # Upload dependency check report
       - name: Upload Dependency-Check report
         uses: actions/upload-artifact@v4
         with:
