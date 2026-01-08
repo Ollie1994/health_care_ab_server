@@ -22,8 +22,18 @@ jobs:
           distribution: 'temurin'
           cache: maven
       # Test with coverage
-      - name: Run tests
-        run: mvn clean verify
+      - name: Build and test with coverage
+        run: mvn verify jacoco:report
+      # Deploy JaCoCo HTML report to GitHub Pages
+      - name: Deploy JaCoCo report to Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: target/site/jacoco
+      # Print the URL to access the report
+      - name: Show coverage report URL
+        run: |
+          echo "Coverage report URL: https://Ollie1994.github.io/health_care_ab_server/index.html"
       # Security scan of dependencies.
       - name: Security scan
         run: mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7
