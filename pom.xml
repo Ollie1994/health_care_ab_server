@@ -96,11 +96,15 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.14</version>
 				<executions>
+					<!-- Prepare agent to collect coverage -->
 					<execution>
+						<id>prepare-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
+
+					<!-- Generate report -->
 					<execution>
 						<id>report</id>
 						<phase>test</phase>
@@ -108,6 +112,8 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
+
+					<!-- Check coverage -->
 					<execution>
 						<id>check</id>
 						<phase>verify</phase>
@@ -131,8 +137,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
 		</plugins>
 	</build>
 </project>
