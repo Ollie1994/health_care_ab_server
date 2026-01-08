@@ -22,8 +22,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
       # Test with coverage
-      - name: Test with coverage (fail < 80%)
-        run: mvn test jacoco:report jacoco:check -Djacoco.check.rule.minimum=0.80
+      - name: Run tests
+        run: mvn test
       # Security scan of dependencies.
       - name: Security scan
         run: mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7

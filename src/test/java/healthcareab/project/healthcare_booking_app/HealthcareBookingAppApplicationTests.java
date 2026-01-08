@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-// REMOVE AFTER ADDING TESTS
+// REMOVE LATER
 @Disabled
 class HealthcareBookingAppApplicationTests {
 
