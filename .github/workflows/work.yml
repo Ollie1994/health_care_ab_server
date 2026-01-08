@@ -23,7 +23,7 @@ jobs:
           cache: maven
       # Test with coverage
       - name: Build and test with coverage
-        run: mvn verify jacoco:report
+        run: mvn clean verify
       # Deploy JaCoCo HTML report to GitHub Pages
       - name: Deploy JaCoCo report to Pages
         uses: peaceiris/actions-gh-pages@v4

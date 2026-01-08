@@ -94,8 +94,9 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.12</version>
+				<version>0.8.14</version>
 				<executions>
+					<!-- Prepare JaCoCo agent -->
 					<execution>
 						<id>prepare-agent</id>
 						<goals>
@@ -103,6 +104,8 @@
 						</goals>
 						<phase>initialize</phase>
 					</execution>
+
+					<!-- Generate report -->
 					<execution>
 						<id>report</id>
 						<phase>verify</phase>
@@ -110,6 +113,8 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
+
+					<!-- Enforce coverage check -->
 					<execution>
 						<id>check</id>
 						<phase>verify</phase>
@@ -132,6 +137,14 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<!-- Surefire plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.1.2</version>
+				<!-- No need to set argLine manually -->
 			</plugin>
 		</plugins>
 	</build>
