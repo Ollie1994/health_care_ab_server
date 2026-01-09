@@ -137,11 +137,4 @@ class AuthServiceTest {
         verify(passwordEncoder, times(1)).encode("plainPassword");
     }
 
-
-
-
-
-
-
-
 }
