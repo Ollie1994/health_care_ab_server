@@ -66,14 +66,12 @@ class JwtUtilTest {
     ===================================================== */
     @Test
     void validateToken_shouldReturnFalse_whenTokenIsExpired() throws Exception {
-        // temporarily set expiration to 1 ms
-        setField(jwtUtil, "jwtExpirationMs", 1);
+        // temporarily set expiration to -1 ms so token is already expired
+        setField(jwtUtil, "jwtExpirationMs", -1);
 
         String token = jwtUtil.generateToken(userDetails);
 
-        // no need to sleep long, just a tiny wait
-        Thread.sleep(5);
-
+        // ---------- Act & Assert ----------
         assertFalse(jwtUtil.validateToken(token, userDetails));
     }
 
