@@ -17,7 +17,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class AuthServiceTest {
+class AuthServiceTest {
 
     //Mocka repository
     @Mock
@@ -36,7 +36,7 @@ public class AuthServiceTest {
 
 
     @Test
-    public void testFindByUsername_UserFound() {
+    void testFindByUsername_UserFound() {
 
         // --- Arrange ---
         String username = "testuser";
