@@ -10,5 +10,5 @@ healthcare_booking_app,healthcareab.project.healthcare_booking_app.services,Auth
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.config,SecurityConfig,0,136,0,0,0,23,0,9,0,9
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.utils,JwtUtil,0,80,1,3,0,21,1,8,0,7
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Role,0,15,0,0,0,3,0,1,0,1
-healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,User,31,36,0,0,14,15,6,11,6,11
+healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,User,3,64,0,0,1,28,1,16,1,16
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.controllers,AuthController,5,246,4,8,1,74,4,7,0,5
