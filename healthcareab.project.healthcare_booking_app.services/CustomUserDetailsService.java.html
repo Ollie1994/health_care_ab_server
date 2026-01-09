@@ -16,27 +16,27 @@ import java.util.stream.Collectors;
 public class CustomUserDetailsService  implements UserDetailsService {
     private final UserRepository userRepository;
 
-<span class="nc" id="L19">    public CustomUserDetailsService(UserRepository userRepository) {</span>
-<span class="nc" id="L20">        this.userRepository = userRepository;</span>
-<span class="nc" id="L21">    }</span>
+<span class="fc" id="L19">    public CustomUserDetailsService(UserRepository userRepository) {</span>
+<span class="fc" id="L20">        this.userRepository = userRepository;</span>
+<span class="fc" id="L21">    }</span>
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-<span class="nc" id="L26">        User user = userRepository.findByUsername(username)</span>
-<span class="nc" id="L27">                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;User not found&quot;));</span>
+<span class="fc" id="L26">        User user = userRepository.findByUsername(username)</span>
+<span class="fc" id="L27">                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;User not found&quot;));</span>
 
-<span class="nc" id="L29">        return new org.springframework.security.core.userdetails.User(</span>
-<span class="nc" id="L30">                user.getUsername(),</span>
-<span class="nc" id="L31">                user.getPassword(),</span>
-<span class="nc" id="L32">                getAuthorities(user)</span>
+<span class="fc" id="L29">        return new org.springframework.security.core.userdetails.User(</span>
+<span class="fc" id="L30">                user.getUsername(),</span>
+<span class="fc" id="L31">                user.getPassword(),</span>
+<span class="fc" id="L32">                getAuthorities(user)</span>
         );
     }
 
     private Collection&lt;? extends GrantedAuthority&gt; getAuthorities(User user) {
-<span class="nc" id="L37">        return user.getRoles().stream()</span>
-<span class="nc" id="L38">                .map(role -&gt; new SimpleGrantedAuthority(&quot;ROLE_&quot; + role.name()))</span>
-<span class="nc" id="L39">                .collect(Collectors.toList());</span>
+<span class="fc" id="L37">        return user.getRoles().stream()</span>
+<span class="fc" id="L38">                .map(role -&gt; new SimpleGrantedAuthority(&quot;ROLE_&quot; + role.name()))</span>
+<span class="fc" id="L39">                .collect(Collectors.toList());</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
