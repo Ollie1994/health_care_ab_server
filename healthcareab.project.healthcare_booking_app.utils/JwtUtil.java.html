@@ -14,7 +14,7 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
-<span class="nc" id="L17">public class JwtUtil {</span>
+<span class="fc" id="L17">public class JwtUtil {</span>
 
     @Value(&quot;${jwt.secret}&quot;)
     private String jwtSecret;
@@ -25,38 +25,38 @@ import java.util.Date;
 
 
     private Key getSigningKey() {
-<span class="nc" id="L28">        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);</span>
-<span class="nc" id="L29">        return Keys.hmacShaKeyFor(keyBytes);</span>
+<span class="fc" id="L28">        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);</span>
+<span class="fc" id="L29">        return Keys.hmacShaKeyFor(keyBytes);</span>
     }
 
     public String generateToken(UserDetails userDetails) {
-<span class="nc" id="L33">        return Jwts.builder()</span>
-<span class="nc" id="L34">                .setSubject(userDetails.getUsername())</span>
-<span class="nc" id="L35">                .setIssuedAt(new Date())</span>
-<span class="nc" id="L36">                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))</span>
-<span class="nc" id="L37">                .signWith(getSigningKey(), SignatureAlgorithm.HS256)</span>
-<span class="nc" id="L38">                .compact();</span>
+<span class="fc" id="L33">        return Jwts.builder()</span>
+<span class="fc" id="L34">                .setSubject(userDetails.getUsername())</span>
+<span class="fc" id="L35">                .setIssuedAt(new Date())</span>
+<span class="fc" id="L36">                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))</span>
+<span class="fc" id="L37">                .signWith(getSigningKey(), SignatureAlgorithm.HS256)</span>
+<span class="fc" id="L38">                .compact();</span>
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
         try {
-<span class="nc" id="L43">            String username = extractUsername(token);</span>
-<span class="nc bnc" id="L44" title="All 4 branches missed.">            return (username.equals(userDetails.getUsername()) &amp;&amp; !isTokenExpired(token));</span>
-<span class="nc" id="L45">        } catch (JwtException | IllegalArgumentException e) {</span>
+<span class="fc" id="L43">            String username = extractUsername(token);</span>
+<span class="pc bpc" id="L44" title="1 of 4 branches missed.">            return (username.equals(userDetails.getUsername()) &amp;&amp; !isTokenExpired(token));</span>
+<span class="fc" id="L45">        } catch (JwtException | IllegalArgumentException e) {</span>
 
-<span class="nc" id="L47">            return false;</span>
+<span class="fc" id="L47">            return false;</span>
         }
     }
 
 
     public String extractUsername(String token) {
-<span class="nc" id="L53">        return extractAllClaims(token).getSubject();</span>
+<span class="fc" id="L53">        return extractAllClaims(token).getSubject();</span>
     }
 
 
     private boolean isTokenExpired(String token) {
-<span class="nc" id="L58">        Date expiration = extractAllClaims(token).getExpiration();</span>
-<span class="nc" id="L59">        return expiration.before(new Date());</span>
+<span class="fc" id="L58">        Date expiration = extractAllClaims(token).getExpiration();</span>
+<span class="fc" id="L59">        return expiration.before(new Date());</span>
     }
 
 
@@ -69,11 +69,11 @@ import java.util.Date;
 
     // Detta fixar utloggnings problemet
     private Claims extractAllClaims(String token) {
-<span class="nc" id="L72">        return Jwts.parserBuilder()</span>
-<span class="nc" id="L73">                .setSigningKey(getSigningKey())</span>
-<span class="nc" id="L74">                .build()</span>
-<span class="nc" id="L75">                .parseClaimsJws(token)</span>
-<span class="nc" id="L76">                .getBody();</span>
+<span class="fc" id="L72">        return Jwts.parserBuilder()</span>
+<span class="fc" id="L73">                .setSigningKey(getSigningKey())</span>
+<span class="fc" id="L74">                .build()</span>
+<span class="fc" id="L75">                .parseClaimsJws(token)</span>
+<span class="fc" id="L76">                .getBody();</span>
     }
 
 

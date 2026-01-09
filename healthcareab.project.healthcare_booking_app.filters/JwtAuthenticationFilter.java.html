@@ -25,66 +25,66 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
-<span class="nc" id="L28">    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);</span>
+<span class="fc" id="L28">    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);</span>
 
-<span class="nc" id="L30">    public JwtAuthenticationFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {</span>
-<span class="nc" id="L31">        this.jwtUtil = jwtUtil;</span>
-<span class="nc" id="L32">        this.userDetailsService = userDetailsService;</span>
-<span class="nc" id="L33">    }</span>
+<span class="fc" id="L30">    public JwtAuthenticationFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {</span>
+<span class="fc" id="L31">        this.jwtUtil = jwtUtil;</span>
+<span class="fc" id="L32">        this.userDetailsService = userDetailsService;</span>
+<span class="fc" id="L33">    }</span>
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-<span class="nc" id="L40">        String jwt = null;</span>
+<span class="fc" id="L40">        String jwt = null;</span>
 
         // try to get the jwt from Authorization header
-<span class="nc" id="L43">        String bearerToken = request.getHeader(&quot;Authorization&quot;);</span>
-<span class="nc bnc" id="L44" title="All 4 branches missed.">        if(StringUtils.hasText(bearerToken) &amp;&amp; bearerToken.startsWith(&quot;Bearer&quot;)) {</span>
-<span class="nc" id="L45">            jwt = bearerToken.substring(7);</span>
+<span class="fc" id="L43">        String bearerToken = request.getHeader(&quot;Authorization&quot;);</span>
+<span class="pc bpc" id="L44" title="1 of 4 branches missed.">        if(StringUtils.hasText(bearerToken) &amp;&amp; bearerToken.startsWith(&quot;Bearer&quot;)) {</span>
+<span class="fc" id="L45">            jwt = bearerToken.substring(7);</span>
         }
 
         // if jwt is not in header, try to get it from cookie
-<span class="nc bnc" id="L49" title="All 4 branches missed.">        if(jwt == null &amp;&amp; request.getCookies() != null) {</span>
-<span class="nc bnc" id="L50" title="All 2 branches missed.">            for (Cookie cookie : request.getCookies()) {</span>
-<span class="nc bnc" id="L51" title="All 2 branches missed.">                if(&quot;jwt&quot;.equals(cookie.getName())) {</span>
-<span class="nc" id="L52">                    jwt = cookie.getValue();</span>
-<span class="nc" id="L53">                    break;</span>
+<span class="fc bfc" id="L49" title="All 4 branches covered.">        if(jwt == null &amp;&amp; request.getCookies() != null) {</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">            for (Cookie cookie : request.getCookies()) {</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">                if(&quot;jwt&quot;.equals(cookie.getName())) {</span>
+<span class="fc" id="L52">                    jwt = cookie.getValue();</span>
+<span class="fc" id="L53">                    break;</span>
                 }
             }
         }
 
         // if we have a jwt and the user is not authenticated
-<span class="nc bnc" id="L59" title="All 4 branches missed.">        if(jwt != null &amp;&amp; SecurityContextHolder.getContext().getAuthentication() == null) {</span>
+<span class="pc bpc" id="L59" title="1 of 4 branches missed.">        if(jwt != null &amp;&amp; SecurityContextHolder.getContext().getAuthentication() == null) {</span>
             try {
                 // extract username from token
-<span class="nc" id="L62">                String username = jwtUtil.extractUsername(jwt);</span>
+<span class="fc" id="L62">                String username = jwtUtil.extractUsername(jwt);</span>
 
                 // get user details from db
-<span class="nc" id="L65">                UserDetails userDetails = userDetailsService.loadUserByUsername(username);</span>
+<span class="fc" id="L65">                UserDetails userDetails = userDetailsService.loadUserByUsername(username);</span>
 
                 // validate token and create valid authentication if token is valid
-<span class="nc bnc" id="L68" title="All 2 branches missed.">                if(jwtUtil.validateToken(jwt, userDetails)) {</span>
-<span class="nc" id="L69">                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(</span>
-<span class="nc" id="L70">                            userDetails, null, userDetails.getAuthorities()</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">                if(jwtUtil.validateToken(jwt, userDetails)) {</span>
+<span class="fc" id="L69">                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(</span>
+<span class="fc" id="L70">                            userDetails, null, userDetails.getAuthorities()</span>
                     );
 
                     // add request details for extra security
-<span class="nc" id="L74">                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
+<span class="fc" id="L74">                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
 
                     // set authentication back into security context
-<span class="nc" id="L77">                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);</span>
+<span class="fc" id="L77">                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);</span>
                 }
-<span class="nc" id="L79">            } catch (JwtException e) {</span>
-<span class="nc" id="L80">                logger.error(&quot;JWT validation failed.&quot;, e);</span>
-<span class="nc" id="L81">                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
-<span class="nc" id="L82">                return;</span>
-<span class="nc" id="L83">            }</span>
+<span class="fc" id="L79">            } catch (JwtException e) {</span>
+<span class="fc" id="L80">                logger.error(&quot;JWT validation failed.&quot;, e);</span>
+<span class="fc" id="L81">                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
+<span class="fc" id="L82">                return;</span>
+<span class="fc" id="L83">            }</span>
         }
 
         // continue to next filter chain
-<span class="nc" id="L87">        filterChain.doFilter(request, response);</span>
-<span class="nc" id="L88">    }</span>
+<span class="fc" id="L87">        filterChain.doFilter(request, response);</span>
+<span class="fc" id="L88">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
