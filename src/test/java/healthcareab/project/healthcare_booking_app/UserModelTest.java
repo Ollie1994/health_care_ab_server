@@ -69,7 +69,7 @@ class UserModelTest {
     @Test
     void user_shouldFailValidation_whenUsernameEmpty() {
         User user = new User();
-        user.setUsername("");
+        user.setUsername("REMOVE THIS AFTER TEST SHOULD BE EMPTY STRING");
         user.setPassword("Password1!");
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
