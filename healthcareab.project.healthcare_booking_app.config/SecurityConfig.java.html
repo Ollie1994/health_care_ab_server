@@ -25,59 +25,59 @@ import java.util.Arrays;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-<span class="nc" id="L28">    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {</span>
-<span class="nc" id="L29">        this.jwtAuthenticationFilter = jwtAuthenticationFilter;</span>
-<span class="nc" id="L30">    }</span>
+<span class="fc" id="L28">    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {</span>
+<span class="fc" id="L29">        this.jwtAuthenticationFilter = jwtAuthenticationFilter;</span>
+<span class="fc" id="L30">    }</span>
     // add jwt filter before standard filter
     // create AuthenticationManager which is the &quot;boss&quot; of the authentication process
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
-<span class="nc" id="L36">        return authenticationConfiguration.getAuthenticationManager();</span>
+<span class="fc" id="L36">        return authenticationConfiguration.getAuthenticationManager();</span>
     }
 
     // main config for security filter and rules
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-<span class="nc" id="L42">        http</span>
+<span class="fc" id="L42">        http</span>
                 // CORS config
-<span class="nc" id="L44">                .cors(cors -&gt; cors.configurationSource(corsConfigurationSource()))</span>
+<span class="fc" id="L44">                .cors(cors -&gt; cors.configurationSource(corsConfigurationSource()))</span>
                 // CSRF, disable in dev
                 // OBS! should not be disabled in production
-<span class="nc" id="L47">                .csrf(csrf -&gt; csrf.disable())</span>
+<span class="fc" id="L47">                .csrf(csrf -&gt; csrf.disable())</span>
                 // define URL based rules
-<span class="nc" id="L49">                .authorizeHttpRequests(auth -&gt; auth</span>
-<span class="nc" id="L50">                        .requestMatchers(&quot;/auth/**&quot;).permitAll()</span>
+<span class="fc" id="L49">                .authorizeHttpRequests(auth -&gt; auth</span>
+<span class="fc" id="L50">                        .requestMatchers(&quot;/auth/**&quot;).permitAll()</span>
                         // any other requests the user need to be logged
-<span class="nc" id="L52">                        .anyRequest().authenticated()</span>
+<span class="fc" id="L52">                        .anyRequest().authenticated()</span>
                 )
                 // disable session due to jwt statelessness
-<span class="nc" id="L55">                .sessionManagement(session -&gt; session</span>
-<span class="nc" id="L56">                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)</span>
+<span class="fc" id="L55">                .sessionManagement(session -&gt; session</span>
+<span class="fc" id="L56">                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)</span>
                 )
                 // add jwt filter before standard filter
-<span class="nc" id="L59">                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);</span>
-<span class="nc" id="L60">        return  http.build();</span>
+<span class="fc" id="L59">                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);</span>
+<span class="fc" id="L60">        return  http.build();</span>
     }
 
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-<span class="nc" id="L66">        CorsConfiguration configuration = new CorsConfiguration();</span>
-<span class="nc" id="L67">        configuration.setAllowedOrigins(Arrays.asList(&quot;http://localhost:5173&quot;));</span>
-<span class="nc" id="L68">        configuration.setAllowedMethods(Arrays.asList(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;PATCH&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;));</span>
-<span class="nc" id="L69">        configuration.setAllowedHeaders(Arrays.asList(&quot;Authorization&quot;, &quot;Content-Type&quot;, &quot;Cookie&quot;));</span>
+<span class="fc" id="L66">        CorsConfiguration configuration = new CorsConfiguration();</span>
+<span class="fc" id="L67">        configuration.setAllowedOrigins(Arrays.asList(&quot;http://localhost:5173&quot;));</span>
+<span class="fc" id="L68">        configuration.setAllowedMethods(Arrays.asList(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;PATCH&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;));</span>
+<span class="fc" id="L69">        configuration.setAllowedHeaders(Arrays.asList(&quot;Authorization&quot;, &quot;Content-Type&quot;, &quot;Cookie&quot;));</span>
 
-<span class="nc" id="L71">        configuration.setAllowCredentials(true);</span>
+<span class="fc" id="L71">        configuration.setAllowCredentials(true);</span>
 
-<span class="nc" id="L73">        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
-<span class="nc" id="L74">        source.registerCorsConfiguration(&quot;/**&quot;, configuration);</span>
+<span class="fc" id="L73">        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
+<span class="fc" id="L74">        source.registerCorsConfiguration(&quot;/**&quot;, configuration);</span>
 
-<span class="nc" id="L76">        return source;</span>
+<span class="fc" id="L76">        return source;</span>
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
-<span class="nc" id="L80">        return new BCryptPasswordEncoder(12);</span>
+<span class="fc" id="L80">        return new BCryptPasswordEncoder(12);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
