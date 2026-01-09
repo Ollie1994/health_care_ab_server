@@ -15,8 +15,8 @@ class JwtUtilTest {
 
     private JwtUtil jwtUtil;
 
-    private final String secret = "my-super-secret-key-for-testing-purposes-123456"; // must be >= 32 bytes for HS256
-    private final int expirationMs = 1000; // 1 second for test purposes
+    private final String secret = "my-super-secret-key-for-testing-purposes-123456"; // ≥32 bytes for HS256
+    private final int normalExpirationMs = 10_000; // 10 seconds for normal tests
 
     private UserDetails userDetails;
 
@@ -25,29 +25,26 @@ class JwtUtilTest {
         jwtUtil = new JwtUtil();
 
         // manually set fields (since @Value injection won't work in unit test)
-        java.lang.reflect.Field secretField = JwtUtil.class.getDeclaredField("jwtSecret");
-        secretField.setAccessible(true);
-        secretField.set(jwtUtil, secret);
-
-        java.lang.reflect.Field expirationField = JwtUtil.class.getDeclaredField("jwtExpirationMs");
-        expirationField.setAccessible(true);
-        expirationField.set(jwtUtil, expirationMs);
+        setField(jwtUtil, "jwtSecret", secret);
+        setField(jwtUtil, "jwtExpirationMs", normalExpirationMs);
 
         userDetails = new User("john", "password", Collections.emptyList());
     }
 
+    // Helper to set private fields
+    private void setField(Object target, String fieldName, Object value) throws Exception {
+        var field = JwtUtil.class.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(target, value);
+    }
+
     /* =====================================================
        POSITIVE: GENERATE & VALIDATE TOKEN
-       ===================================================== */
+    ===================================================== */
     @Test
     void generateToken_shouldReturnValidToken() {
-        // ---------- Arrange ----------
-        // done in @BeforeEach
-
-        // ---------- Act ----------
         String token = jwtUtil.generateToken(userDetails);
 
-        // ---------- Assert ----------
         assertNotNull(token);
         assertEquals("john", jwtUtil.extractUsername(token));
         assertTrue(jwtUtil.validateToken(token, userDetails));
@@ -55,63 +52,51 @@ class JwtUtilTest {
 
     /* =====================================================
        NEGATIVE: INVALID TOKEN
-       ===================================================== */
+    ===================================================== */
     @Test
     void validateToken_shouldReturnFalse_whenTokenIsInvalid() {
-        // ---------- Arrange ----------
         String invalidToken = "this-is-not-a-token";
 
-        // ---------- Act & Assert ----------
         assertFalse(jwtUtil.validateToken(invalidToken, userDetails));
         assertThrows(JwtException.class, () -> jwtUtil.extractUsername(invalidToken));
     }
 
     /* =====================================================
        NEGATIVE: EXPIRED TOKEN
-       ===================================================== */
+    ===================================================== */
     @Test
-    void validateToken_shouldReturnFalse_whenTokenIsExpired() throws InterruptedException {
-        // ---------- Arrange ----------
+    void validateToken_shouldReturnFalse_whenTokenIsExpired() throws Exception {
+        // temporarily set expiration to 1 ms
+        setField(jwtUtil, "jwtExpirationMs", 1);
+
         String token = jwtUtil.generateToken(userDetails);
 
-        // wait until token expires
-        Thread.sleep(expirationMs + 10);
+        // no need to sleep long, just a tiny wait
+        Thread.sleep(5);
 
-        // ---------- Act ----------
-        boolean isValid = jwtUtil.validateToken(token, userDetails);
-
-        // ---------- Assert ----------
-        assertFalse(isValid);
+        assertFalse(jwtUtil.validateToken(token, userDetails));
     }
 
     /* =====================================================
        NEGATIVE: WRONG USER
-       ===================================================== */
+    ===================================================== */
     @Test
     void validateToken_shouldReturnFalse_whenUsernameDoesNotMatch() {
-        // ---------- Arrange ----------
         String token = jwtUtil.generateToken(userDetails);
         UserDetails otherUser = new User("alice", "password", Collections.emptyList());
 
-        // ---------- Act ----------
-        boolean isValid = jwtUtil.validateToken(token, otherUser);
-
-        // ---------- Assert ----------
-        assertFalse(isValid);
+        assertFalse(jwtUtil.validateToken(token, otherUser));
     }
 
     /* =====================================================
        POSITIVE: EXTRACT USERNAME
-       ===================================================== */
+    ===================================================== */
     @Test
     void extractUsername_shouldReturnCorrectUsername() {
-        // ---------- Arrange ----------
         String token = jwtUtil.generateToken(userDetails);
 
-        // ---------- Act ----------
         String username = jwtUtil.extractUsername(token);
 
-        // ---------- Assert ----------
         assertEquals("john", username);
     }
 }
