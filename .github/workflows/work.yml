@@ -9,27 +9,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Cache NVD database
+      - uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: dc-${{ runner.os }}-${{ hashFiles('pom.xml') }}
+          restore-keys: dc-${{ runner.os }}-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      # Test with Coverage
-      # - name: Build and test with coverage
-      #  run: mvn verify jacoco:report
+      # Test with coverage
+      - name: Build and test with coverage
+        run: mvn clean verify
+      # Deploy JaCoCo HTML report to GitHub Pages
+      - name: Deploy JaCoCo report to Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: target/site/jacoco
+      # Print the URL to access the report
+      - name: Show coverage report URL
+        run: |
+          echo "Coverage report URL: https://Ollie1994.github.io/health_care_ab_server/index.html"
       # Security scan of dependencies.
       - name: Security scan
-        run: mvn org.owasp:dependency-check-maven:check
+        run: mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-      # Deploy JaCoCo HTML report to GitHub Pages
-      #- name: Deploy JaCoCo report to Pages
-      #  uses: peaceiris/actions-gh-pages@v4
-      #  with:
-      #    github_token: ${{ secrets.GITHUB_TOKEN }}
-      #    publish_dir: target/site/jacoco
-      # Print the URL to access the report
-      #- name: Show coverage report URL
-      #  run: |
-      #    echo "Coverage report URL: https://Ollie1994.github.io/j_unit_test_with_ci_serveractions_ollie94/index.html"
+      # Upload dependency check report
+      - name: Upload Dependency-Check report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: target/dependency-check-report.html
