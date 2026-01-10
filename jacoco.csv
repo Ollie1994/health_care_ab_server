@@ -1,7 +1,7 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.dto,AuthRequest,0,15,0,0,0,6,0,3,0,3
-healthcare_booking_app,healthcareab.project.healthcare_booking_app.dto,RegisterRequest,9,30,0,0,3,11,3,4,3,4
-healthcare_booking_app,healthcareab.project.healthcare_booking_app.dto,RegisterResponse,42,21,0,0,18,8,12,1,12,1
+healthcare_booking_app,healthcareab.project.healthcare_booking_app.dto,RegisterRequest,12,33,0,0,4,12,4,4,4,4
+healthcare_booking_app,healthcareab.project.healthcare_booking_app.dto,RegisterResponse,49,24,0,0,21,9,14,1,14,1
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.dto,AuthResponse,49,24,0,0,21,9,14,1,14,1
 healthcare_booking_app,healthcareab.project.healthcare_booking_app,HealthcareBookingAppApplication,8,0,0,0,3,0,2,0,2,0
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.filters,JwtAuthenticationFilter,2,113,5,13,0,29,5,7,0,3
@@ -10,5 +10,5 @@ healthcare_booking_app,healthcareab.project.healthcare_booking_app.services,Auth
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.config,SecurityConfig,0,136,0,0,0,23,0,9,0,9
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.utils,JwtUtil,0,80,1,3,0,21,1,8,0,7
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Role,0,15,0,0,0,3,0,1,0,1
-healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,User,3,64,0,0,1,28,1,16,1,16
-healthcare_booking_app,healthcareab.project.healthcare_booking_app.controllers,AuthController,5,246,4,8,1,74,4,7,0,5
+healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,User,27,64,0,0,10,28,2,16,2,16
+healthcare_booking_app,healthcareab.project.healthcare_booking_app.controllers,AuthController,5,241,4,8,1,73,4,7,0,5

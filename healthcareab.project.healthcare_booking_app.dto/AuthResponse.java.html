@@ -11,18 +11,18 @@ public class AuthResponse {
     private String email;
     private String firstName;
     private String lastName;
-    private String address;
+    private String socialSecurityNumber;
 
-<span class="fc" id="L16">    public AuthResponse(String jwtToken, String username, Set&lt;Role&gt; roles, String email, String firstName, String lastName, String address) {</span>
-<span class="fc" id="L17">        this.jwtToken = jwtToken;</span>
-<span class="fc" id="L18">        this.username = username;</span>
-<span class="fc" id="L19">        this.roles = roles;</span>
-<span class="fc" id="L20">        this.email = email;</span>
-<span class="fc" id="L21">        this.firstName = firstName;</span>
-<span class="fc" id="L22">        this.lastName = lastName;</span>
-<span class="fc" id="L23">        this.address = address;</span>
-<span class="fc" id="L24">    }</span>
 
+<span class="fc" id="L17">    public AuthResponse(String jwtToken, String username, Set&lt;Role&gt; roles, String email, String firstName, String lastName, String socialSecurityNumber) {</span>
+<span class="fc" id="L18">        this.jwtToken = jwtToken;</span>
+<span class="fc" id="L19">        this.username = username;</span>
+<span class="fc" id="L20">        this.roles = roles;</span>
+<span class="fc" id="L21">        this.email = email;</span>
+<span class="fc" id="L22">        this.firstName = firstName;</span>
+<span class="fc" id="L23">        this.lastName = lastName;</span>
+<span class="fc" id="L24">        this.socialSecurityNumber = socialSecurityNumber;</span>
+<span class="fc" id="L25">    }</span>
 
     public String getJwtToken() {
 <span class="nc" id="L28">        return jwtToken;</span>
@@ -72,12 +72,12 @@ public class AuthResponse {
 <span class="nc" id="L72">        this.lastName = lastName;</span>
 <span class="nc" id="L73">    }</span>
 
-    public String getAddress() {
-<span class="nc" id="L76">        return address;</span>
+    public String getSocialSecurityNumber() {
+<span class="nc" id="L76">        return socialSecurityNumber;</span>
     }
 
-    public void setAddress(String address) {
-<span class="nc" id="L80">        this.address = address;</span>
+    public void setSocialSecurityNumber(String socialSecurityNumber) {
+<span class="nc" id="L80">        this.socialSecurityNumber = socialSecurityNumber;</span>
 <span class="nc" id="L81">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
