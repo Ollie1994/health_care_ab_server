@@ -30,38 +30,50 @@ public class User {
     private String email;
     private String firstName;
     private String lastName;
-    private String address;
+    private Integer socialSecurityNumber;
 
     public User() {
     }
 
-    public User(String username, String password, Set<Role> roles) {
+    public User(String username, String password, Set<Role> roles, String email, String firstName, String lastName, Integer socialSecurityNumber) {
         this.username = username;
         this.password = password;
         this.roles = roles;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.socialSecurityNumber = socialSecurityNumber;
     }
-
 
     public String getId() {
         return id;
     }
 
-    public String getUsername() {
+    public @NotEmpty(message = "Username cannot be empty") String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(@NotEmpty(message = "Username cannot be empty") String username) {
         this.username = username;
     }
 
-    public String getPassword() {
+    public @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()\\-_=+{};:,<.>])(?=.{8,})" +
+                    ".*$",
+            message = "Password must be at least 8 characters long and contain at least " +
+                    "one uppercase letter, one number, and one special character"
+    ) String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(@Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()\\-_=+{};:,<.>])(?=.{8,})" +
+                    ".*$",
+            message = "Password must be at least 8 characters long and contain at least " +
+                    "one uppercase letter, one number, and one special character"
+    ) String password) {
         this.password = password;
     }
-
 
     public Set<Role> getRoles() {
         return roles;
@@ -95,11 +107,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getAddress() {
-        return address;
+    public Integer getSocialSecurityNumber() {
+        return socialSecurityNumber;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setSocialSecurityNumber(Integer socialSecurityNumber) {
+        this.socialSecurityNumber = socialSecurityNumber;
     }
 }
