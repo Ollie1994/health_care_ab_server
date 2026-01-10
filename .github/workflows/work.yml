@@ -10,11 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # Cache NVD database
-      - uses: actions/cache@v4
+      - name: Cache Dependency-Check NVD
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository/org/owasp/dependency-check-data
-          key: dc-${{ runner.os }}-${{ hashFiles('pom.xml') }}
-          restore-keys: dc-${{ runner.os }}-
+          key: nvd-${{ runner.os }}
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
