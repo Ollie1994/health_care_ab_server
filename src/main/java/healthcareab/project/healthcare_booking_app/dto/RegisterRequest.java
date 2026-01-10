@@ -14,10 +14,10 @@ public class RegisterRequest {
     private String email;
     private String firstName;
     private String lastName;
-    private Integer socialSecurityNumber;
+    private String socialSecurityNumber;
 
 
-    public RegisterRequest(String username, String password, Set<Role> roles, String email, String firstName, String lastName, Integer socialSecurityNumber) {
+    public RegisterRequest(String username, String password, Set<Role> roles, String email, String firstName, String lastName, String socialSecurityNumber) {
         this.username = username;
         this.password = password;
         this.roles = roles;
@@ -51,7 +51,7 @@ public class RegisterRequest {
         return lastName;
     }
 
-    public Integer getSocialSecurityNumber() {
+    public String getSocialSecurityNumber() {
         return socialSecurityNumber;
     }
 }

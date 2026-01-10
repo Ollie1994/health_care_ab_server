@@ -30,12 +30,18 @@ public class User {
     private String email;
     private String firstName;
     private String lastName;
-    private Integer socialSecurityNumber;
+    private String socialSecurityNumber;
 
     public User() {
     }
 
-    public User(String username, String password, Set<Role> roles, String email, String firstName, String lastName, Integer socialSecurityNumber) {
+    public User(String username, String password, Set<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public User(String username, String password, Set<Role> roles, String email, String firstName, String lastName, String socialSecurityNumber) {
         this.username = username;
         this.password = password;
         this.roles = roles;
@@ -107,11 +113,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Integer getSocialSecurityNumber() {
+    public String getSocialSecurityNumber() {
         return socialSecurityNumber;
     }
 
-    public void setSocialSecurityNumber(Integer socialSecurityNumber) {
+    public void setSocialSecurityNumber(String socialSecurityNumber) {
         this.socialSecurityNumber = socialSecurityNumber;
     }
 }

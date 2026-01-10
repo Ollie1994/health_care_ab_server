@@ -11,10 +11,10 @@ public class AuthResponse {
     private String email;
     private String firstName;
     private String lastName;
-    private Integer socialSecurityNumber;
+    private String socialSecurityNumber;
 
 
-    public AuthResponse(String jwtToken, String username, Set<Role> roles, String email, String firstName, String lastName, Integer socialSecurityNumber) {
+    public AuthResponse(String jwtToken, String username, Set<Role> roles, String email, String firstName, String lastName, String socialSecurityNumber) {
         this.jwtToken = jwtToken;
         this.username = username;
         this.roles = roles;
@@ -72,11 +72,11 @@ public class AuthResponse {
         this.lastName = lastName;
     }
 
-    public Integer getSocialSecurityNumber() {
+    public String getSocialSecurityNumber() {
         return socialSecurityNumber;
     }
 
-    public void setSocialSecurityNumber(Integer socialSecurityNumber) {
+    public void setSocialSecurityNumber(String socialSecurityNumber) {
         this.socialSecurityNumber = socialSecurityNumber;
     }
 }

@@ -125,7 +125,7 @@ class AuthServiceTest {
         // --- Assert ---
         assertEquals("encodedPassword", newUser.getPassword());
         assertNotNull(newUser.getRoles());
-        assertTrue(newUser.getRoles().contains(Role.USER));
+        assertTrue(newUser.getRoles().contains(Role.PATIENT));
 
         // Verify that repository.save() was called exactly once with newUser
         verify(userRepository, times(1)).save(newUser);
