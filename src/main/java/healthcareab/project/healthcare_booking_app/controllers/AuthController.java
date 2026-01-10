@@ -40,8 +40,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        System.out.println("Registration attempt: " + registerRequest.getUsername()
-                + " with password: " + registerRequest.getPassword());
 
         if(authService.existsByUsername(registerRequest.getUsername())) {
             return ResponseEntity
