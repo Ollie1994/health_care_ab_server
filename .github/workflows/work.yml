@@ -35,11 +35,8 @@ jobs:
         run: |
           echo "Coverage report URL: https://Ollie1994.github.io/health_care_ab_server/index.html"
       # Security scan of dependencies.
-
       - name: Security scan
-        run: mvn org.owasp:dependency-check-maven:check \
-          -DnvdApiKey=${{ secrets.NVD_API_KEY }} \
-          -DfailBuildOnCVSS=7
+        run: mvn org.owasp:dependency-check-maven:check -DnvdApiKey=${{ secrets.NVD_API_KEY }} -DfailBuildOnCVSS=7
       # Upload dependency check report
       - name: Upload Dependency-Check report
         uses: actions/upload-artifact@v4
