@@ -32,6 +32,18 @@ Issue #
 - [ ] Code follows project coding standards
 
 
+## Testing requirements
+### Unit test scenarios
+
+**Positive scenarios:**
+- [ ] Scenario 1:
+- [ ] Scenario 2:
+
+**Negative scenarios:**
+- [ ] Scenario 1:
+- [ ] Scenario 2:
+
+
 ## Acceptance criteria
 - [ ] All required functionality is implemented
 - [ ] API returns valid JSON responses
