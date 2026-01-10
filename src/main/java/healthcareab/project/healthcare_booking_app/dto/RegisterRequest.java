@@ -11,20 +11,21 @@ public class RegisterRequest {
     @NotBlank
     private String password;
     private Set<Role> roles;
-
     private String email;
     private String firstName;
     private String lastName;
+    private Integer socialSecurityNumber;
 
-    public RegisterRequest(String username, String password, Set<Role> roles, String email, String firstName, String lastName) {
+
+    public RegisterRequest(String username, String password, Set<Role> roles, String email, String firstName, String lastName, Integer socialSecurityNumber) {
         this.username = username;
         this.password = password;
         this.roles = roles;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.socialSecurityNumber = socialSecurityNumber;
     }
-
 
     public @NotBlank String getUsername() {
         return username;
@@ -48,5 +49,9 @@ public class RegisterRequest {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public Integer getSocialSecurityNumber() {
+        return socialSecurityNumber;
     }
 }

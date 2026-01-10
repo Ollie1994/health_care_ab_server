@@ -54,7 +54,7 @@ public class AuthController {
         user.setPassword(registerRequest.getPassword());
 
         if(registerRequest.getRoles() == null || registerRequest.getRoles().isEmpty()) {
-            user.setRoles(Set.of(Role.USER));
+            user.setRoles(Set.of(Role.PATIENT));
         } else {
             user.setRoles(registerRequest.getRoles());
         }
@@ -67,7 +67,8 @@ public class AuthController {
                 user.getRoles(),
                 user.getEmail(),
                 user.getFirstName(),
-                user.getLastName()
+                user.getLastName(),
+                user.getSocialSecurityNumber()
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -104,7 +105,7 @@ public class AuthController {
                     authService.findByUsername(userDetails.getUsername()).getEmail(),
                     authService.findByUsername(userDetails.getUsername()).getFirstName(),
                     authService.findByUsername(userDetails.getUsername()).getLastName(),
-                    authService.findByUsername(userDetails.getUsername()).getAddress()
+                    authService.findByUsername(userDetails.getUsername()).getSocialSecurityNumber()
 
             );
 
@@ -154,7 +155,7 @@ public class AuthController {
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getAddress()
+                user.getSocialSecurityNumber()
         ));
     }
 
