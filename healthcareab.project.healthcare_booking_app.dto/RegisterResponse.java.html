@@ -8,67 +8,76 @@ public class RegisterResponse {
     private String message;
     private String username;
     private Set&lt;Role&gt; roles;
-
     private String email;
     private String firstName;
     private String lastName;
+    private String socialSecurityNumber;
 
-<span class="fc" id="L16">    public RegisterResponse(String message, String username, Set&lt;Role&gt; roles, String email, String firstName, String lastName) {</span>
-<span class="fc" id="L17">        this.message = message;</span>
-<span class="fc" id="L18">        this.username = username;</span>
-<span class="fc" id="L19">        this.roles = roles;</span>
-<span class="fc" id="L20">        this.email = email;</span>
-<span class="fc" id="L21">        this.firstName = firstName;</span>
-<span class="fc" id="L22">        this.lastName = lastName;</span>
-<span class="fc" id="L23">    }</span>
 
+<span class="fc" id="L17">    public RegisterResponse(String message, String username, Set&lt;Role&gt; roles, String email, String firstName, String lastName, String socialSecurityNumber) {</span>
+<span class="fc" id="L18">        this.message = message;</span>
+<span class="fc" id="L19">        this.username = username;</span>
+<span class="fc" id="L20">        this.roles = roles;</span>
+<span class="fc" id="L21">        this.email = email;</span>
+<span class="fc" id="L22">        this.firstName = firstName;</span>
+<span class="fc" id="L23">        this.lastName = lastName;</span>
+<span class="fc" id="L24">        this.socialSecurityNumber = socialSecurityNumber;</span>
+<span class="fc" id="L25">    }</span>
 
     public String getMessage() {
-<span class="nc" id="L27">        return message;</span>
+<span class="nc" id="L28">        return message;</span>
     }
 
     public void setMessage(String message) {
-<span class="nc" id="L31">        this.message = message;</span>
-<span class="nc" id="L32">    }</span>
+<span class="nc" id="L32">        this.message = message;</span>
+<span class="nc" id="L33">    }</span>
 
     public String getUsername() {
-<span class="nc" id="L35">        return username;</span>
+<span class="nc" id="L36">        return username;</span>
     }
 
     public void setUsername(String username) {
-<span class="nc" id="L39">        this.username = username;</span>
-<span class="nc" id="L40">    }</span>
+<span class="nc" id="L40">        this.username = username;</span>
+<span class="nc" id="L41">    }</span>
 
     public Set&lt;Role&gt; getRoles() {
-<span class="nc" id="L43">        return roles;</span>
+<span class="nc" id="L44">        return roles;</span>
     }
 
     public void setRoles(Set&lt;Role&gt; roles) {
-<span class="nc" id="L47">        this.roles = roles;</span>
-<span class="nc" id="L48">    }</span>
+<span class="nc" id="L48">        this.roles = roles;</span>
+<span class="nc" id="L49">    }</span>
 
     public String getEmail() {
-<span class="nc" id="L51">        return email;</span>
+<span class="nc" id="L52">        return email;</span>
     }
 
     public void setEmail(String email) {
-<span class="nc" id="L55">        this.email = email;</span>
-<span class="nc" id="L56">    }</span>
+<span class="nc" id="L56">        this.email = email;</span>
+<span class="nc" id="L57">    }</span>
 
     public String getFirstName() {
-<span class="nc" id="L59">        return firstName;</span>
+<span class="nc" id="L60">        return firstName;</span>
     }
 
     public void setFirstName(String firstName) {
-<span class="nc" id="L63">        this.firstName = firstName;</span>
-<span class="nc" id="L64">    }</span>
+<span class="nc" id="L64">        this.firstName = firstName;</span>
+<span class="nc" id="L65">    }</span>
 
     public String getLastName() {
-<span class="nc" id="L67">        return lastName;</span>
+<span class="nc" id="L68">        return lastName;</span>
     }
 
     public void setLastName(String lastName) {
-<span class="nc" id="L71">        this.lastName = lastName;</span>
-<span class="nc" id="L72">    }</span>
+<span class="nc" id="L72">        this.lastName = lastName;</span>
+<span class="nc" id="L73">    }</span>
+
+    public String getSocialSecurityNumber() {
+<span class="nc" id="L76">        return socialSecurityNumber;</span>
+    }
+
+    public void setSocialSecurityNumber(String socialSecurityNumber) {
+<span class="nc" id="L80">        this.socialSecurityNumber = socialSecurityNumber;</span>
+<span class="nc" id="L81">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
