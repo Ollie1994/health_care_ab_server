@@ -28,7 +28,7 @@ public class AuthService {
 
         // ensure the user has at least default role USER
 <span class="pc bpc" id="L30" title="3 of 4 branches missed.">        if(user.getRoles() == null || user.getRoles().isEmpty()) {</span>
-<span class="fc" id="L31">            user.setRoles(Set.of(Role.PATIENT));</span>
+<span class="fc" id="L31">            user.setRoles(Set.of(Role.USER));</span>
         }
 
 <span class="fc" id="L34">        userRepository.save(user);</span>

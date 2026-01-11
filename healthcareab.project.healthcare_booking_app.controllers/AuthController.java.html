@@ -40,120 +40,121 @@ public class AuthController {
 
     @PostMapping(&quot;/register&quot;)
     public ResponseEntity&lt;?&gt; register(@Valid @RequestBody RegisterRequest registerRequest) {
+<span class="fc" id="L43">        System.out.println(&quot;Registration attempt: &quot; + registerRequest.getUsername()</span>
+<span class="fc" id="L44">                + &quot; with password: &quot; + registerRequest.getPassword());</span>
 
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        if(authService.existsByUsername(registerRequest.getUsername())) {</span>
-<span class="fc" id="L45">            return ResponseEntity</span>
-<span class="fc" id="L46">                    .status(HttpStatus.CONFLICT)</span>
-<span class="fc" id="L47">                    .body(&quot;Username already exists.&quot;);</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if(authService.existsByUsername(registerRequest.getUsername())) {</span>
+<span class="fc" id="L47">            return ResponseEntity</span>
+<span class="fc" id="L48">                    .status(HttpStatus.CONFLICT)</span>
+<span class="fc" id="L49">                    .body(&quot;Username already exists.&quot;);</span>
         }
 
-<span class="fc" id="L50">        User user = new User();</span>
-<span class="fc" id="L51">        user.setUsername(registerRequest.getUsername());</span>
-<span class="fc" id="L52">        user.setPassword(registerRequest.getPassword());</span>
+<span class="fc" id="L52">        User user = new User();</span>
+<span class="fc" id="L53">        user.setUsername(registerRequest.getUsername());</span>
+<span class="fc" id="L54">        user.setPassword(registerRequest.getPassword());</span>
 
-<span class="pc bpc" id="L54" title="2 of 4 branches missed.">        if(registerRequest.getRoles() == null || registerRequest.getRoles().isEmpty()) {</span>
-<span class="nc" id="L55">            user.setRoles(Set.of(Role.PATIENT));</span>
+<span class="pc bpc" id="L56" title="2 of 4 branches missed.">        if(registerRequest.getRoles() == null || registerRequest.getRoles().isEmpty()) {</span>
+<span class="nc" id="L57">            user.setRoles(Set.of(Role.USER));</span>
         } else {
-<span class="fc" id="L57">            user.setRoles(registerRequest.getRoles());</span>
+<span class="fc" id="L59">            user.setRoles(registerRequest.getRoles());</span>
         }
 
-<span class="fc" id="L60">        authService.registerUser(user);</span>
+<span class="fc" id="L62">        authService.registerUser(user);</span>
 
-<span class="fc" id="L62">        RegisterResponse response = new RegisterResponse(</span>
+<span class="fc" id="L64">        RegisterResponse response = new RegisterResponse(</span>
                 &quot;User registered successfully&quot;,
-<span class="fc" id="L64">                user.getUsername(),</span>
-<span class="fc" id="L65">                user.getRoles(),</span>
-<span class="fc" id="L66">                user.getEmail(),</span>
-<span class="fc" id="L67">                user.getFirstName(),</span>
-<span class="fc" id="L68">                user.getLastName(),</span>
-<span class="fc" id="L69">                user.getSocialSecurityNumber()</span>
+<span class="fc" id="L66">                user.getUsername(),</span>
+<span class="fc" id="L67">                user.getRoles(),</span>
+<span class="fc" id="L68">                user.getEmail(),</span>
+<span class="fc" id="L69">                user.getFirstName(),</span>
+<span class="fc" id="L70">                user.getLastName()</span>
         );
 
-<span class="fc" id="L72">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+<span class="fc" id="L73">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
     }
 
     @PostMapping(&quot;/login&quot;)
     public ResponseEntity&lt;?&gt; login (@Valid @RequestBody AuthRequest authRequest, HttpServletResponse response) {
 
         try {
-<span class="fc" id="L79">            Authentication authentication = authenticationManager.authenticate(</span>
+<span class="fc" id="L80">            Authentication authentication = authenticationManager.authenticate(</span>
                     new UsernamePasswordAuthenticationToken(
-<span class="fc" id="L81">                            authRequest.getUsername(),</span>
-<span class="fc" id="L82">                            authRequest.getPassword()</span>
+<span class="fc" id="L82">                            authRequest.getUsername(),</span>
+<span class="fc" id="L83">                            authRequest.getPassword()</span>
                     )
             );
 
-<span class="fc" id="L86">            SecurityContextHolder.getContext().setAuthentication(authentication);</span>
+<span class="fc" id="L87">            SecurityContextHolder.getContext().setAuthentication(authentication);</span>
 
-<span class="fc" id="L88">            UserDetails userDetails = (UserDetails) authentication.getPrincipal();</span>
+<span class="fc" id="L89">            UserDetails userDetails = (UserDetails) authentication.getPrincipal();</span>
 
-<span class="fc" id="L90">            String jwt = jwtUtil.generateToken(userDetails);</span>
-<span class="fc" id="L91">            ResponseCookie jwtCookie = ResponseCookie.from(&quot;jwt&quot;, jwt)</span>
-<span class="fc" id="L92">                    .httpOnly(true) // prevents javascript to get cookie</span>
-<span class="fc" id="L93">                    .secure(false) //IMPORTANT TO CHANGE IN PRODUCTION TO TRUE</span>
-<span class="fc" id="L94">                    .path(&quot;/&quot;)  // cookies is available in all application</span>
-<span class="fc" id="L95">                    .maxAge(10 * 60 * 60) // valid for 10h</span>
-<span class="fc" id="L96">                    .sameSite(&quot;Strict&quot;) // Lax &amp; None</span>
-<span class="fc" id="L97">                    .build();</span>
+<span class="fc" id="L91">            String jwt = jwtUtil.generateToken(userDetails);</span>
+<span class="fc" id="L92">            ResponseCookie jwtCookie = ResponseCookie.from(&quot;jwt&quot;, jwt)</span>
+<span class="fc" id="L93">                    .httpOnly(true) // prevents javascript to get cookie</span>
+<span class="fc" id="L94">                    .secure(false) //IMPORTANT TO CHANGE IN PRODUCTION TO TRUE</span>
+<span class="fc" id="L95">                    .path(&quot;/&quot;)  // cookies is available in all application</span>
+<span class="fc" id="L96">                    .maxAge(10 * 60 * 60) // valid for 10h</span>
+<span class="fc" id="L97">                    .sameSite(&quot;Strict&quot;) // Lax &amp; None</span>
+<span class="fc" id="L98">                    .build();</span>
 
-<span class="fc" id="L99">            AuthResponse authResponse = new AuthResponse(</span>
+<span class="fc" id="L100">            AuthResponse authResponse = new AuthResponse(</span>
                     &quot;Login successful&quot;,
-<span class="fc" id="L101">                    userDetails.getUsername(),</span>
-<span class="fc" id="L102">                    authService.findByUsername(userDetails.getUsername()).getRoles(),</span>
-<span class="fc" id="L103">                    authService.findByUsername(userDetails.getUsername()).getEmail(),</span>
-<span class="fc" id="L104">                    authService.findByUsername(userDetails.getUsername()).getFirstName(),</span>
-<span class="fc" id="L105">                    authService.findByUsername(userDetails.getUsername()).getLastName(),</span>
-<span class="fc" id="L106">                    authService.findByUsername(userDetails.getUsername()).getSocialSecurityNumber()</span>
+<span class="fc" id="L102">                    userDetails.getUsername(),</span>
+<span class="fc" id="L103">                    authService.findByUsername(userDetails.getUsername()).getRoles(),</span>
+<span class="fc" id="L104">                    authService.findByUsername(userDetails.getUsername()).getEmail(),</span>
+<span class="fc" id="L105">                    authService.findByUsername(userDetails.getUsername()).getFirstName(),</span>
+<span class="fc" id="L106">                    authService.findByUsername(userDetails.getUsername()).getLastName(),</span>
+<span class="fc" id="L107">                    authService.findByUsername(userDetails.getUsername()).getAddress()</span>
 
             );
 
-<span class="fc" id="L110">            return ResponseEntity.ok()</span>
-<span class="fc" id="L111">                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())</span>
-<span class="fc" id="L112">                    .body(authResponse);</span>
+<span class="fc" id="L111">            return ResponseEntity.ok()</span>
+<span class="fc" id="L112">                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())</span>
+<span class="fc" id="L113">                    .body(authResponse);</span>
 
-<span class="fc" id="L114">        } catch (AuthenticationException e) {</span>
-<span class="fc" id="L115">            return ResponseEntity</span>
-<span class="fc" id="L116">                    .status(HttpStatus.UNAUTHORIZED)</span>
-<span class="fc" id="L117">                    .body(&quot;Incorrect username or password&quot;);</span>
+<span class="fc" id="L115">        } catch (AuthenticationException e) {</span>
+<span class="fc" id="L116">            return ResponseEntity</span>
+<span class="fc" id="L117">                    .status(HttpStatus.UNAUTHORIZED)</span>
+<span class="fc" id="L118">                    .body(&quot;Incorrect username or password&quot;);</span>
         }
     }
 
     @PostMapping(&quot;/logout&quot;)
     public ResponseEntity&lt;?&gt; logout(HttpServletResponse response) {
-<span class="fc" id="L123">        ResponseCookie jwtCookie = ResponseCookie.from(&quot;jwt&quot;, &quot;&quot;)</span>
-<span class="fc" id="L124">                .httpOnly(true)</span>
-<span class="fc" id="L125">                .secure(false) // VIKTIGT! ändra i production</span>
-<span class="fc" id="L126">                .path(&quot;/&quot;)</span>
-<span class="fc" id="L127">                .maxAge(0)</span>
-<span class="fc" id="L128">                .sameSite(&quot;Strict&quot;)</span>
-<span class="fc" id="L129">                .build();</span>
+<span class="fc" id="L124">        ResponseCookie jwtCookie = ResponseCookie.from(&quot;jwt&quot;, &quot;&quot;)</span>
+<span class="fc" id="L125">                .httpOnly(true)</span>
+<span class="fc" id="L126">                .secure(false) // VIKTIGT! ändra i production</span>
+<span class="fc" id="L127">                .path(&quot;/&quot;)</span>
+<span class="fc" id="L128">                .maxAge(0)</span>
+<span class="fc" id="L129">                .sameSite(&quot;Strict&quot;)</span>
+<span class="fc" id="L130">                .build();</span>
 
-<span class="fc" id="L131">        SecurityContextHolder.clearContext();</span>
+<span class="fc" id="L132">        SecurityContextHolder.clearContext();</span>
 
-<span class="fc" id="L133">        return ResponseEntity.ok()</span>
-<span class="fc" id="L134">                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())</span>
-<span class="fc" id="L135">                .body(&quot;Logout successful!&quot;);</span>
+<span class="fc" id="L134">        return ResponseEntity.ok()</span>
+<span class="fc" id="L135">                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())</span>
+<span class="fc" id="L136">                .body(&quot;Logout successful!&quot;);</span>
     }
 
     @GetMapping(&quot;/check&quot;)
     public ResponseEntity&lt;?&gt; checkAuthentication() {
-<span class="fc" id="L140">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L141">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
 
-<span class="pc bpc" id="L142" title="2 of 6 branches missed.">        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {</span>
-<span class="fc" id="L143">            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Not authenticated!&quot;);</span>
+<span class="pc bpc" id="L143" title="2 of 6 branches missed.">        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {</span>
+<span class="fc" id="L144">            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Not authenticated!&quot;);</span>
         }
 
-<span class="fc" id="L146">        UserDetails userDetails = (UserDetails) authentication.getPrincipal();</span>
-<span class="fc" id="L147">        User user = authService.findByUsername(userDetails.getUsername());</span>
+<span class="fc" id="L147">        UserDetails userDetails = (UserDetails) authentication.getPrincipal();</span>
+<span class="fc" id="L148">        User user = authService.findByUsername(userDetails.getUsername());</span>
 
-<span class="fc" id="L149">        return ResponseEntity.ok(new AuthResponse(</span>
+<span class="fc" id="L150">        return ResponseEntity.ok(new AuthResponse(</span>
                 &quot;Authenticated&quot;,
-<span class="fc" id="L151">                user.getUsername(),</span>
-<span class="fc" id="L152">                user.getRoles(),</span>
-<span class="fc" id="L153">                user.getEmail(),</span>
-<span class="fc" id="L154">                user.getFirstName(),</span>
-<span class="fc" id="L155">                user.getLastName(),</span>
-<span class="fc" id="L156">                user.getSocialSecurityNumber()</span>
+<span class="fc" id="L152">                user.getUsername(),</span>
+<span class="fc" id="L153">                user.getRoles(),</span>
+<span class="fc" id="L154">                user.getEmail(),</span>
+<span class="fc" id="L155">                user.getFirstName(),</span>
+<span class="fc" id="L156">                user.getLastName(),</span>
+<span class="fc" id="L157">                user.getAddress()</span>
         ));
     }
 

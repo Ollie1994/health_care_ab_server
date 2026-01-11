@@ -11,48 +11,43 @@ public class RegisterRequest {
     @NotBlank
     private String password;
     private Set&lt;Role&gt; roles;
+
     private String email;
     private String firstName;
     private String lastName;
-    private String socialSecurityNumber;
 
+<span class="fc" id="L19">    public RegisterRequest(String username, String password, Set&lt;Role&gt; roles, String email, String firstName, String lastName) {</span>
+<span class="fc" id="L20">        this.username = username;</span>
+<span class="fc" id="L21">        this.password = password;</span>
+<span class="fc" id="L22">        this.roles = roles;</span>
+<span class="fc" id="L23">        this.email = email;</span>
+<span class="fc" id="L24">        this.firstName = firstName;</span>
+<span class="fc" id="L25">        this.lastName = lastName;</span>
+<span class="fc" id="L26">    }</span>
 
-<span class="fc" id="L20">    public RegisterRequest(String username, String password, Set&lt;Role&gt; roles, String email, String firstName, String lastName, String socialSecurityNumber) {</span>
-<span class="fc" id="L21">        this.username = username;</span>
-<span class="fc" id="L22">        this.password = password;</span>
-<span class="fc" id="L23">        this.roles = roles;</span>
-<span class="fc" id="L24">        this.email = email;</span>
-<span class="fc" id="L25">        this.firstName = firstName;</span>
-<span class="fc" id="L26">        this.lastName = lastName;</span>
-<span class="fc" id="L27">        this.socialSecurityNumber = socialSecurityNumber;</span>
-<span class="fc" id="L28">    }</span>
 
     public @NotBlank String getUsername() {
-<span class="fc" id="L31">        return username;</span>
+<span class="fc" id="L30">        return username;</span>
     }
 
     public @NotBlank String getPassword() {
-<span class="fc" id="L35">        return password;</span>
+<span class="fc" id="L34">        return password;</span>
     }
 
     public Set&lt;Role&gt; getRoles() {
-<span class="fc" id="L39">        return roles;</span>
+<span class="fc" id="L38">        return roles;</span>
     }
 
     public String getEmail() {
-<span class="nc" id="L43">        return email;</span>
+<span class="nc" id="L42">        return email;</span>
     }
 
     public String getFirstName() {
-<span class="nc" id="L47">        return firstName;</span>
+<span class="nc" id="L46">        return firstName;</span>
     }
 
     public String getLastName() {
-<span class="nc" id="L51">        return lastName;</span>
-    }
-
-    public String getSocialSecurityNumber() {
-<span class="nc" id="L55">        return socialSecurityNumber;</span>
+<span class="nc" id="L50">        return lastName;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
