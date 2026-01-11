@@ -11,18 +11,18 @@ public class AuthResponse {
     private String email;
     private String firstName;
     private String lastName;
-    private String address;
+    private String socialSecurityNumber;
 
-    public AuthResponse(String jwtToken, String username, Set<Role> roles, String email, String firstName, String lastName, String address) {
+
+    public AuthResponse(String jwtToken, String username, Set<Role> roles, String email, String firstName, String lastName, String socialSecurityNumber) {
         this.jwtToken = jwtToken;
         this.username = username;
         this.roles = roles;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.address = address;
+        this.socialSecurityNumber = socialSecurityNumber;
     }
-
 
     public String getJwtToken() {
         return jwtToken;
@@ -72,11 +72,11 @@ public class AuthResponse {
         this.lastName = lastName;
     }
 
-    public String getAddress() {
-        return address;
+    public String getSocialSecurityNumber() {
+        return socialSecurityNumber;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setSocialSecurityNumber(String socialSecurityNumber) {
+        this.socialSecurityNumber = socialSecurityNumber;
     }
 }

@@ -65,10 +65,11 @@ class AuthControllerTest {
         RegisterRequest request = new RegisterRequest(
                 "john",
                 "password",
-                Set.of(Role.USER),
+                Set.of(Role.PATIENT),
                 "john@email.com",
                 "John",
-                "Doe"
+                "Doe",
+                "199206038852"
         );
 
         when(authService.existsByUsername("john")).thenReturn(false);
@@ -87,10 +88,11 @@ class AuthControllerTest {
         RegisterRequest request = new RegisterRequest(
                 "john",
                 "password",
-                Set.of(Role.USER),
+                Set.of(Role.PATIENT),
                 "john@email.com",
                 "John",
-                "Doe"
+                "Doe",
+                "199206038852"
         );
 
         when(authService.existsByUsername("john")).thenReturn(true);
@@ -124,7 +126,7 @@ class AuthControllerTest {
 
         User user = new User();
         user.setUsername("john");
-        user.setRoles(Set.of(Role.USER));
+        user.setRoles(Set.of(Role.PATIENT));
 
         when(authenticationManager.authenticate(any()))
                 .thenReturn(authentication);
@@ -211,7 +213,7 @@ class AuthControllerTest {
 
         User user = new User();
         user.setUsername("john");
-        user.setRoles(Set.of(Role.USER));
+        user.setRoles(Set.of(Role.PATIENT));
 
         when(authService.findByUsername("john")).thenReturn(user);
 
