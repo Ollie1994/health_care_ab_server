@@ -8,20 +8,21 @@ public class RegisterResponse {
     private String message;
     private String username;
     private Set<Role> roles;
-
     private String email;
     private String firstName;
     private String lastName;
+    private String socialSecurityNumber;
 
-    public RegisterResponse(String message, String username, Set<Role> roles, String email, String firstName, String lastName) {
+
+    public RegisterResponse(String message, String username, Set<Role> roles, String email, String firstName, String lastName, String socialSecurityNumber) {
         this.message = message;
         this.username = username;
         this.roles = roles;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.socialSecurityNumber = socialSecurityNumber;
     }
-
 
     public String getMessage() {
         return message;
@@ -69,5 +70,13 @@ public class RegisterResponse {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getSocialSecurityNumber() {
+        return socialSecurityNumber;
+    }
+
+    public void setSocialSecurityNumber(String socialSecurityNumber) {
+        this.socialSecurityNumber = socialSecurityNumber;
     }
 }

@@ -28,7 +28,7 @@ class UserModelTest {
     @Test
     void user_constructorAndGettersSetters_shouldWork() {
         // --- Arrange ---
-        Set<Role> roles = Set.of(Role.USER);
+        Set<Role> roles = Set.of(Role.PATIENT);
         User user = new User("john", "Password1!", roles);
 
         // --- Act & Assert ---
@@ -39,19 +39,19 @@ class UserModelTest {
         // Test setters
         user.setUsername("alice");
         user.setPassword("NewPass1!");
-        user.setRoles(Set.of(Role.ADMIN));
+        user.setRoles(Set.of(Role.CAREGIVER));
         user.setEmail("alice@example.com");
         user.setFirstName("Alice");
         user.setLastName("Smith");
-        user.setAddress("123 Street");
+        user.setSocialSecurityNumber("199309048875");
 
         assertEquals("alice", user.getUsername());
         assertEquals("NewPass1!", user.getPassword());
-        assertTrue(user.getRoles().contains(Role.ADMIN));
+        assertTrue(user.getRoles().contains(Role.CAREGIVER));
         assertEquals("alice@example.com", user.getEmail());
         assertEquals("Alice", user.getFirstName());
         assertEquals("Smith", user.getLastName());
-        assertEquals("123 Street", user.getAddress());
+        assertEquals("199309048875", user.getSocialSecurityNumber());
     }
 
     /* =====================================================

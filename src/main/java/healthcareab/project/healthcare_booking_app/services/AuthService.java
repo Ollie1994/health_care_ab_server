@@ -28,7 +28,7 @@ public class AuthService {
 
         // ensure the user has at least default role USER
         if(user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles(Set.of(Role.USER));
+            user.setRoles(Set.of(Role.PATIENT));
         }
 
         userRepository.save(user);

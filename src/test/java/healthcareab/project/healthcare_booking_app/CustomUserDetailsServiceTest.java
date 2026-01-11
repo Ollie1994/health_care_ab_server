@@ -41,7 +41,7 @@ class CustomUserDetailsServiceTest {
         User user = new User();
         user.setUsername("john");
         user.setPassword("password");
-        user.setRoles(Set.of(Role.USER, Role.ADMIN));
+        user.setRoles(Set.of(Role.PATIENT, Role.CAREGIVER));
 
         when(userRepository.findByUsername("john"))
                 .thenReturn(Optional.of(user));
@@ -61,11 +61,11 @@ class CustomUserDetailsServiceTest {
         assertEquals(2, authorities.size());
         assertTrue(
                 authorities.stream()
-                        .anyMatch(a -> a.getAuthority().equals("ROLE_USER"))
+                        .anyMatch(a -> a.getAuthority().equals("ROLE_PATIENT"))
         );
         assertTrue(
                 authorities.stream()
-                        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))
+                        .anyMatch(a -> a.getAuthority().equals("ROLE_CAREGIVER"))
         );
 
         verify(userRepository).findByUsername("john");
