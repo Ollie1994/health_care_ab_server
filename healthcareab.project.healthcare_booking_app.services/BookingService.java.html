@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookingService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">healthcare_booking_app</a> &gt; <a href="index.source.html" class="el_package">healthcareab.project.healthcare_booking_app.services</a> &gt; <span class="el_source">BookingService.java</span></div><h1>BookingService.java</h1><pre class="source lang-java linenums">package healthcareab.project.healthcare_booking_app.services;
+
+import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
+import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
+import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
+import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
+import healthcareab.project.healthcare_booking_app.models.Booking;
+import healthcareab.project.healthcare_booking_app.models.BookingStatus;
+import healthcareab.project.healthcare_booking_app.models.User;
+import healthcareab.project.healthcare_booking_app.repository.BookingRepository;
+import healthcareab.project.healthcare_booking_app.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BookingService {
+    private final BookingRepository bookingRepository;
+    private final BookingConverter bookingConverter;
+    private final AuthService authService;
+    private final UserRepository userRepository;
+
+<span class="fc" id="L21">    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository) {</span>
+<span class="fc" id="L22">        this.bookingRepository = bookingRepository;</span>
+<span class="fc" id="L23">        this.bookingConverter = bookingConverter;</span>
+<span class="fc" id="L24">        this.authService = authService;</span>
+<span class="fc" id="L25">        this.userRepository = userRepository;</span>
+<span class="fc" id="L26">    }</span>
+
+    public CreateBookingResponse createBooking(CreateBookingRequest request) {
+<span class="fc" id="L29">        Booking booking = new Booking();</span>
+
+        //Set patient to authorized patient.
+<span class="fc" id="L32">        User patient = authService.getAuthenticated();</span>
+<span class="pc" id="L33">        User caregiver = userRepository.findById(request.getCaregiver_id()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Caregiver not found&quot;));</span>
+
+
+
+<span class="fc" id="L37">        booking.setPatient_id(patient.getId());</span>
+<span class="fc" id="L38">        booking.setCaregiver_id(request.getCaregiver_id());</span>
+<span class="fc" id="L39">        booking.setStatus(BookingStatus.PENDING);</span>
+<span class="fc" id="L40">        booking.setStart_date_time(request.getStart_date_time());</span>
+<span class="fc" id="L41">        booking.setEnd_date_time(request.getEnd_date_time());</span>
+<span class="fc" id="L42">        booking.setSymptoms(request.getSymptoms());</span>
+<span class="fc" id="L43">        booking.setReason_for_visit(request.getReason_for_visit());</span>
+<span class="fc" id="L44">        booking.setNotes_from_patient(request.getNotes_from_patient());</span>
+
+<span class="fc" id="L46">        Booking createdBooking = bookingRepository.save(booking);</span>
+
+<span class="fc" id="L48">        return bookingConverter.convertToCreateBookingResponse(createdBooking, caregiver);</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

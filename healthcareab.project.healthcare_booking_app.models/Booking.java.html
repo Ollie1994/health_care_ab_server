@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Booking.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">healthcare_booking_app</a> &gt; <a href="index.source.html" class="el_package">healthcareab.project.healthcare_booking_app.models</a> &gt; <span class="el_source">Booking.java</span></div><h1>Booking.java</h1><pre class="source lang-java linenums">package healthcareab.project.healthcare_booking_app.models;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;bookings&quot;)
+public class Booking {
+
+    @Id
+    private String id;
+
+    private String patient_id;
+
+    private String caregiver_id;
+
+    private BookingStatus status;
+
+    private LocalDateTime start_date_time;
+
+    private LocalDateTime end_date_time;
+
+    private List&lt;String&gt; symptoms;
+
+    private String reason_for_visit;
+
+    private String notes_from_patient;
+
+    private String feedback;
+
+    private String notes_from_caregiver;
+
+    private String employee_only_notes;
+
+    private List&lt;String&gt; related_appointment_ids;
+
+    @CreatedDate
+    private LocalDate created_at;
+
+    @LastModifiedDate
+    private LocalDate updated_at;
+
+
+<span class="fc" id="L49">    public Booking() {</span>
+<span class="fc" id="L50">    }</span>
+
+
+    public String getId() {
+<span class="nc" id="L54">        return id;</span>
+    }
+
+    public String getPatient_id() {
+<span class="fc" id="L58">        return patient_id;</span>
+    }
+
+    public void setPatient_id(String patient_id) {
+<span class="fc" id="L62">        this.patient_id = patient_id;</span>
+<span class="fc" id="L63">    }</span>
+
+    public String getCaregiver_id() {
+<span class="fc" id="L66">        return caregiver_id;</span>
+    }
+
+    public void setCaregiver_id(String caregiver_id) {
+<span class="fc" id="L70">        this.caregiver_id = caregiver_id;</span>
+<span class="fc" id="L71">    }</span>
+
+    public BookingStatus getStatus() {
+<span class="fc" id="L74">        return status;</span>
+    }
+
+    public void setStatus(BookingStatus status) {
+<span class="fc" id="L78">        this.status = status;</span>
+<span class="fc" id="L79">    }</span>
+
+    public LocalDateTime getStart_date_time() {
+<span class="fc" id="L82">        return start_date_time;</span>
+    }
+
+    public void setStart_date_time(LocalDateTime start_date_time) {
+<span class="fc" id="L86">        this.start_date_time = start_date_time;</span>
+<span class="fc" id="L87">    }</span>
+
+    public LocalDateTime getEnd_date_time() {
+<span class="fc" id="L90">        return end_date_time;</span>
+    }
+
+    public void setEnd_date_time(LocalDateTime end_date_time) {
+<span class="fc" id="L94">        this.end_date_time = end_date_time;</span>
+<span class="fc" id="L95">    }</span>
+
+    public List&lt;String&gt; getSymptoms() {
+<span class="fc" id="L98">        return symptoms;</span>
+    }
+
+    public void setSymptoms(List&lt;String&gt; symptoms) {
+<span class="fc" id="L102">        this.symptoms = symptoms;</span>
+<span class="fc" id="L103">    }</span>
+
+    public String getReason_for_visit() {
+<span class="fc" id="L106">        return reason_for_visit;</span>
+    }
+
+    public void setReason_for_visit(String reason_for_visit) {
+<span class="fc" id="L110">        this.reason_for_visit = reason_for_visit;</span>
+<span class="fc" id="L111">    }</span>
+
+    public String getNotes_from_patient() {
+<span class="fc" id="L114">        return notes_from_patient;</span>
+    }
+
+    public void setNotes_from_patient(String notes_from_patient) {
+<span class="fc" id="L118">        this.notes_from_patient = notes_from_patient;</span>
+<span class="fc" id="L119">    }</span>
+
+    public String getFeedback() {
+<span class="fc" id="L122">        return feedback;</span>
+    }
+
+    public void setFeedback(String feedback) {
+<span class="fc" id="L126">        this.feedback = feedback;</span>
+<span class="fc" id="L127">    }</span>
+
+    public String getNotes_from_caregiver() {
+<span class="fc" id="L130">        return notes_from_caregiver;</span>
+    }
+
+    public void setNotes_from_caregiver(String notes_from_caregiver) {
+<span class="fc" id="L134">        this.notes_from_caregiver = notes_from_caregiver;</span>
+<span class="fc" id="L135">    }</span>
+
+    public String getEmployee_only_notes() {
+<span class="fc" id="L138">        return employee_only_notes;</span>
+    }
+
+    public void setEmployee_only_notes(String employee_only_notes) {
+<span class="fc" id="L142">        this.employee_only_notes = employee_only_notes;</span>
+<span class="fc" id="L143">    }</span>
+
+    public List&lt;String&gt; getRelated_appointment_ids() {
+<span class="fc" id="L146">        return related_appointment_ids;</span>
+    }
+
+    public void setRelated_appointment_ids(List&lt;String&gt; related_appointment_ids) {
+<span class="fc" id="L150">        this.related_appointment_ids = related_appointment_ids;</span>
+<span class="fc" id="L151">    }</span>
+
+    public LocalDate getCreated_at() {
+<span class="fc" id="L154">        return created_at;</span>
+    }
+
+    public void setCreated_at(LocalDate created_at) {
+<span class="fc" id="L158">        this.created_at = created_at;</span>
+<span class="fc" id="L159">    }</span>
+
+    public LocalDate getUpdated_at() {
+<span class="fc" id="L162">        return updated_at;</span>
+    }
+
+    public void setUpdated_at(LocalDate updated_at) {
+<span class="fc" id="L166">        this.updated_at = updated_at;</span>
+<span class="fc" id="L167">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
