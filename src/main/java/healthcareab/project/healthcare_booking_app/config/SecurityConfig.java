@@ -48,6 +48,7 @@ public class SecurityConfig {
                 // define URL based rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/booking/**").hasAnyRole("PATIENT", "CAREGIVER")
                         // any other requests the user need to be logged
                         .anyRequest().authenticated()
                 )
