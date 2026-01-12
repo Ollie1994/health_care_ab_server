@@ -15,9 +15,9 @@ public class Booking {
     @Id
     private String id;
 
-    private String patient_id;
+    private String patientId;
 
-    private String caregiver_id;
+    private String caregiverId;
 
     private BookingStatus status;
 
@@ -55,19 +55,19 @@ public class Booking {
     }
 
     public String getPatient_id() {
-        return patient_id;
+        return patientId;
     }
 
     public void setPatient_id(String patient_id) {
-        this.patient_id = patient_id;
+        this.patientId = patient_id;
     }
 
     public String getCaregiver_id() {
-        return caregiver_id;
+        return caregiverId;
     }
 
     public void setCaregiver_id(String caregiver_id) {
-        this.caregiver_id = caregiver_id;
+        this.caregiverId = caregiver_id;
     }
 
     public BookingStatus getStatus() {

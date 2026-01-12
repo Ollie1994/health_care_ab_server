@@ -3,6 +3,7 @@ package healthcareab.project.healthcare_booking_app.services;
 import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
+import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
 import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
 import healthcareab.project.healthcare_booking_app.models.Booking;
@@ -14,6 +15,8 @@ import healthcareab.project.healthcare_booking_app.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -53,17 +56,34 @@ public class BookingService {
         return bookingConverter.convertToCreateBookingResponse(createdBooking, caregiver);
     }
 
-    public ResponseEntity<?> getMyBookings() {
+    public List<GetBookingsResponse> getMyBookings() {
         User user = authService.getAuthenticated();
         user = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (user.getRoles().contains(Role.PATIENT)) {
-            List<Booking> bookings = bookingRepository.findByPatient_id(user.getId());
+            List<Booking> bookings = bookingRepository.findByPatientId(user.getId());
+            List<GetBookingsResponse> responses = new ArrayList<>();
+            for (Booking booking : bookings) {
+                User caregiver = userRepository.findById(booking.getCaregiver_id()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+                String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
+                responses.add(convertToGetBookingsResponse(booking, fullName));
+            }
+            return responses;
         } else if (user.getRoles().contains(Role.CAREGIVER)) {
-
+            List<Booking> bookings = bookingRepository.findByCaregiverId(user.getId());
+            List<GetBookingsResponse> responses = new ArrayList<>();
+            for (Booking booking : bookings) {
+                User patient = userRepository.findById(booking.getPatient_id()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+                String fullName = patient.getFirstName() + " " + patient.getLastName();
+                responses.add(convertToGetBookingsResponse(booking, fullName));
+            }
+            return responses;
         } else {
             throw new AccessDeniedException("You are not authorized to view this booking");
         }
     }
 
+    private GetBookingsResponse convertToGetBookingsResponse (Booking booking, String fullName) {
+        return new GetBookingsResponse(booking.getStart_date_time(), booking.getEnd_date_time(), booking.getStatus(), fullName, booking.getSymptoms(), booking.getId());
+    }
 }
