@@ -27,8 +27,8 @@ private final BookingService bookingService;
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
-
-
-
+    public ResponseEntity<?> getMyBookings() {
+        GetBookingsResponse response = bookingService.getMyBookings();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
