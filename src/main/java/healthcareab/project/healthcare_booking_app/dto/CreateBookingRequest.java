@@ -25,6 +25,15 @@ public class CreateBookingRequest {
     }
 
 
+    public CreateBookingRequest(String caregiver_id, LocalDateTime start_date_time, LocalDateTime end_date_time, List<String> symptoms, String reason_for_visit, String notes_from_patient) {
+        this.caregiver_id = caregiver_id;
+        this.start_date_time = start_date_time;
+        this.end_date_time = end_date_time;
+        this.symptoms = symptoms;
+        this.reason_for_visit = reason_for_visit;
+        this.notes_from_patient = notes_from_patient;
+    }
+
     public String getCaregiver_id() {
         return caregiver_id;
     }
