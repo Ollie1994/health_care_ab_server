@@ -4,6 +4,7 @@ import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
+import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
 import healthcareab.project.healthcare_booking_app.models.User;
@@ -17,12 +18,14 @@ public class BookingService {
     private final BookingConverter bookingConverter;
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final SESEmailHelper sesEmailHelper;
 
-    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository) {
+    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository, SESEmailHelper sesEmailHelper) {
         this.bookingRepository = bookingRepository;
         this.bookingConverter = bookingConverter;
         this.authService = authService;
         this.userRepository = userRepository;
+        this.sesEmailHelper = sesEmailHelper;
     }
 
     public CreateBookingResponse createBooking(CreateBookingRequest request) {
@@ -44,6 +47,7 @@ public class BookingService {
         booking.setNotes_from_patient(request.getNotes_from_patient());
 
         Booking createdBooking = bookingRepository.save(booking);
+        sesEmailHelper.sendEmail();
 
         return bookingConverter.convertToCreateBookingResponse(createdBooking, caregiver);
     }
