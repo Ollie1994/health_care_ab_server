@@ -16,8 +16,8 @@ public class BookingConverter {
         return new CreateBookingResponse(
                 "Booking has been booked successfully",
                 user.getFirstName(),
-                booking.getStart_date_time(),
-                booking.getEnd_date_time()
+                booking.getStartDateTime(),
+                booking.getEndDateTime()
         );
     }
 }

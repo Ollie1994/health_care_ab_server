@@ -2,6 +2,8 @@ package healthcareab.project.healthcare_booking_app.controllers;
 
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
+import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
+import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
 import healthcareab.project.healthcare_booking_app.services.BookingService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -27,8 +29,12 @@ private final BookingService bookingService;
     }
 
     @GetMapping
-    public ResponseEntity<?> getMyBookings() {
-        List<?> response = bookingService.getMyBookings();
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    public List<GetBookingsResponse> getMyBookings() {
+        return bookingService.getMyBookings();
+    }
+
+    @GetMapping("/history")
+    public List<GetBookingHistoryResponse> getMyBookingHistory() {
+        return bookingService.getMyBookingHistory();
     }
 }

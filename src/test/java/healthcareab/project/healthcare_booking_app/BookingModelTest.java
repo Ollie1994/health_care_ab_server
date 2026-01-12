@@ -32,34 +32,34 @@ class BookingModelTest {
         LocalDate updated = LocalDate.of(2026, 8, 2);
 
         // Act
-        booking.setPatient_id("patient123");
-        booking.setCaregiver_id("caregiver456");
+        booking.setPatientId("patient123");
+        booking.setCaregiverId("caregiver456");
         booking.setStatus(BookingStatus.PENDING);
-        booking.setStart_date_time(start);
-        booking.setEnd_date_time(end);
+        booking.setStartDateTime(start);
+        booking.setEndDateTime(end);
         booking.setSymptoms(List.of("fever", "cough"));
-        booking.setReason_for_visit("Regular checkup");
-        booking.setNotes_from_patient("Feeling tired");
+        booking.setReasonForVisit("Regular checkup");
+        booking.setNotesFromPatient("Feeling tired");
         booking.setFeedback("Good service");
-        booking.setNotes_from_caregiver("Patient advised rest");
-        booking.setEmployee_only_notes("Internal notes");
-        booking.setRelated_appointment_ids(List.of("apt1", "apt2"));
+        booking.setNotesFromCaregiver("Patient advised rest");
+        booking.setEmployeeOnlyNotes("Internal notes");
+        booking.setRelatedAppointmentIds(List.of("apt1", "apt2"));
         booking.setCreated_at(created);
         booking.setUpdated_at(updated);
 
         // Assert
-        assertEquals("patient123", booking.getPatient_id());
-        assertEquals("caregiver456", booking.getCaregiver_id());
+        assertEquals("patient123", booking.getPatientId());
+        assertEquals("caregiver456", booking.getCaregiverId());
         assertEquals(BookingStatus.PENDING, booking.getStatus());
-        assertEquals(start, booking.getStart_date_time());
-        assertEquals(end, booking.getEnd_date_time());
+        assertEquals(start, booking.getStartDateTime());
+        assertEquals(end, booking.getEndDateTime());
         assertEquals(List.of("fever", "cough"), booking.getSymptoms());
-        assertEquals("Regular checkup", booking.getReason_for_visit());
-        assertEquals("Feeling tired", booking.getNotes_from_patient());
+        assertEquals("Regular checkup", booking.getReasonForVisit());
+        assertEquals("Feeling tired", booking.getNotesFromPatient());
         assertEquals("Good service", booking.getFeedback());
-        assertEquals("Patient advised rest", booking.getNotes_from_caregiver());
-        assertEquals("Internal notes", booking.getEmployee_only_notes());
-        assertEquals(List.of("apt1", "apt2"), booking.getRelated_appointment_ids());
+        assertEquals("Patient advised rest", booking.getNotesFromCaregiver());
+        assertEquals("Internal notes", booking.getEmployeeOnlyNotes());
+        assertEquals(List.of("apt1", "apt2"), booking.getRelatedAppointmentIds());
         assertEquals(created, booking.getCreated_at());
         assertEquals(updated, booking.getUpdated_at());
     }
@@ -70,34 +70,34 @@ class BookingModelTest {
     @Test
     void booking_shouldHandleNullFieldsGracefully() {
         // Arrange
-        booking.setPatient_id(null);
-        booking.setCaregiver_id(null);
+        booking.setPatientId(null);
+        booking.setCaregiverId(null);
         booking.setStatus(null);
-        booking.setStart_date_time(null);
-        booking.setEnd_date_time(null);
+        booking.setStartDateTime(null);
+        booking.setEndDateTime(null);
         booking.setSymptoms(null);
-        booking.setReason_for_visit(null);
-        booking.setNotes_from_patient(null);
+        booking.setReasonForVisit(null);
+        booking.setNotesFromPatient(null);
         booking.setFeedback(null);
-        booking.setNotes_from_caregiver(null);
-        booking.setEmployee_only_notes(null);
-        booking.setRelated_appointment_ids(null);
+        booking.setNotesFromCaregiver(null);
+        booking.setEmployeeOnlyNotes(null);
+        booking.setRelatedAppointmentIds(null);
         booking.setCreated_at(null);
         booking.setUpdated_at(null);
 
         // Act & Assert
-        assertNull(booking.getPatient_id());
-        assertNull(booking.getCaregiver_id());
+        assertNull(booking.getPatientId());
+        assertNull(booking.getCaregiverId());
         assertNull(booking.getStatus());
-        assertNull(booking.getStart_date_time());
-        assertNull(booking.getEnd_date_time());
+        assertNull(booking.getStartDateTime());
+        assertNull(booking.getEndDateTime());
         assertNull(booking.getSymptoms());
-        assertNull(booking.getReason_for_visit());
-        assertNull(booking.getNotes_from_patient());
+        assertNull(booking.getReasonForVisit());
+        assertNull(booking.getNotesFromPatient());
         assertNull(booking.getFeedback());
-        assertNull(booking.getNotes_from_caregiver());
-        assertNull(booking.getEmployee_only_notes());
-        assertNull(booking.getRelated_appointment_ids());
+        assertNull(booking.getNotesFromCaregiver());
+        assertNull(booking.getEmployeeOnlyNotes());
+        assertNull(booking.getRelatedAppointmentIds());
         assertNull(booking.getCreated_at());
         assertNull(booking.getUpdated_at());
     }
@@ -106,11 +106,11 @@ class BookingModelTest {
     void booking_shouldAllowEmptyLists() {
         // Arrange
         booking.setSymptoms(List.of());
-        booking.setRelated_appointment_ids(List.of());
+        booking.setRelatedAppointmentIds(List.of());
 
         // Act & Assert
         assertTrue(booking.getSymptoms().isEmpty());
-        assertTrue(booking.getRelated_appointment_ids().isEmpty());
+        assertTrue(booking.getRelatedAppointmentIds().isEmpty());
     }
 
     @Test
@@ -120,10 +120,10 @@ class BookingModelTest {
         LocalDateTime end = LocalDateTime.of(2026, 8, 5, 11, 0);
 
         // Act
-        booking.setStart_date_time(start);
-        booking.setEnd_date_time(end);
+        booking.setStartDateTime(start);
+        booking.setEndDateTime(end);
 
         // Assert (manual logic since model has no validation)
-        assertTrue(booking.getStart_date_time().isAfter(booking.getEnd_date_time()));
+        assertTrue(booking.getStartDateTime().isAfter(booking.getEndDateTime()));
     }
 }

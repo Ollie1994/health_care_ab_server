@@ -30,8 +30,8 @@ class BookingConverterTest {
         user.setFirstName("John");
 
         Booking booking = new Booking();
-        booking.setStart_date_time(LocalDateTime.of(2026, 1, 12, 10, 0));
-        booking.setEnd_date_time(LocalDateTime.of(2026, 1, 12, 12, 0));
+        booking.setStartDateTime(LocalDateTime.of(2026, 1, 12, 10, 0));
+        booking.setEndDateTime(LocalDateTime.of(2026, 1, 12, 12, 0));
 
         // --- Act ---
         CreateBookingResponse response = bookingConverter.convertToCreateBookingResponse(booking, user);
@@ -40,8 +40,8 @@ class BookingConverterTest {
         assertNotNull(response);
         assertEquals("Booking has been booked successfully", response.getMessage());
         assertEquals("John", response.getCaregiver_first_name());
-        assertEquals(booking.getStart_date_time(), response.getStart_date_time());
-        assertEquals(booking.getEnd_date_time(), response.getEnd_date_time());
+        assertEquals(booking.getStartDateTime(), response.getStart_date_time());
+        assertEquals(booking.getEndDateTime(), response.getEnd_date_time());
     }
 
     @Test
@@ -64,8 +64,8 @@ class BookingConverterTest {
         User user = null;
 
         Booking booking = new Booking();
-        booking.setStart_date_time(LocalDateTime.of(2026, 1, 12, 10, 0));
-        booking.setEnd_date_time(LocalDateTime.of(2026, 1, 12, 12, 0));
+        booking.setStartDateTime(LocalDateTime.of(2026, 1, 12, 10, 0));
+        booking.setEndDateTime(LocalDateTime.of(2026, 1, 12, 12, 0));
 
         // --- Act & Assert ---
         assertThrows(NullPointerException.class, () ->

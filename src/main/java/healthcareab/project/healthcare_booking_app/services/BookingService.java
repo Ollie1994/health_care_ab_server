@@ -3,6 +3,7 @@ package healthcareab.project.healthcare_booking_app.services;
 import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
+import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
 import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
 import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
@@ -12,10 +13,9 @@ import healthcareab.project.healthcare_booking_app.models.Role;
 import healthcareab.project.healthcare_booking_app.models.User;
 import healthcareab.project.healthcare_booking_app.repository.BookingRepository;
 import healthcareab.project.healthcare_booking_app.repository.UserRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Book;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,16 +40,14 @@ public class BookingService {
         User patient = authService.getAuthenticated();
         User caregiver = userRepository.findById(request.getCaregiver_id()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
 
-
-
-        booking.setPatient_id(patient.getId());
-        booking.setCaregiver_id(request.getCaregiver_id());
+        booking.setPatientId(patient.getId());
+        booking.setCaregiverId(request.getCaregiver_id());
         booking.setStatus(BookingStatus.PENDING);
-        booking.setStart_date_time(request.getStart_date_time());
-        booking.setEnd_date_time(request.getEnd_date_time());
+        booking.setStartDateTime(request.getStart_date_time());
+        booking.setEndDateTime(request.getEnd_date_time());
         booking.setSymptoms(request.getSymptoms());
-        booking.setReason_for_visit(request.getReason_for_visit());
-        booking.setNotes_from_patient(request.getNotes_from_patient());
+        booking.setReasonForVisit(request.getReason_for_visit());
+        booking.setNotesFromPatient(request.getNotes_from_patient());
 
         Booking createdBooking = bookingRepository.save(booking);
 
@@ -63,27 +61,68 @@ public class BookingService {
         if (user.getRoles().contains(Role.PATIENT)) {
             List<Booking> bookings = bookingRepository.findByPatientId(user.getId());
             List<GetBookingsResponse> responses = new ArrayList<>();
+            // For each booking, find the caregivers name, convert to DTO and add to response.
             for (Booking booking : bookings) {
-                User caregiver = userRepository.findById(booking.getCaregiver_id()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+                User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
                 String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
                 responses.add(convertToGetBookingsResponse(booking, fullName));
             }
             return responses;
+
         } else if (user.getRoles().contains(Role.CAREGIVER)) {
             List<Booking> bookings = bookingRepository.findByCaregiverId(user.getId());
             List<GetBookingsResponse> responses = new ArrayList<>();
+            // For each booking, find the patients name, convert to DTO and add to response.
             for (Booking booking : bookings) {
-                User patient = userRepository.findById(booking.getPatient_id()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
                 String fullName = patient.getFirstName() + " " + patient.getLastName();
                 responses.add(convertToGetBookingsResponse(booking, fullName));
             }
             return responses;
+
+        } else {
+            throw new AccessDeniedException("You are not authorized to view this booking");
+        }
+    }
+
+    public List<GetBookingHistoryResponse> getMyBookingHistory() {
+        User user = authService.getAuthenticated();
+        user = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.getRoles().contains(Role.PATIENT)) {
+            // Gets only past bookings
+            List<Booking> bookings = bookingRepository.findByPatientIdAndEndDateTimeBefore(user.getId(), LocalDateTime.now());
+            List<GetBookingHistoryResponse> responses = new ArrayList<>();
+            // For each booking, find the caregivers name, convert to DTO and add to response.
+            for (Booking booking : bookings) {
+                User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+                String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
+                responses.add(convertToGetBookingHistoryResponse(booking, fullName));
+            }
+            return responses;
+
+        } else if (user.getRoles().contains(Role.CAREGIVER)) {
+            // Gets only past bookings
+            List<Booking> bookings = bookingRepository.findByCaregiverIdAndEndDateTimeBefore(user.getId(), LocalDateTime.now());
+            List<GetBookingHistoryResponse> responses = new ArrayList<>();
+            // For each booking, find the patients name, convert to DTO and add to response.
+            for (Booking booking : bookings) {
+                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+                String fullName = patient.getFirstName() + " " + patient.getLastName();
+                responses.add(convertToGetBookingHistoryResponse(booking, fullName));
+            }
+            return responses;
+
         } else {
             throw new AccessDeniedException("You are not authorized to view this booking");
         }
     }
 
     private GetBookingsResponse convertToGetBookingsResponse (Booking booking, String fullName) {
-        return new GetBookingsResponse(booking.getStart_date_time(), booking.getEnd_date_time(), booking.getStatus(), fullName, booking.getSymptoms(), booking.getId());
+        return new GetBookingsResponse(booking.getStartDateTime(), booking.getEndDateTime(), booking.getStatus(), fullName, booking.getSymptoms(), booking.getId());
+    }
+
+    private GetBookingHistoryResponse convertToGetBookingHistoryResponse (Booking booking, String fullName) {
+        return new GetBookingHistoryResponse(booking.getStartDateTime(), fullName, booking.getId());
     }
 }
