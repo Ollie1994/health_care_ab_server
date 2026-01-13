@@ -2,6 +2,7 @@ package healthcareab.project.healthcare_booking_app;
 
 import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
+import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
 import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
@@ -97,7 +98,7 @@ class BookingConverterTest {
     @Test
     void testConvertToGetBookingsResponse() {
         // --- Arrange ---
-        Booking booking = new Booking();
+        Booking booking = new Booking("BOOKING_ID_1");
         booking.setStartDateTime(LocalDateTime.of(2026, 1, 12, 10, 0));
         booking.setEndDateTime(LocalDateTime.of(2026, 1, 12, 12, 0));
         booking.setStatus(BookingStatus.PENDING);
@@ -118,5 +119,23 @@ class BookingConverterTest {
         assertEquals(booking.getStatus(), response.getStatus());
         assertEquals("John Doe", response.getFullName());
         assertEquals(symptoms, response.getSymptoms());
+        assertEquals(booking.getId(), response.getBookingId());
+    }
+
+    @Test
+    void testConvertToGetBookingHistoryResponse() {
+        // --- Arrange ---
+        Booking booking = new Booking("BOOKING_ID_1");
+        booking.setStartDateTime(LocalDateTime.of(2026, 1, 12, 10, 0));
+
+        // --- Act ---
+        GetBookingHistoryResponse response =
+                bookingConverter.convertToGetBookingHistoryResponse(booking, "John Doe");
+
+        // --- Assert ---
+        assertNotNull(response);
+        assertEquals(booking.getStartDateTime(), response.getStartDateTime());
+        assertEquals("John Doe", response.getFullName());
+        assertEquals(booking.getId(), response.getBookingId());
     }
 }

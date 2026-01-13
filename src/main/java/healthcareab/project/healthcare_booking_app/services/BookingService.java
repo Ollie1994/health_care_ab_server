@@ -81,7 +81,7 @@ public class BookingService {
             return responses;
 
         } else {
-            throw new AccessDeniedException("You are not authorized to view this booking");
+            throw new AccessDeniedException("You are not authorized to view bookings");
         }
     }
 
@@ -114,7 +114,7 @@ public class BookingService {
             return responses;
 
         } else {
-            throw new AccessDeniedException("You are not authorized to view this booking");
+            throw new AccessDeniedException("You are not authorized to view bookings");
         }
     }
 }

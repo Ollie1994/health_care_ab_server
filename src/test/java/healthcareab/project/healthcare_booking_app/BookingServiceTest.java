@@ -5,6 +5,7 @@ import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
 import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
 import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
+import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
 import healthcareab.project.healthcare_booking_app.models.Role;
@@ -24,8 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -80,7 +80,9 @@ class BookingServiceTest {
         );
 
     }
-
+    /*--------------------
+    POSITIVE SCENARIOS
+    --------------------*/
     @Test
     void createBooking_shouldReturnBookingResponse() {
         // --- ARRANGE ---
@@ -346,5 +348,52 @@ class BookingServiceTest {
         verify(bookingConverter, times(2))
                 .convertToGetBookingHistoryResponse(any(Booking.class), eq("John Doe"));
         verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBefore(any(), any());
+    }
+
+    /*--------------------
+    NEGATIVE SCENARIOS
+    --------------------*/
+    @Test
+    void getMyBookings_whenUserHasNoRoles_shouldThrowAccessDeniedException() {
+        // --- ARRANGE ---
+        User noRoleUser = new User("USER_ID_1", "username", "password", Set.of());
+
+        when(authService.getAuthenticated()).thenReturn(noRoleUser);
+        when(userRepository.findById(noRoleUser.getId())).thenReturn(Optional.of(noRoleUser));
+
+        // --- ACT & ASSERT ---
+        AccessDeniedException exception = assertThrows(
+                AccessDeniedException.class,
+                () -> bookingService.getMyBookings()
+        );
+
+        assertEquals("You are not authorized to view bookings", exception.getMessage());
+
+        // --- VERIFY ---
+        verify(bookingRepository, never()).findByPatientId(any());
+        verify(bookingRepository, never()).findByCaregiverId(any());
+        verify(bookingConverter, never()).convertToGetBookingsResponse(any(), anyString());
+    }
+
+    @Test
+    void getMyBookingHistory_whenUserHasNoRoles_shouldThrowAccessDeniedException() {
+        // --- ARRANGE ---
+        User noRoleUser = new User("USER_ID_1", "username", "password", Set.of());
+
+        when(authService.getAuthenticated()).thenReturn(noRoleUser);
+        when(userRepository.findById(noRoleUser.getId())).thenReturn(Optional.of(noRoleUser));
+
+        // --- ACT & ASSERT ---
+        AccessDeniedException exception = assertThrows(
+                AccessDeniedException.class,
+                () -> bookingService.getMyBookingHistory()
+        );
+
+        assertEquals("You are not authorized to view bookings", exception.getMessage());
+
+        // --- VERIFY ---
+        verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBefore(any(), any());
+        verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBefore(any(), any());
+        verify(bookingConverter, never()).convertToGetBookingHistoryResponse(any(), anyString());
     }
 }
