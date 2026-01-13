@@ -37,7 +37,6 @@ public class Booking {
 
     private String employeeOnlyNotes;
 
-
     @CreatedDate
     private LocalDate createdAt;
 
@@ -45,115 +44,120 @@ public class Booking {
     private LocalDate updatedAt;
 
 
-<span class="fc" id="L48">    public Booking() {</span>
-<span class="fc" id="L49">    }</span>
+<span class="fc" id="L47">    public Booking() {</span>
+<span class="fc" id="L48">    }</span>
+
+    //With ID for testing purposes
+<span class="fc" id="L51">    public Booking(String id) {</span>
+<span class="fc" id="L52">        this.id = id;</span>
+<span class="fc" id="L53">    }</span>
 
     public String getId() {
-<span class="nc" id="L52">        return id;</span>
+<span class="fc" id="L56">        return id;</span>
     }
 
     public String getPatientId() {
-<span class="fc" id="L56">        return patientId;</span>
+<span class="fc" id="L60">        return patientId;</span>
     }
 
     public void setPatientId(String patientId) {
-<span class="fc" id="L60">        this.patientId = patientId;</span>
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L64">        this.patientId = patientId;</span>
+<span class="fc" id="L65">    }</span>
 
     public String getCaregiverId() {
-<span class="fc" id="L64">        return caregiverId;</span>
+<span class="fc" id="L68">        return caregiverId;</span>
     }
 
     public void setCaregiverId(String caregiverId) {
-<span class="fc" id="L68">        this.caregiverId = caregiverId;</span>
-<span class="fc" id="L69">    }</span>
+<span class="fc" id="L72">        this.caregiverId = caregiverId;</span>
+<span class="fc" id="L73">    }</span>
 
     public BookingStatus getStatus() {
-<span class="fc" id="L72">        return status;</span>
+<span class="fc" id="L76">        return status;</span>
     }
 
     public void setStatus(BookingStatus status) {
-<span class="fc" id="L76">        this.status = status;</span>
-<span class="fc" id="L77">    }</span>
+<span class="fc" id="L80">        this.status = status;</span>
+<span class="fc" id="L81">    }</span>
 
     public LocalDateTime getStartDateTime() {
-<span class="fc" id="L80">        return startDateTime;</span>
+<span class="fc" id="L84">        return startDateTime;</span>
     }
 
     public void setStartDateTime(LocalDateTime startDateTime) {
-<span class="fc" id="L84">        this.startDateTime = startDateTime;</span>
-<span class="fc" id="L85">    }</span>
+<span class="fc" id="L88">        this.startDateTime = startDateTime;</span>
+<span class="fc" id="L89">    }</span>
 
     public LocalDateTime getEndDateTime() {
-<span class="fc" id="L88">        return endDateTime;</span>
+<span class="fc" id="L92">        return endDateTime;</span>
     }
 
     public void setEndDateTime(LocalDateTime endDateTime) {
-<span class="fc" id="L92">        this.endDateTime = endDateTime;</span>
-<span class="fc" id="L93">    }</span>
+<span class="fc" id="L96">        this.endDateTime = endDateTime;</span>
+<span class="fc" id="L97">    }</span>
 
     public List&lt;String&gt; getSymptoms() {
-<span class="fc" id="L96">        return symptoms;</span>
+<span class="fc" id="L100">        return symptoms;</span>
     }
 
     public void setSymptoms(List&lt;String&gt; symptoms) {
-<span class="fc" id="L100">        this.symptoms = symptoms;</span>
-<span class="fc" id="L101">    }</span>
+<span class="fc" id="L104">        this.symptoms = symptoms;</span>
+<span class="fc" id="L105">    }</span>
 
     public String getReasonForVisit() {
-<span class="fc" id="L104">        return reasonForVisit;</span>
+<span class="fc" id="L108">        return reasonForVisit;</span>
     }
 
     public void setReasonForVisit(String reasonForVisit) {
-<span class="fc" id="L108">        this.reasonForVisit = reasonForVisit;</span>
-<span class="fc" id="L109">    }</span>
+<span class="fc" id="L112">        this.reasonForVisit = reasonForVisit;</span>
+<span class="fc" id="L113">    }</span>
 
     public String getNotesFromPatient() {
-<span class="fc" id="L112">        return notesFromPatient;</span>
+<span class="fc" id="L116">        return notesFromPatient;</span>
     }
 
     public void setNotesFromPatient(String notesFromPatient) {
-<span class="fc" id="L116">        this.notesFromPatient = notesFromPatient;</span>
-<span class="fc" id="L117">    }</span>
+<span class="fc" id="L120">        this.notesFromPatient = notesFromPatient;</span>
+<span class="fc" id="L121">    }</span>
 
     public String getFeedback() {
-<span class="fc" id="L120">        return feedback;</span>
+<span class="fc" id="L124">        return feedback;</span>
     }
 
     public void setFeedback(String feedback) {
-<span class="fc" id="L124">        this.feedback = feedback;</span>
-<span class="fc" id="L125">    }</span>
+<span class="fc" id="L128">        this.feedback = feedback;</span>
+<span class="fc" id="L129">    }</span>
 
     public String getNotesFromCaregiver() {
-<span class="fc" id="L128">        return notesFromCaregiver;</span>
+<span class="fc" id="L132">        return notesFromCaregiver;</span>
     }
 
     public void setNotesFromCaregiver(String notesFromCaregiver) {
-<span class="fc" id="L132">        this.notesFromCaregiver = notesFromCaregiver;</span>
-<span class="fc" id="L133">    }</span>
+<span class="fc" id="L136">        this.notesFromCaregiver = notesFromCaregiver;</span>
+<span class="fc" id="L137">    }</span>
 
     public String getEmployeeOnlyNotes() {
-<span class="fc" id="L136">        return employeeOnlyNotes;</span>
+<span class="fc" id="L140">        return employeeOnlyNotes;</span>
     }
 
     public void setEmployeeOnlyNotes(String employeeOnlyNotes) {
-<span class="fc" id="L140">        this.employeeOnlyNotes = employeeOnlyNotes;</span>
-<span class="fc" id="L141">    }</span>
+<span class="fc" id="L144">        this.employeeOnlyNotes = employeeOnlyNotes;</span>
+<span class="fc" id="L145">    }</span>
 
     public LocalDate getCreatedAt() {
-<span class="fc" id="L144">        return createdAt;</span>
+<span class="fc" id="L148">        return createdAt;</span>
     }
 
     public void setCreatedAt(LocalDate createdAt) {
-<span class="fc" id="L148">        this.createdAt = createdAt;</span>
-<span class="fc" id="L149">    }</span>
+<span class="fc" id="L152">        this.createdAt = createdAt;</span>
+<span class="fc" id="L153">    }</span>
 
     public LocalDate getUpdatedAt() {
-<span class="fc" id="L152">        return updatedAt;</span>
+<span class="fc" id="L156">        return updatedAt;</span>
     }
 
     public void setUpdatedAt(LocalDate updatedAt) {
-<span class="fc" id="L156">        this.updatedAt = updatedAt;</span>
-<span class="fc" id="L157">    }</span>
+<span class="fc" id="L160">        this.updatedAt = updatedAt;</span>
+<span class="fc" id="L161">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
