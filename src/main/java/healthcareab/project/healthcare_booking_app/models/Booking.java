@@ -48,6 +48,11 @@ public class Booking {
     public Booking() {
     }
 
+    //With ID for testing purposes
+    public Booking(String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }

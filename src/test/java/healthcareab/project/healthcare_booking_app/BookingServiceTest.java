@@ -3,7 +3,10 @@ package healthcareab.project.healthcare_booking_app;
 import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
+import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
 import healthcareab.project.healthcare_booking_app.models.Booking;
+import healthcareab.project.healthcare_booking_app.models.BookingStatus;
+import healthcareab.project.healthcare_booking_app.models.Role;
 import healthcareab.project.healthcare_booking_app.models.User;
 import healthcareab.project.healthcare_booking_app.repository.BookingRepository;
 import healthcareab.project.healthcare_booking_app.repository.UserRepository;
@@ -18,12 +21,12 @@ import org.mockito.MockitoAnnotations;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class BookingServiceTest {
 
@@ -53,8 +56,8 @@ class BookingServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // --- ARRANGE COMMON DATA ---
-        patient = new User("patient", "password", null);
-        caregiver = new User("caregiver", "password", null);
+        patient = new User("PATIENT_ID_123","patient", "password", null);
+        caregiver = new User("CAREGIVER_ID_123","caregiver", "password", null);
 
 
         request = new CreateBookingRequest(
@@ -74,6 +77,7 @@ class BookingServiceTest {
                 request.getStart_date_time(),
                 request.getEnd_date_time()
         );
+
     }
 
     @Test
@@ -96,5 +100,66 @@ class BookingServiceTest {
         verify(userRepository).findById(caregiver.getId());
         verify(bookingRepository).save(any(Booking.class));
         verify(bookingConverter).convertToCreateBookingResponse(savedBooking, caregiver);
+    }
+
+    @Test
+    void getMyBookings_whenUserIsPatient_shouldReturnGetBookingResponse() {
+        // --- ARRANGE ---
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+        patient.setRoles(Set.of(Role.PATIENT));
+
+        caregiver.setFirstName("Dr");
+        caregiver.setLastName("McCaregiver");
+        caregiver.setRoles(Set.of(Role.CAREGIVER));
+
+        Booking bookingOne = new Booking("BOOKING_ID_1");
+        bookingOne.setPatientId(patient.getId());
+        bookingOne.setCaregiverId(caregiver.getId());
+        bookingOne.setStartDateTime(LocalDateTime.of(2026, 8, 5, 10, 0));
+        bookingOne.setEndDateTime(LocalDateTime.of(2026, 8, 5, 11, 0));
+        bookingOne.setStatus(BookingStatus.APPROVED);
+        bookingOne.setSymptoms(List.of("Flu", "Cough"));
+
+        Booking bookingTwo = new Booking("BOOKING_ID_2");
+        bookingTwo.setPatientId(patient.getId());
+        bookingTwo.setCaregiverId(caregiver.getId());
+        bookingTwo.setStartDateTime(LocalDateTime.of(2026, 8, 6, 14, 0));
+        bookingTwo.setEndDateTime(LocalDateTime.of(2026, 8, 6, 15, 30));
+        bookingTwo.setStatus(BookingStatus.PENDING);
+        bookingTwo.setSymptoms(List.of("Headache", "Fatigue"));
+
+        when(authService.getAuthenticated()).thenReturn(patient);
+        when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
+        when(bookingRepository.findByPatientId(patient.getId())).thenReturn(List.of(bookingOne, bookingTwo));
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
+
+        when(bookingConverter.convertToGetBookingsResponse(any(Booking.class), anyString()))
+                .thenAnswer(invocation -> {
+                    Booking booking = invocation.getArgument(0);
+                    String fullName = invocation.getArgument(1);
+                    return new GetBookingsResponse(
+                            booking.getStartDateTime(),
+                            booking.getEndDateTime(),
+                            booking.getStatus(),
+                            fullName,
+                            booking.getSymptoms(),
+                            booking.getId()
+                    );
+                });
+
+        // --- ACT ---
+        List<GetBookingsResponse> result = bookingService.getMyBookings();
+
+        // --- ASSERT ---
+        assertNotNull(result);
+        assertEquals(2, result.size());
+
+        verify(bookingRepository).findByPatientId(patient.getId());
+        verify(userRepository).findById(patient.getId());
+        verify(userRepository, times(2)).findById(caregiver.getId());
+        verify(bookingRepository, never()).save(any(Booking.class));
+        verify(bookingConverter, times(2))
+                .convertToGetBookingsResponse(any(Booking.class), eq("Dr McCaregiver"));
     }
 }

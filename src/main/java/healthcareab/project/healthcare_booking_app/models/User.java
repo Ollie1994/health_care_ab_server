@@ -41,7 +41,13 @@ public class User {
         this.roles = roles;
     }
 
-
+    // Constructor with ID for testing!
+    public User(String id, String username, String password, Set<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
 
     public String getId() {
         return id;
