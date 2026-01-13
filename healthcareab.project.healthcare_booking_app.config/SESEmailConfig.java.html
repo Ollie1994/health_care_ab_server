@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SESEmailConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">healthcare_booking_app</a> &gt; <a href="index.source.html" class="el_package">healthcareab.project.healthcare_booking_app.config</a> &gt; <span class="el_source">SESEmailConfig.java</span></div><h1>SESEmailConfig.java</h1><pre class="source lang-java linenums">package healthcareab.project.healthcare_booking_app.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.ses.SesClient;
+import software.amazon.awssdk.services.ses.model.*;
+
+@Configuration
+<span class="nc" id="L12">public class SESEmailConfig {</span>
+    @Value(&quot;${aws.access.key}&quot;)
+    private String AWS_ACCESS_KEY;
+    @Value(&quot;${aws.secret.key}&quot;)
+    private String AWS_SECRET_KEY;
+    @Value(&quot;${aws.sender.email}&quot;)
+    private String senderEmail;
+
+
+    private StaticCredentialsProvider awsCredentials() {
+<span class="nc" id="L22">        return StaticCredentialsProvider.create(</span>
+<span class="nc" id="L23">                AwsBasicCredentials.create(AWS_ACCESS_KEY, AWS_SECRET_KEY)</span>
+        );
+    }
+
+
+    private SesClient emailClientBuilder() {
+<span class="nc" id="L29">        return SesClient.builder()</span>
+<span class="nc" id="L30">                .region(Region.EU_NORTH_1)</span>
+<span class="nc" id="L31">                .credentialsProvider(awsCredentials()) // from previous rewrite</span>
+<span class="nc" id="L32">                .build();</span>
+    }
+
+
+    public void sendSESEmail(String htmlMessage, String subject, String recipientEmail) {
+
+<span class="nc" id="L38">        SesClient mailClient = emailClientBuilder();</span>
+
+<span class="nc" id="L40">        SendEmailRequest request = SendEmailRequest.builder()</span>
+<span class="nc" id="L41">                .source(senderEmail)</span>
+<span class="nc" id="L42">                .destination(Destination.builder().toAddresses(recipientEmail).build())</span>
+<span class="nc" id="L43">                .message(Message.builder().subject(Content.builder().charset(&quot;UTF-8&quot;).data(subject).build()).body(Body.builder().html(Content.builder().charset(&quot;UTF-8&quot;).data(htmlEmailTemplate(htmlMessage)).build()).build()).build())</span>
+<span class="nc" id="L44">                .build();</span>
+
+<span class="nc" id="L46">        mailClient.sendEmail(request);</span>
+
+
+<span class="nc" id="L49">    }</span>
+
+    private String htmlEmailTemplate(String message) {
+<span class="nc" id="L52">        return message;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

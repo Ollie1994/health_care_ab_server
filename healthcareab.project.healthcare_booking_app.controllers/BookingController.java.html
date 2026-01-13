@@ -2,12 +2,14 @@
 
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.PatchBookingResponse;
 import healthcareab.project.healthcare_booking_app.services.BookingService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(&quot;/booking&quot;)
@@ -15,21 +17,19 @@ public class BookingController {
 
 private final BookingService bookingService;
 
-<span class="fc" id="L18">    public BookingController(BookingService bookingService) {</span>
-<span class="fc" id="L19">        this.bookingService = bookingService;</span>
-<span class="fc" id="L20">    }</span>
+<span class="fc" id="L20">    public BookingController(BookingService bookingService) {</span>
+<span class="fc" id="L21">        this.bookingService = bookingService;</span>
+<span class="fc" id="L22">    }</span>
 
     @PostMapping
     public ResponseEntity&lt;CreateBookingResponse&gt; createBooking(@Valid @RequestBody CreateBookingRequest request) {
-<span class="fc" id="L24">        CreateBookingResponse response = bookingService.createBooking(request);</span>
-<span class="fc" id="L25">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+<span class="fc" id="L26">        CreateBookingResponse response = bookingService.createBooking(request);</span>
+<span class="fc" id="L27">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
     }
 
-    // For cancelling a booking
-    @PatchMapping(&quot;/cancel/{id}&quot;)
-    public ResponseEntity&lt;PatchBookingResponse&gt; cancelBooking(@PathVariable String id) {
-<span class="fc" id="L31">        PatchBookingResponse response = bookingService.cancelBooking(id);</span>
-<span class="fc" id="L32">        return ResponseEntity.status(HttpStatus.OK).body(response);</span>
-    }
+
+
+
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
