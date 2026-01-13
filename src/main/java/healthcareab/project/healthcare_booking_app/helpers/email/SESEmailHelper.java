@@ -1,9 +1,9 @@
 package healthcareab.project.healthcare_booking_app.helpers.email;
 
 import healthcareab.project.healthcare_booking_app.config.SESEmailConfig;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class SESEmailHelper {
 
     private final SESEmailConfig awsConfig;
