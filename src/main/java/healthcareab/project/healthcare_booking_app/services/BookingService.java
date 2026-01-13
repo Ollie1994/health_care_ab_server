@@ -62,10 +62,6 @@ public class BookingService {
         // Get current logged-in user (patient)
         User patient = authService.getAuthenticated();
 
-        // Get caregiver
-        User caregiver = userRepository.findById(booking.getCaregiver_id())
-                .orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
-
         // Check if current user (patient) is same as patient in booking
         if (!booking.getPatient_id().equals(patient.getId())) {
             throw new UnauthorizedException("You do not have permission to cancel this booking");
@@ -88,6 +84,10 @@ public class BookingService {
             throw new IllegalArgumentException("Booking cannot be cancelled within 24 hours of start time");
 
         }
+
+        // Get caregiver
+        User caregiver = userRepository.findById(booking.getCaregiver_id())
+                .orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
 
         // Cancel booking and return DTO
         booking.setStatus(BookingStatus.CANCELLED);
