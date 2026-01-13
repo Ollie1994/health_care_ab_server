@@ -56,19 +56,27 @@ class BookingServiceTest {
     private PatchBookingResponse expectedPatchResponse;
 
     // --- So user id does not throw NullPointerException in cancel booking tests
-    private void setUserId(User user, String id) throws Exception {
-        Field idField = User.class.getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(user, id);
+    private void setUserId(User user, String id) {
+        try {
+            Field idField = User.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(user, id);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to set user id in test", e);
+        }
     }
 
     @BeforeEach
-    void setup() throws Exception {
+    void setup() {
         MockitoAnnotations.openMocks(this);
 
         // --- ARRANGE COMMON DATA ---
         patient = new User("patient", "password", null);
         caregiver = new User("caregiver", "password", null);
+
+        // set user id
+        setUserId(patient, "patient1");
+        setUserId(caregiver, "caregiver1");
 
 
         request = new CreateBookingRequest(
@@ -89,13 +97,7 @@ class BookingServiceTest {
                 request.getEnd_date_time()
         );
 
-    // -------------------- CANCEL BOOKING TESTS --------------------
-
         // --- ARRANGE COMMON DATA FOR CANCEL BOOKING ---
-
-        // Set id
-        setUserId(patient, "patient1");
-        setUserId(caregiver, "caregiver1");
 
         booking = new Booking();
         booking.setPatient_id(patient.getId());
