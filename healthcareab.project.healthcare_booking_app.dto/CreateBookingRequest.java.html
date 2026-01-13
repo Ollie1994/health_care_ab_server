@@ -5,57 +5,53 @@ import java.util.List;
 
 public class CreateBookingRequest {
 
-    private String caregiver_id;
+    private String caregiverId;
 
-    private LocalDateTime start_date_time;
+    private LocalDateTime startDateTime;
 
-    private LocalDateTime end_date_time;
+    private LocalDateTime endDateTime;
 
     private List&lt;String&gt; symptoms;
 
-    private String reason_for_visit;
+    private String reasonForVisit;
 
-    private String notes_from_patient;
-
-    // maybe ???
-    //private List&lt;String&gt; related_appointment_ids;
+    private String notesFromPatient;
 
 
-<span class="fc" id="L24">    public CreateBookingRequest() {</span>
-<span class="fc" id="L25">    }</span>
+<span class="fc" id="L21">    public CreateBookingRequest() {</span>
+<span class="fc" id="L22">    }</span>
 
+<span class="fc" id="L24">    public CreateBookingRequest(String caregiverId, LocalDateTime startDateTime, LocalDateTime endDateTime, List&lt;String&gt; symptoms, String reasonForVisit, String notesFromPatient) {</span>
+<span class="fc" id="L25">        this.caregiverId = caregiverId;</span>
+<span class="fc" id="L26">        this.startDateTime = startDateTime;</span>
+<span class="fc" id="L27">        this.endDateTime = endDateTime;</span>
+<span class="fc" id="L28">        this.symptoms = symptoms;</span>
+<span class="fc" id="L29">        this.reasonForVisit = reasonForVisit;</span>
+<span class="fc" id="L30">        this.notesFromPatient = notesFromPatient;</span>
+<span class="fc" id="L31">    }</span>
 
-<span class="fc" id="L28">    public CreateBookingRequest(String caregiver_id, LocalDateTime start_date_time, LocalDateTime end_date_time, List&lt;String&gt; symptoms, String reason_for_visit, String notes_from_patient) {</span>
-<span class="fc" id="L29">        this.caregiver_id = caregiver_id;</span>
-<span class="fc" id="L30">        this.start_date_time = start_date_time;</span>
-<span class="fc" id="L31">        this.end_date_time = end_date_time;</span>
-<span class="fc" id="L32">        this.symptoms = symptoms;</span>
-<span class="fc" id="L33">        this.reason_for_visit = reason_for_visit;</span>
-<span class="fc" id="L34">        this.notes_from_patient = notes_from_patient;</span>
-<span class="fc" id="L35">    }</span>
-
-    public String getCaregiver_id() {
-<span class="fc" id="L38">        return caregiver_id;</span>
+    public String getCaregiverId() {
+<span class="fc" id="L34">        return caregiverId;</span>
     }
 
-    public LocalDateTime getStart_date_time() {
-<span class="fc" id="L42">        return start_date_time;</span>
+    public LocalDateTime getStartDateTime() {
+<span class="fc" id="L38">        return startDateTime;</span>
     }
 
-    public LocalDateTime getEnd_date_time() {
-<span class="fc" id="L46">        return end_date_time;</span>
+    public LocalDateTime getEndDateTime() {
+<span class="fc" id="L42">        return endDateTime;</span>
     }
 
     public List&lt;String&gt; getSymptoms() {
-<span class="fc" id="L50">        return symptoms;</span>
+<span class="fc" id="L46">        return symptoms;</span>
     }
 
-    public String getReason_for_visit() {
-<span class="fc" id="L54">        return reason_for_visit;</span>
+    public String getReasonForVisit() {
+<span class="fc" id="L50">        return reasonForVisit;</span>
     }
 
-    public String getNotes_from_patient() {
-<span class="fc" id="L58">        return notes_from_patient;</span>
+    public String getNotesFromPatient() {
+<span class="fc" id="L54">        return notesFromPatient;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -4,6 +4,7 @@ import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
+import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
 import healthcareab.project.healthcare_booking_app.models.User;
@@ -17,35 +18,38 @@ public class BookingService {
     private final BookingConverter bookingConverter;
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final SESEmailHelper sesEmailHelper;
 
-<span class="fc" id="L21">    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository) {</span>
-<span class="fc" id="L22">        this.bookingRepository = bookingRepository;</span>
-<span class="fc" id="L23">        this.bookingConverter = bookingConverter;</span>
-<span class="fc" id="L24">        this.authService = authService;</span>
-<span class="fc" id="L25">        this.userRepository = userRepository;</span>
-<span class="fc" id="L26">    }</span>
+<span class="fc" id="L23">    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository, SESEmailHelper sesEmailHelper) {</span>
+<span class="fc" id="L24">        this.bookingRepository = bookingRepository;</span>
+<span class="fc" id="L25">        this.bookingConverter = bookingConverter;</span>
+<span class="fc" id="L26">        this.authService = authService;</span>
+<span class="fc" id="L27">        this.userRepository = userRepository;</span>
+<span class="fc" id="L28">        this.sesEmailHelper = sesEmailHelper;</span>
+<span class="fc" id="L29">    }</span>
 
     public CreateBookingResponse createBooking(CreateBookingRequest request) {
-<span class="fc" id="L29">        Booking booking = new Booking();</span>
+<span class="fc" id="L32">        Booking booking = new Booking();</span>
 
         //Set patient to authorized patient.
-<span class="fc" id="L32">        User patient = authService.getAuthenticated();</span>
-<span class="pc" id="L33">        User caregiver = userRepository.findById(request.getCaregiver_id()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Caregiver not found&quot;));</span>
+<span class="fc" id="L35">        User patient = authService.getAuthenticated();</span>
+<span class="pc" id="L36">        User caregiver = userRepository.findById(request.getCaregiverId()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Caregiver not found&quot;));</span>
 
 
+<span class="fc" id="L39">        booking.setPatientId(patient.getId());</span>
+<span class="fc" id="L40">        booking.setCaregiverId(request.getCaregiverId());</span>
+<span class="fc" id="L41">        booking.setStatus(BookingStatus.CONFIRMED);</span>
+<span class="fc" id="L42">        booking.setStartDateTime(request.getStartDateTime());</span>
+<span class="fc" id="L43">        booking.setEndDateTime(request.getEndDateTime());</span>
+<span class="fc" id="L44">        booking.setSymptoms(request.getSymptoms());</span>
+<span class="fc" id="L45">        booking.setReasonForVisit(request.getReasonForVisit());</span>
+<span class="fc" id="L46">        booking.setNotesFromCaregiver(request.getNotesFromPatient());</span>
 
-<span class="fc" id="L37">        booking.setPatient_id(patient.getId());</span>
-<span class="fc" id="L38">        booking.setCaregiver_id(request.getCaregiver_id());</span>
-<span class="fc" id="L39">        booking.setStatus(BookingStatus.PENDING);</span>
-<span class="fc" id="L40">        booking.setStart_date_time(request.getStart_date_time());</span>
-<span class="fc" id="L41">        booking.setEnd_date_time(request.getEnd_date_time());</span>
-<span class="fc" id="L42">        booking.setSymptoms(request.getSymptoms());</span>
-<span class="fc" id="L43">        booking.setReason_for_visit(request.getReason_for_visit());</span>
-<span class="fc" id="L44">        booking.setNotes_from_patient(request.getNotes_from_patient());</span>
+<span class="fc" id="L48">        Booking createdBooking = bookingRepository.save(booking);</span>
+<span class="fc" id="L49">        String message = &quot;Booking confirmed for &quot; + patient.getFirstName() + &quot; &quot; + patient.getLastName() + &quot; at &quot; + booking.getStartDateTime() + &quot; with caregiver &quot; + caregiver.getFirstName() + &quot; &quot; + caregiver.getLastName();</span>
+<span class="fc" id="L50">        sesEmailHelper.sendEmail(message, &quot;Confirmation Email&quot;, patient.getEmail());</span>
 
-<span class="fc" id="L46">        Booking createdBooking = bookingRepository.save(booking);</span>
-
-<span class="fc" id="L48">        return bookingConverter.convertToCreateBookingResponse(createdBooking, caregiver);</span>
+<span class="fc" id="L52">        return bookingConverter.convertToCreateBookingResponse(createdBooking, caregiver);</span>
     }
 
 
