@@ -13,7 +13,7 @@ public class SESEmailHelper {
     }
 
 
-    public void sendEmail() {
-        awsConfig.sendSESEmail();
+    public void sendEmail(String htmlMessage, String subject, String recipientEmail) {
+        awsConfig.sendSESEmail(htmlMessage, subject, recipientEmail);
     }
 }

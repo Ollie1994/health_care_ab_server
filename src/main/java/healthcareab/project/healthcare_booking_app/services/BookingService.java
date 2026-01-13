@@ -36,7 +36,6 @@ public class BookingService {
         User caregiver = userRepository.findById(request.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
 
 
-
         booking.setPatientId(patient.getId());
         booking.setCaregiverId(request.getCaregiverId());
         booking.setStatus(BookingStatus.CONFIRMED);
@@ -47,7 +46,8 @@ public class BookingService {
         booking.setNotesFromCaregiver(request.getNotesFromPatient());
 
         Booking createdBooking = bookingRepository.save(booking);
-        sesEmailHelper.sendEmail();
+        String message = "Booking confirmed for " + patient.getFirstName() + " " + patient.getLastName() + " at " + booking.getStartDateTime() + " with caregiver " + caregiver.getFirstName() + " " + caregiver.getLastName();
+        sesEmailHelper.sendEmail(message, "Confirmation Email", patient.getEmail());
 
         return bookingConverter.convertToCreateBookingResponse(createdBooking, caregiver);
     }

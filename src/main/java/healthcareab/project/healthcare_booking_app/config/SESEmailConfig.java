@@ -14,13 +14,8 @@ public class SESEmailConfig {
     private String AWS_ACCESS_KEY;
     @Value("${aws.secret.key}")
     private String AWS_SECRET_KEY;
-
     @Value("${aws.sender.email}")
     private String senderEmail;
-    @Value("${aws.recipient.email}")
-    private String recipientEmail;
-    String subject = "Confirmation Email";
-    String htmlMessage = "Your appointment is now booked";
 
 
     private StaticCredentialsProvider awsCredentials() {
@@ -38,7 +33,7 @@ public class SESEmailConfig {
     }
 
 
-    public void sendSESEmail() {
+    public void sendSESEmail(String htmlMessage, String subject, String recipientEmail) {
 
         SesClient mailClient = emailClientBuilder();
 
