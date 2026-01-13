@@ -101,7 +101,7 @@ class BookingConverterTest {
         Booking booking = new Booking("BOOKING_ID_1");
         booking.setStartDateTime(LocalDateTime.of(2026, 1, 12, 10, 0));
         booking.setEndDateTime(LocalDateTime.of(2026, 1, 12, 12, 0));
-        booking.setStatus(BookingStatus.PENDING);
+        booking.setStatus(BookingStatus.CONFIRMED);
 
         List<String> symptoms = new ArrayList<>();
         symptoms.add("Fever");

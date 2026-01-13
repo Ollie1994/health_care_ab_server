@@ -56,7 +56,7 @@ class BookingControllerTest {
                 new GetBookingsResponse(
                         LocalDateTime.of(2026, 8, 5, 10, 0),
                         LocalDateTime.of(2026, 8, 5, 11, 0),
-                        BookingStatus.APPROVED,
+                        BookingStatus.CONFIRMED,
                         "Dr McCaregiver",
                         List.of("Flu", "Cough"),
                         "BOOKING_ID_1"
@@ -64,7 +64,7 @@ class BookingControllerTest {
                 new GetBookingsResponse(
                         LocalDateTime.of(2026, 8, 6, 14, 0),
                         LocalDateTime.of(2026, 8, 6, 15, 30),
-                        BookingStatus.PENDING,
+                        BookingStatus.CONFIRMED,
                         "Dr McCaregiver",
                         List.of("Headache", "Fatigue"),
                         "BOOKING_ID_2"
