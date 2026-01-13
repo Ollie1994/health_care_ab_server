@@ -5,56 +5,52 @@ import java.util.List;
 
 public class CreateBookingRequest {
 
-    private String caregiver_id;
+    private String caregiverId;
 
-    private LocalDateTime start_date_time;
+    private LocalDateTime startDateTime;
 
-    private LocalDateTime end_date_time;
+    private LocalDateTime endDateTime;
 
     private List<String> symptoms;
 
-    private String reason_for_visit;
+    private String reasonForVisit;
 
-    private String notes_from_patient;
-
-    // maybe ???
-    //private List<String> related_appointment_ids;
+    private String notesFromPatient;
 
 
     public CreateBookingRequest() {
     }
 
-
-    public CreateBookingRequest(String caregiver_id, LocalDateTime start_date_time, LocalDateTime end_date_time, List<String> symptoms, String reason_for_visit, String notes_from_patient) {
-        this.caregiver_id = caregiver_id;
-        this.start_date_time = start_date_time;
-        this.end_date_time = end_date_time;
+    public CreateBookingRequest(String caregiverId, LocalDateTime startDateTime, LocalDateTime endDateTime, List<String> symptoms, String reasonForVisit, String notesFromPatient) {
+        this.caregiverId = caregiverId;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.symptoms = symptoms;
-        this.reason_for_visit = reason_for_visit;
-        this.notes_from_patient = notes_from_patient;
+        this.reasonForVisit = reasonForVisit;
+        this.notesFromPatient = notesFromPatient;
     }
 
-    public String getCaregiver_id() {
-        return caregiver_id;
+    public String getCaregiverId() {
+        return caregiverId;
     }
 
-    public LocalDateTime getStart_date_time() {
-        return start_date_time;
+    public LocalDateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public LocalDateTime getEnd_date_time() {
-        return end_date_time;
+    public LocalDateTime getEndDateTime() {
+        return endDateTime;
     }
 
     public List<String> getSymptoms() {
         return symptoms;
     }
 
-    public String getReason_for_visit() {
-        return reason_for_visit;
+    public String getReasonForVisit() {
+        return reasonForVisit;
     }
 
-    public String getNotes_from_patient() {
-        return notes_from_patient;
+    public String getNotesFromPatient() {
+        return notesFromPatient;
     }
 }

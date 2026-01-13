@@ -3,6 +3,7 @@ package healthcareab.project.healthcare_booking_app;
 import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
+import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.User;
 import healthcareab.project.healthcare_booking_app.repository.BookingRepository;
@@ -22,13 +23,15 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class BookingServiceTest {
 
     @Mock
     private BookingRepository bookingRepository;
+
+    @Mock
+    private SESEmailHelper sesEmailHelper;
 
     @Mock
     private BookingConverter bookingConverter;
@@ -71,8 +74,8 @@ class BookingServiceTest {
         expectedResponse = new CreateBookingResponse(
                 "Booking created",
                 caregiver.getUsername(),
-                request.getStart_date_time(),
-                request.getEnd_date_time()
+                request.getStartDateTime(),
+                request.getEndDateTime()
         );
     }
 
@@ -83,6 +86,7 @@ class BookingServiceTest {
         when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
         when(bookingRepository.save(any(Booking.class))).thenReturn(savedBooking);
         when(bookingConverter.convertToCreateBookingResponse(savedBooking, caregiver)).thenReturn(expectedResponse);
+        doNothing().when(sesEmailHelper).sendEmail(anyString(), anyString(), any());
 
         // --- ACT ---
         CreateBookingResponse actualResponse = bookingService.createBooking(request);
@@ -96,5 +100,6 @@ class BookingServiceTest {
         verify(userRepository).findById(caregiver.getId());
         verify(bookingRepository).save(any(Booking.class));
         verify(bookingConverter).convertToCreateBookingResponse(savedBooking, caregiver);
+        verify(sesEmailHelper).sendEmail(anyString(), anyString(), any());
     }
 }
