@@ -37,13 +37,12 @@ public class Booking {
 
     private String employeeOnlyNotes;
 
-    private List<String> relatedAppointmentIds;
-
     @CreatedDate
-    private LocalDate created_at;
+    private LocalDate createdAt;
 
     @LastModifiedDate
-    private LocalDate updated_at;
+    private LocalDate updatedAt;
+
 
     public Booking() {
     }
@@ -145,27 +144,19 @@ public class Booking {
         this.employeeOnlyNotes = employeeOnlyNotes;
     }
 
-    public List<String> getRelatedAppointmentIds() {
-        return relatedAppointmentIds;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
-    public void setRelatedAppointmentIds(List<String> relatedAppointmentIds) {
-        this.relatedAppointmentIds = relatedAppointmentIds;
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public LocalDate getCreated_at() {
-        return created_at;
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setCreated_at(LocalDate created_at) {
-        this.created_at = created_at;
-    }
-
-    public LocalDate getUpdated_at() {
-        return updated_at;
-    }
-
-    public void setUpdated_at(LocalDate updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(LocalDate updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

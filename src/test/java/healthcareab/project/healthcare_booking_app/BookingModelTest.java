@@ -34,7 +34,7 @@ class BookingModelTest {
         // Act
         booking.setPatientId("patient123");
         booking.setCaregiverId("caregiver456");
-        booking.setStatus(BookingStatus.PENDING);
+        booking.setStatus(BookingStatus.CONFIRMED);
         booking.setStartDateTime(start);
         booking.setEndDateTime(end);
         booking.setSymptoms(List.of("fever", "cough"));
@@ -43,14 +43,13 @@ class BookingModelTest {
         booking.setFeedback("Good service");
         booking.setNotesFromCaregiver("Patient advised rest");
         booking.setEmployeeOnlyNotes("Internal notes");
-        booking.setRelatedAppointmentIds(List.of("apt1", "apt2"));
-        booking.setCreated_at(created);
-        booking.setUpdated_at(updated);
+        booking.setCreatedAt(created);
+        booking.setUpdatedAt(updated);
 
         // Assert
         assertEquals("patient123", booking.getPatientId());
         assertEquals("caregiver456", booking.getCaregiverId());
-        assertEquals(BookingStatus.PENDING, booking.getStatus());
+        assertEquals(BookingStatus.CONFIRMED, booking.getStatus());
         assertEquals(start, booking.getStartDateTime());
         assertEquals(end, booking.getEndDateTime());
         assertEquals(List.of("fever", "cough"), booking.getSymptoms());
@@ -59,9 +58,8 @@ class BookingModelTest {
         assertEquals("Good service", booking.getFeedback());
         assertEquals("Patient advised rest", booking.getNotesFromCaregiver());
         assertEquals("Internal notes", booking.getEmployeeOnlyNotes());
-        assertEquals(List.of("apt1", "apt2"), booking.getRelatedAppointmentIds());
-        assertEquals(created, booking.getCreated_at());
-        assertEquals(updated, booking.getUpdated_at());
+        assertEquals(created, booking.getCreatedAt());
+        assertEquals(updated, booking.getUpdatedAt());
     }
 
     /* =====================================================
@@ -81,9 +79,8 @@ class BookingModelTest {
         booking.setFeedback(null);
         booking.setNotesFromCaregiver(null);
         booking.setEmployeeOnlyNotes(null);
-        booking.setRelatedAppointmentIds(null);
-        booking.setCreated_at(null);
-        booking.setUpdated_at(null);
+        booking.setCreatedAt(null);
+        booking.setUpdatedAt(null);
 
         // Act & Assert
         assertNull(booking.getPatientId());
@@ -97,20 +94,17 @@ class BookingModelTest {
         assertNull(booking.getFeedback());
         assertNull(booking.getNotesFromCaregiver());
         assertNull(booking.getEmployeeOnlyNotes());
-        assertNull(booking.getRelatedAppointmentIds());
-        assertNull(booking.getCreated_at());
-        assertNull(booking.getUpdated_at());
+        assertNull(booking.getCreatedAt());
+        assertNull(booking.getUpdatedAt());
     }
 
     @Test
     void booking_shouldAllowEmptyLists() {
         // Arrange
         booking.setSymptoms(List.of());
-        booking.setRelatedAppointmentIds(List.of());
 
         // Act & Assert
         assertTrue(booking.getSymptoms().isEmpty());
-        assertTrue(booking.getRelatedAppointmentIds().isEmpty());
     }
 
     @Test

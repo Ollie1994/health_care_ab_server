@@ -6,6 +6,7 @@ import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
 import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
 import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
 import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
+import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
 import healthcareab.project.healthcare_booking_app.models.Role;
@@ -33,6 +34,9 @@ class BookingServiceTest {
 
     @Mock
     private BookingRepository bookingRepository;
+
+    @Mock
+    private SESEmailHelper sesEmailHelper;
 
     @Mock
     private BookingConverter bookingConverter;
@@ -75,10 +79,9 @@ class BookingServiceTest {
         expectedResponse = new CreateBookingResponse(
                 "Booking created",
                 caregiver.getUsername(),
-                request.getStart_date_time(),
-                request.getEnd_date_time()
+                request.getStartDateTime(),
+                request.getEndDateTime()
         );
-
     }
     /*--------------------
     POSITIVE SCENARIOS
@@ -90,6 +93,7 @@ class BookingServiceTest {
         when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
         when(bookingRepository.save(any(Booking.class))).thenReturn(savedBooking);
         when(bookingConverter.convertToCreateBookingResponse(savedBooking, caregiver)).thenReturn(expectedResponse);
+        doNothing().when(sesEmailHelper).sendEmail(anyString(), anyString(), any());
 
         // --- ACT ---
         CreateBookingResponse actualResponse = bookingService.createBooking(request);
@@ -103,6 +107,7 @@ class BookingServiceTest {
         verify(userRepository).findById(caregiver.getId());
         verify(bookingRepository).save(any(Booking.class));
         verify(bookingConverter).convertToCreateBookingResponse(savedBooking, caregiver);
+        verify(sesEmailHelper).sendEmail(anyString(), anyString(), any());
     }
 
     @Test
@@ -121,7 +126,7 @@ class BookingServiceTest {
         bookingOne.setCaregiverId(caregiver.getId());
         bookingOne.setStartDateTime(LocalDateTime.of(2026, 8, 5, 10, 0));
         bookingOne.setEndDateTime(LocalDateTime.of(2026, 8, 5, 11, 0));
-        bookingOne.setStatus(BookingStatus.APPROVED);
+        bookingOne.setStatus(BookingStatus.CONFIRMED);
         bookingOne.setSymptoms(List.of("Flu", "Cough"));
 
         Booking bookingTwo = new Booking("BOOKING_ID_2");
@@ -129,7 +134,7 @@ class BookingServiceTest {
         bookingTwo.setCaregiverId(caregiver.getId());
         bookingTwo.setStartDateTime(LocalDateTime.of(2026, 8, 6, 14, 0));
         bookingTwo.setEndDateTime(LocalDateTime.of(2026, 8, 6, 15, 30));
-        bookingTwo.setStatus(BookingStatus.PENDING);
+        bookingTwo.setStatus(BookingStatus.CONFIRMED);
         bookingTwo.setSymptoms(List.of("Headache", "Fatigue"));
 
         when(authService.getAuthenticated()).thenReturn(patient);
@@ -183,7 +188,7 @@ class BookingServiceTest {
         bookingOne.setCaregiverId(caregiver.getId());
         bookingOne.setStartDateTime(LocalDateTime.of(2026, 8, 5, 10, 0));
         bookingOne.setEndDateTime(LocalDateTime.of(2026, 8, 5, 11, 0));
-        bookingOne.setStatus(BookingStatus.APPROVED);
+        bookingOne.setStatus(BookingStatus.CONFIRMED);
         bookingOne.setSymptoms(List.of("Flu", "Cough"));
 
         Booking bookingTwo = new Booking("BOOKING_ID_2");
@@ -191,7 +196,7 @@ class BookingServiceTest {
         bookingTwo.setCaregiverId(caregiver.getId());
         bookingTwo.setStartDateTime(LocalDateTime.of(2026, 8, 6, 14, 0));
         bookingTwo.setEndDateTime(LocalDateTime.of(2026, 8, 6, 15, 30));
-        bookingTwo.setStatus(BookingStatus.PENDING);
+        bookingTwo.setStatus(BookingStatus.CONFIRMED);
         bookingTwo.setSymptoms(List.of("Headache", "Fatigue"));
 
         when(authService.getAuthenticated()).thenReturn(caregiver);
@@ -246,7 +251,7 @@ class BookingServiceTest {
         bookingOne.setCaregiverId(caregiver.getId());
         bookingOne.setStartDateTime(LocalDateTime.now().minusDays(2));
         bookingOne.setEndDateTime(LocalDateTime.now().minusDays(1));
-        bookingOne.setStatus(BookingStatus.APPROVED);
+        bookingOne.setStatus(BookingStatus.CONFIRMED);
         bookingOne.setSymptoms(List.of("Flu", "Cough"));
 
         Booking bookingTwo = new Booking("BOOKING_ID_2");
@@ -254,7 +259,7 @@ class BookingServiceTest {
         bookingTwo.setCaregiverId(caregiver.getId());
         bookingTwo.setStartDateTime(LocalDateTime.now().minusDays(3));
         bookingTwo.setEndDateTime(LocalDateTime.now().minusDays(2));
-        bookingTwo.setStatus(BookingStatus.PENDING);
+        bookingTwo.setStatus(BookingStatus.CONFIRMED);
         bookingTwo.setSymptoms(List.of("Headache", "Fatigue"));
 
         when(authService.getAuthenticated()).thenReturn(patient);
@@ -306,7 +311,7 @@ class BookingServiceTest {
         bookingOne.setCaregiverId(caregiver.getId());
         bookingOne.setStartDateTime(LocalDateTime.now().minusDays(2));
         bookingOne.setEndDateTime(LocalDateTime.now().minusDays(1));
-        bookingOne.setStatus(BookingStatus.APPROVED);
+        bookingOne.setStatus(BookingStatus.CONFIRMED);
         bookingOne.setSymptoms(List.of("Flu", "Cough"));
 
         Booking bookingTwo = new Booking("BOOKING_ID_2");
@@ -314,7 +319,7 @@ class BookingServiceTest {
         bookingTwo.setCaregiverId(caregiver.getId());
         bookingTwo.setStartDateTime(LocalDateTime.now().minusDays(3));
         bookingTwo.setEndDateTime(LocalDateTime.now().minusDays(2));
-        bookingTwo.setStatus(BookingStatus.PENDING);
+        bookingTwo.setStatus(BookingStatus.CONFIRMED);
         bookingTwo.setSymptoms(List.of("Headache", "Fatigue"));
 
         when(authService.getAuthenticated()).thenReturn(caregiver);

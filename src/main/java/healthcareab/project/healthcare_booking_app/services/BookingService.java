@@ -7,6 +7,7 @@ import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse
 import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
 import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
+import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
 import healthcareab.project.healthcare_booking_app.models.Role;
@@ -25,12 +26,14 @@ public class BookingService {
     private final BookingConverter bookingConverter;
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final SESEmailHelper sesEmailHelper;
 
-    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository) {
+    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository, SESEmailHelper sesEmailHelper) {
         this.bookingRepository = bookingRepository;
         this.bookingConverter = bookingConverter;
         this.authService = authService;
         this.userRepository = userRepository;
+        this.sesEmailHelper = sesEmailHelper;
     }
 
     public CreateBookingResponse createBooking(CreateBookingRequest request) {
@@ -38,18 +41,21 @@ public class BookingService {
 
         //Set patient to authorized patient.
         User patient = authService.getAuthenticated();
-        User caregiver = userRepository.findById(request.getCaregiver_id()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+        User caregiver = userRepository.findById(request.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+
 
         booking.setPatientId(patient.getId());
-        booking.setCaregiverId(request.getCaregiver_id());
-        booking.setStatus(BookingStatus.PENDING);
-        booking.setStartDateTime(request.getStart_date_time());
-        booking.setEndDateTime(request.getEnd_date_time());
+        booking.setCaregiverId(request.getCaregiverId());
+        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setStartDateTime(request.getStartDateTime());
+        booking.setEndDateTime(request.getEndDateTime());
         booking.setSymptoms(request.getSymptoms());
-        booking.setReasonForVisit(request.getReason_for_visit());
-        booking.setNotesFromPatient(request.getNotes_from_patient());
+        booking.setReasonForVisit(request.getReasonForVisit());
+        booking.setNotesFromCaregiver(request.getNotesFromPatient());
 
         Booking createdBooking = bookingRepository.save(booking);
+        String message = "Booking confirmed for " + patient.getFirstName() + " " + patient.getLastName() + " at " + booking.getStartDateTime() + " with caregiver " + caregiver.getFirstName() + " " + caregiver.getLastName();
+        sesEmailHelper.sendEmail(message, "Confirmation Email", patient.getEmail());
 
         return bookingConverter.convertToCreateBookingResponse(createdBooking, caregiver);
     }
