@@ -33,18 +33,18 @@ public class BookingService {
 
         //Set patient to authorized patient.
         User patient = authService.getAuthenticated();
-        User caregiver = userRepository.findById(request.getCaregiver_id()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+        User caregiver = userRepository.findById(request.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
 
 
 
-        booking.setPatient_id(patient.getId());
-        booking.setCaregiver_id(request.getCaregiver_id());
-        booking.setStatus(BookingStatus.PENDING);
-        booking.setStart_date_time(request.getStart_date_time());
-        booking.setEnd_date_time(request.getEnd_date_time());
+        booking.setPatientId(patient.getId());
+        booking.setCaregiverId(request.getCaregiverId());
+        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setStartDateTime(request.getStartDateTime());
+        booking.setEndDateTime(request.getEndDateTime());
         booking.setSymptoms(request.getSymptoms());
-        booking.setReason_for_visit(request.getReason_for_visit());
-        booking.setNotes_from_patient(request.getNotes_from_patient());
+        booking.setReasonForVisit(request.getReasonForVisit());
+        booking.setNotesFromCaregiver(request.getNotesFromPatient());
 
         Booking createdBooking = bookingRepository.save(booking);
         sesEmailHelper.sendEmail();

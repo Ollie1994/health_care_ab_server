@@ -71,8 +71,8 @@ class BookingServiceTest {
         expectedResponse = new CreateBookingResponse(
                 "Booking created",
                 caregiver.getUsername(),
-                request.getStart_date_time(),
-                request.getEnd_date_time()
+                request.getStartDateTime(),
+                request.getEndDateTime()
         );
     }
 
