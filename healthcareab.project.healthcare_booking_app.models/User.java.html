@@ -41,25 +41,19 @@ public class User {
 <span class="fc" id="L41">        this.roles = roles;</span>
 <span class="fc" id="L42">    }</span>
 
-    // Constructor with ID for testing!
-<span class="fc" id="L45">    public User(String id, String username, String password, Set&lt;Role&gt; roles) {</span>
-<span class="fc" id="L46">        this.id = id;</span>
-<span class="fc" id="L47">        this.username = username;</span>
-<span class="fc" id="L48">        this.password = password;</span>
-<span class="fc" id="L49">        this.roles = roles;</span>
-<span class="fc" id="L50">    }</span>
+
 
     public String getId() {
-<span class="fc" id="L53">        return id;</span>
+<span class="fc" id="L47">        return id;</span>
     }
 
     public @NotEmpty(message = &quot;Username cannot be empty&quot;) String getUsername() {
-<span class="fc" id="L57">        return username;</span>
+<span class="fc" id="L51">        return username;</span>
     }
 
     public void setUsername(@NotEmpty(message = &quot;Username cannot be empty&quot;) String username) {
-<span class="fc" id="L61">        this.username = username;</span>
-<span class="fc" id="L62">    }</span>
+<span class="fc" id="L55">        this.username = username;</span>
+<span class="fc" id="L56">    }</span>
 
     public @Pattern(
             regexp = &quot;^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&amp;*()\\-_=+{};:,&lt;.&gt;])(?=.{8,})&quot; +
@@ -67,7 +61,7 @@ public class User {
             message = &quot;Password must be at least 8 characters long and contain at least &quot; +
                     &quot;one uppercase letter, one number, and one special character&quot;
     ) String getPassword() {
-<span class="fc" id="L70">        return password;</span>
+<span class="fc" id="L64">        return password;</span>
     }
 
     public void setPassword(@Pattern(
@@ -76,47 +70,47 @@ public class User {
             message = &quot;Password must be at least 8 characters long and contain at least &quot; +
                     &quot;one uppercase letter, one number, and one special character&quot;
     ) String password) {
-<span class="fc" id="L79">        this.password = password;</span>
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L73">        this.password = password;</span>
+<span class="fc" id="L74">    }</span>
 
     public Set&lt;Role&gt; getRoles() {
-<span class="fc" id="L83">        return roles;</span>
+<span class="fc" id="L77">        return roles;</span>
     }
 
     public void setRoles(Set&lt;Role&gt; roles) {
-<span class="fc" id="L87">        this.roles = roles;</span>
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L81">        this.roles = roles;</span>
+<span class="fc" id="L82">    }</span>
 
     public String getEmail() {
-<span class="fc" id="L91">        return email;</span>
+<span class="fc" id="L85">        return email;</span>
     }
 
     public void setEmail(String email) {
-<span class="fc" id="L95">        this.email = email;</span>
-<span class="fc" id="L96">    }</span>
+<span class="fc" id="L89">        this.email = email;</span>
+<span class="fc" id="L90">    }</span>
 
     public String getFirstName() {
-<span class="fc" id="L99">        return firstName;</span>
+<span class="fc" id="L93">        return firstName;</span>
     }
 
     public void setFirstName(String firstName) {
-<span class="fc" id="L103">        this.firstName = firstName;</span>
-<span class="fc" id="L104">    }</span>
+<span class="fc" id="L97">        this.firstName = firstName;</span>
+<span class="fc" id="L98">    }</span>
 
     public String getLastName() {
-<span class="fc" id="L107">        return lastName;</span>
+<span class="fc" id="L101">        return lastName;</span>
     }
 
     public void setLastName(String lastName) {
-<span class="fc" id="L111">        this.lastName = lastName;</span>
-<span class="fc" id="L112">    }</span>
+<span class="fc" id="L105">        this.lastName = lastName;</span>
+<span class="fc" id="L106">    }</span>
 
     public String getSocialSecurityNumber() {
-<span class="fc" id="L115">        return socialSecurityNumber;</span>
+<span class="fc" id="L109">        return socialSecurityNumber;</span>
     }
 
     public void setSocialSecurityNumber(String socialSecurityNumber) {
-<span class="fc" id="L119">        this.socialSecurityNumber = socialSecurityNumber;</span>
-<span class="fc" id="L120">    }</span>
+<span class="fc" id="L113">        this.socialSecurityNumber = socialSecurityNumber;</span>
+<span class="fc" id="L114">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
