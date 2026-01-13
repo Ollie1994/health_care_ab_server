@@ -3,14 +3,21 @@
 import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
+import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
+import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
+import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
-import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
+import healthcareab.project.healthcare_booking_app.models.Role;
 import healthcareab.project.healthcare_booking_app.models.User;
 import healthcareab.project.healthcare_booking_app.repository.BookingRepository;
 import healthcareab.project.healthcare_booking_app.repository.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BookingService {
@@ -18,40 +25,97 @@ public class BookingService {
     private final BookingConverter bookingConverter;
     private final AuthService authService;
     private final UserRepository userRepository;
-    private final SESEmailHelper sesEmailHelper;
 
-<span class="fc" id="L23">    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository, SESEmailHelper sesEmailHelper) {</span>
-<span class="fc" id="L24">        this.bookingRepository = bookingRepository;</span>
-<span class="fc" id="L25">        this.bookingConverter = bookingConverter;</span>
-<span class="fc" id="L26">        this.authService = authService;</span>
-<span class="fc" id="L27">        this.userRepository = userRepository;</span>
-<span class="fc" id="L28">        this.sesEmailHelper = sesEmailHelper;</span>
-<span class="fc" id="L29">    }</span>
+<span class="fc" id="L29">    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository) {</span>
+<span class="fc" id="L30">        this.bookingRepository = bookingRepository;</span>
+<span class="fc" id="L31">        this.bookingConverter = bookingConverter;</span>
+<span class="fc" id="L32">        this.authService = authService;</span>
+<span class="fc" id="L33">        this.userRepository = userRepository;</span>
+<span class="fc" id="L34">    }</span>
 
     public CreateBookingResponse createBooking(CreateBookingRequest request) {
-<span class="fc" id="L32">        Booking booking = new Booking();</span>
+<span class="fc" id="L37">        Booking booking = new Booking();</span>
 
         //Set patient to authorized patient.
-<span class="fc" id="L35">        User patient = authService.getAuthenticated();</span>
-<span class="pc" id="L36">        User caregiver = userRepository.findById(request.getCaregiverId()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Caregiver not found&quot;));</span>
+<span class="fc" id="L40">        User patient = authService.getAuthenticated();</span>
+<span class="pc" id="L41">        User caregiver = userRepository.findById(request.getCaregiver_id()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Caregiver not found&quot;));</span>
 
+<span class="fc" id="L43">        booking.setPatientId(patient.getId());</span>
+<span class="fc" id="L44">        booking.setCaregiverId(request.getCaregiver_id());</span>
+<span class="fc" id="L45">        booking.setStatus(BookingStatus.PENDING);</span>
+<span class="fc" id="L46">        booking.setStartDateTime(request.getStart_date_time());</span>
+<span class="fc" id="L47">        booking.setEndDateTime(request.getEnd_date_time());</span>
+<span class="fc" id="L48">        booking.setSymptoms(request.getSymptoms());</span>
+<span class="fc" id="L49">        booking.setReasonForVisit(request.getReason_for_visit());</span>
+<span class="fc" id="L50">        booking.setNotesFromPatient(request.getNotes_from_patient());</span>
 
-<span class="fc" id="L39">        booking.setPatientId(patient.getId());</span>
-<span class="fc" id="L40">        booking.setCaregiverId(request.getCaregiverId());</span>
-<span class="fc" id="L41">        booking.setStatus(BookingStatus.CONFIRMED);</span>
-<span class="fc" id="L42">        booking.setStartDateTime(request.getStartDateTime());</span>
-<span class="fc" id="L43">        booking.setEndDateTime(request.getEndDateTime());</span>
-<span class="fc" id="L44">        booking.setSymptoms(request.getSymptoms());</span>
-<span class="fc" id="L45">        booking.setReasonForVisit(request.getReasonForVisit());</span>
-<span class="fc" id="L46">        booking.setNotesFromCaregiver(request.getNotesFromPatient());</span>
+<span class="fc" id="L52">        Booking createdBooking = bookingRepository.save(booking);</span>
 
-<span class="fc" id="L48">        Booking createdBooking = bookingRepository.save(booking);</span>
-<span class="fc" id="L49">        String message = &quot;Booking confirmed for &quot; + patient.getFirstName() + &quot; &quot; + patient.getLastName() + &quot; at &quot; + booking.getStartDateTime() + &quot; with caregiver &quot; + caregiver.getFirstName() + &quot; &quot; + caregiver.getLastName();</span>
-<span class="fc" id="L50">        sesEmailHelper.sendEmail(message, &quot;Confirmation Email&quot;, patient.getEmail());</span>
-
-<span class="fc" id="L52">        return bookingConverter.convertToCreateBookingResponse(createdBooking, caregiver);</span>
+<span class="fc" id="L54">        return bookingConverter.convertToCreateBookingResponse(createdBooking, caregiver);</span>
     }
 
+    public List&lt;GetBookingsResponse&gt; getMyBookings() {
+<span class="fc" id="L58">        User user = authService.getAuthenticated();</span>
+<span class="pc" id="L59">        user = userRepository.findById(user.getId()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;User not found&quot;));</span>
 
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (user.getRoles().contains(Role.PATIENT)) {</span>
+<span class="fc" id="L62">            List&lt;Booking&gt; bookings = bookingRepository.findByPatientId(user.getId());</span>
+<span class="fc" id="L63">            List&lt;GetBookingsResponse&gt; responses = new ArrayList&lt;&gt;();</span>
+            // For each booking, find the caregivers name, convert to DTO and add to response.
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            for (Booking booking : bookings) {</span>
+<span class="pc" id="L66">                User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Caregiver not found&quot;));</span>
+<span class="fc" id="L67">                String fullName = caregiver.getFirstName() + &quot; &quot; + caregiver.getLastName();</span>
+<span class="fc" id="L68">                responses.add(bookingConverter.convertToGetBookingsResponse(booking, fullName));</span>
+<span class="fc" id="L69">            }</span>
+<span class="fc" id="L70">            return responses;</span>
+
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        } else if (user.getRoles().contains(Role.CAREGIVER)) {</span>
+<span class="fc" id="L73">            List&lt;Booking&gt; bookings = bookingRepository.findByCaregiverId(user.getId());</span>
+<span class="fc" id="L74">            List&lt;GetBookingsResponse&gt; responses = new ArrayList&lt;&gt;();</span>
+            // For each booking, find the patients name, convert to DTO and add to response.
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            for (Booking booking : bookings) {</span>
+<span class="pc" id="L77">                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Patient not found&quot;));</span>
+<span class="fc" id="L78">                String fullName = patient.getFirstName() + &quot; &quot; + patient.getLastName();</span>
+<span class="fc" id="L79">                responses.add(bookingConverter.convertToGetBookingsResponse(booking, fullName));</span>
+<span class="fc" id="L80">            }</span>
+<span class="fc" id="L81">            return responses;</span>
+
+        } else {
+<span class="fc" id="L84">            throw new AccessDeniedException(&quot;You are not authorized to view bookings&quot;);</span>
+        }
+    }
+
+    public List&lt;GetBookingHistoryResponse&gt; getMyBookingHistory() {
+<span class="fc" id="L89">        User user = authService.getAuthenticated();</span>
+<span class="pc" id="L90">        user = userRepository.findById(user.getId()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;User not found&quot;));</span>
+
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (user.getRoles().contains(Role.PATIENT)) {</span>
+            // Gets only past bookings
+<span class="fc" id="L94">            List&lt;Booking&gt; bookings = bookingRepository.findByPatientIdAndEndDateTimeBefore(user.getId(), LocalDateTime.now());</span>
+<span class="fc" id="L95">            List&lt;GetBookingHistoryResponse&gt; responses = new ArrayList&lt;&gt;();</span>
+            // For each booking, find the caregivers name, convert to DTO and add to response.
+<span class="fc bfc" id="L97" title="All 2 branches covered.">            for (Booking booking : bookings) {</span>
+<span class="pc" id="L98">                User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Caregiver not found&quot;));</span>
+<span class="fc" id="L99">                String fullName = caregiver.getFirstName() + &quot; &quot; + caregiver.getLastName();</span>
+<span class="fc" id="L100">                responses.add(bookingConverter.convertToGetBookingHistoryResponse(booking, fullName));</span>
+<span class="fc" id="L101">            }</span>
+<span class="fc" id="L102">            return responses;</span>
+
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        } else if (user.getRoles().contains(Role.CAREGIVER)) {</span>
+            // Gets only past bookings
+<span class="fc" id="L106">            List&lt;Booking&gt; bookings = bookingRepository.findByCaregiverIdAndEndDateTimeBefore(user.getId(), LocalDateTime.now());</span>
+<span class="fc" id="L107">            List&lt;GetBookingHistoryResponse&gt; responses = new ArrayList&lt;&gt;();</span>
+            // For each booking, find the patients name, convert to DTO and add to response.
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            for (Booking booking : bookings) {</span>
+<span class="pc" id="L110">                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Patient not found&quot;));</span>
+<span class="fc" id="L111">                String fullName = patient.getFirstName() + &quot; &quot; + patient.getLastName();</span>
+<span class="fc" id="L112">                responses.add(bookingConverter.convertToGetBookingHistoryResponse(booking, fullName));</span>
+<span class="fc" id="L113">            }</span>
+<span class="fc" id="L114">            return responses;</span>
+
+        } else {
+<span class="fc" id="L117">            throw new AccessDeniedException(&quot;You are not authorized to view bookings&quot;);</span>
+        }
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

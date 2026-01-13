@@ -13,63 +13,63 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-<span class="fc" id="L16">public class GlobalExceptionHandler {</span>
+<span class="nc" id="L16">public class GlobalExceptionHandler {</span>
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity&lt;String&gt; handleIllegalArgument(IllegalArgumentException ex) {
-<span class="fc" id="L20">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());</span>
+<span class="nc" id="L20">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());</span>
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity&lt;String&gt; handleResourceNotFoundException(ResourceNotFoundException ex) {
-<span class="fc" id="L25">        return new ResponseEntity&lt;&gt;(ex.getMessage(), HttpStatus.NOT_FOUND);</span>
+<span class="nc" id="L25">        return new ResponseEntity&lt;&gt;(ex.getMessage(), HttpStatus.NOT_FOUND);</span>
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity&lt;String&gt; handleUnauthorizedException(UnauthorizedException ex) {
-<span class="fc" id="L30">        return new ResponseEntity&lt;&gt;(ex.getMessage(), HttpStatus.UNAUTHORIZED);</span>
+<span class="nc" id="L30">        return new ResponseEntity&lt;&gt;(ex.getMessage(), HttpStatus.UNAUTHORIZED);</span>
     }
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity&lt;String&gt; handleConflictException(ConflictException ex) {
-<span class="fc" id="L35">        return new ResponseEntity&lt;&gt;(ex.getMessage(), HttpStatus.CONFLICT);</span>
+<span class="nc" id="L35">        return new ResponseEntity&lt;&gt;(ex.getMessage(), HttpStatus.CONFLICT);</span>
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity&lt;String&gt; handleGeneral(Exception ex) {
-<span class="fc" id="L40">        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(&quot;An unexpected error occurred.&quot;);</span>
+<span class="nc" id="L40">        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(&quot;An unexpected error occurred.&quot;);</span>
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity&lt;String&gt; handleAccessDeniedException(AccessDeniedException ex) {
-<span class="fc" id="L45">        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Unauthorized&quot;);</span>
+<span class="nc" id="L45">        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Unauthorized&quot;);</span>
     }
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity&lt;String&gt; handleNullPointerException(NullPointerException ex) {
-<span class="fc" id="L50">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(&quot;An unexpected NullPointerException has occurred.&quot;);</span>
+<span class="nc" id="L50">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(&quot;An unexpected NullPointerException has occurred.&quot;);</span>
     }
 
     // https://chatgpt.com/share/67afa18c-6c9c-800b-8210-a0ee475d4e62
     // https://chatgpt.com/share/67afa170-7498-800b-a88c-831dff26b325
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity&lt;String&gt; handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-<span class="fc" id="L57">        String errorMessages = ex.getBindingResult().getFieldErrors().stream()</span>
-<span class="fc" id="L58">                .map(fieldError -&gt; fieldError.getField() + &quot;: &quot; + fieldError.getDefaultMessage())</span>
-<span class="fc" id="L59">                .collect(Collectors.joining(&quot;, &quot;));</span>
-<span class="fc" id="L60">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);</span>
+<span class="nc" id="L57">        String errorMessages = ex.getBindingResult().getFieldErrors().stream()</span>
+<span class="nc" id="L58">                .map(fieldError -&gt; fieldError.getField() + &quot;: &quot; + fieldError.getDefaultMessage())</span>
+<span class="nc" id="L59">                .collect(Collectors.joining(&quot;, &quot;));</span>
+<span class="nc" id="L60">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);</span>
     }
 
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity&lt;String&gt; handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-<span class="fc" id="L66">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(&quot;The request body is invalid.&quot;);</span>
+<span class="nc" id="L66">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(&quot;The request body is invalid.&quot;);</span>
 
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity&lt;String&gt; handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-<span class="fc" id="L72">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(&quot;The request body is invalid.&quot;);</span>
+<span class="nc" id="L72">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(&quot;The request body is invalid.&quot;);</span>
 
     }
 }

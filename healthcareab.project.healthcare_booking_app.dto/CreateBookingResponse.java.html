@@ -6,52 +6,53 @@ public class CreateBookingResponse {
 
     private String message;
 
-    private String caregiverFirstName;
+    private String caregiver_first_name;
 
-    private LocalDateTime startDateTime;
+    private LocalDateTime start_date_time;
 
-    private LocalDateTime endDateTime;
+    private LocalDateTime end_date_time;
 
 <span class="nc" id="L15">    public CreateBookingResponse() {</span>
 <span class="nc" id="L16">    }</span>
 
-<span class="fc" id="L18">    public CreateBookingResponse(String message, String caregiverFirstName, LocalDateTime startDateTime, LocalDateTime endDateTime) {</span>
-<span class="fc" id="L19">        this.message = message;</span>
-<span class="fc" id="L20">        this.caregiverFirstName = caregiverFirstName;</span>
-<span class="fc" id="L21">        this.startDateTime = startDateTime;</span>
-<span class="fc" id="L22">        this.endDateTime = endDateTime;</span>
-<span class="fc" id="L23">    }</span>
+
+<span class="fc" id="L19">    public CreateBookingResponse(String message, String caregiver_first_name, LocalDateTime start_date_time, LocalDateTime end_date_time) {</span>
+<span class="fc" id="L20">        this.message = message;</span>
+<span class="fc" id="L21">        this.caregiver_first_name = caregiver_first_name;</span>
+<span class="fc" id="L22">        this.start_date_time = start_date_time;</span>
+<span class="fc" id="L23">        this.end_date_time = end_date_time;</span>
+<span class="fc" id="L24">    }</span>
 
     public String getMessage() {
-<span class="fc" id="L26">        return message;</span>
+<span class="fc" id="L27">        return message;</span>
     }
 
     public void setMessage(String message) {
-<span class="nc" id="L30">        this.message = message;</span>
-<span class="nc" id="L31">    }</span>
+<span class="nc" id="L31">        this.message = message;</span>
+<span class="nc" id="L32">    }</span>
 
-    public String getCaregiverFirstName() {
-<span class="fc" id="L34">        return caregiverFirstName;</span>
+    public String getCaregiver_first_name() {
+<span class="fc" id="L35">        return caregiver_first_name;</span>
     }
 
-    public void setCaregiverFirstName(String caregiverFirstName) {
-<span class="nc" id="L38">        this.caregiverFirstName = caregiverFirstName;</span>
-<span class="nc" id="L39">    }</span>
+    public void setCaregiver_first_name(String caregiver_first_name) {
+<span class="nc" id="L39">        this.caregiver_first_name = caregiver_first_name;</span>
+<span class="nc" id="L40">    }</span>
 
-    public LocalDateTime getStartDateTime() {
-<span class="fc" id="L42">        return startDateTime;</span>
+    public LocalDateTime getStart_date_time() {
+<span class="fc" id="L43">        return start_date_time;</span>
     }
 
-    public void setStartDateTime(LocalDateTime startDateTime) {
-<span class="nc" id="L46">        this.startDateTime = startDateTime;</span>
-<span class="nc" id="L47">    }</span>
+    public void setStart_date_time(LocalDateTime start_date_time) {
+<span class="nc" id="L47">        this.start_date_time = start_date_time;</span>
+<span class="nc" id="L48">    }</span>
 
-    public LocalDateTime getEndDateTime() {
-<span class="fc" id="L50">        return endDateTime;</span>
+    public LocalDateTime getEnd_date_time() {
+<span class="fc" id="L51">        return end_date_time;</span>
     }
 
-    public void setEndDateTime(LocalDateTime endDateTime) {
-<span class="nc" id="L54">        this.endDateTime = endDateTime;</span>
-<span class="nc" id="L55">    }</span>
+    public void setEnd_date_time(LocalDateTime end_date_time) {
+<span class="nc" id="L55">        this.end_date_time = end_date_time;</span>
+<span class="nc" id="L56">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
