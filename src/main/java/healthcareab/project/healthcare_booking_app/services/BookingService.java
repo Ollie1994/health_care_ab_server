@@ -65,7 +65,7 @@ public class BookingService {
             for (Booking booking : bookings) {
                 User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
                 String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
-                responses.add(convertToGetBookingsResponse(booking, fullName));
+                responses.add(bookingConverter.convertToGetBookingsResponse(booking, fullName));
             }
             return responses;
 
@@ -76,7 +76,7 @@ public class BookingService {
             for (Booking booking : bookings) {
                 User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
                 String fullName = patient.getFirstName() + " " + patient.getLastName();
-                responses.add(convertToGetBookingsResponse(booking, fullName));
+                responses.add(bookingConverter.convertToGetBookingsResponse(booking, fullName));
             }
             return responses;
 
@@ -97,7 +97,7 @@ public class BookingService {
             for (Booking booking : bookings) {
                 User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
                 String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
-                responses.add(convertToGetBookingHistoryResponse(booking, fullName));
+                responses.add(bookingConverter.convertToGetBookingHistoryResponse(booking, fullName));
             }
             return responses;
 
@@ -109,20 +109,12 @@ public class BookingService {
             for (Booking booking : bookings) {
                 User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
                 String fullName = patient.getFirstName() + " " + patient.getLastName();
-                responses.add(convertToGetBookingHistoryResponse(booking, fullName));
+                responses.add(bookingConverter.convertToGetBookingHistoryResponse(booking, fullName));
             }
             return responses;
 
         } else {
             throw new AccessDeniedException("You are not authorized to view this booking");
         }
-    }
-
-    private GetBookingsResponse convertToGetBookingsResponse (Booking booking, String fullName) {
-        return new GetBookingsResponse(booking.getStartDateTime(), booking.getEndDateTime(), booking.getStatus(), fullName, booking.getSymptoms(), booking.getId());
-    }
-
-    private GetBookingHistoryResponse convertToGetBookingHistoryResponse (Booking booking, String fullName) {
-        return new GetBookingHistoryResponse(booking.getStartDateTime(), fullName, booking.getId());
     }
 }
