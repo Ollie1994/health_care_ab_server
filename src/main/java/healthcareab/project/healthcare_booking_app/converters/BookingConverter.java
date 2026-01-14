@@ -1,6 +1,7 @@
 package healthcareab.project.healthcare_booking_app.converters;
 
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
+import healthcareab.project.healthcare_booking_app.dto.PatchBookingResponse;
 import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
 import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
 import healthcareab.project.healthcare_booking_app.models.Booking;
@@ -26,5 +27,16 @@ public class BookingConverter {
 
     public GetBookingHistoryResponse convertToGetBookingHistoryResponse (Booking booking, String fullName) {
         return new GetBookingHistoryResponse(booking.getStartDateTime(), fullName, booking.getId());
+    }
+
+    public PatchBookingResponse convertToPatchBookingResponse(Booking booking, User user) {
+        return new PatchBookingResponse(
+                booking.getId(),
+                user.getFirstName(),
+                booking.getStatus(),
+                booking.getStartDateTime(),
+                booking.getEndDateTime(),
+                "Booking has been cancelled successfully"
+        );
     }
 }

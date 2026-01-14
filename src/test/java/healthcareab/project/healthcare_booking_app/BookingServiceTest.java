@@ -1,11 +1,11 @@
 package healthcareab.project.healthcare_booking_app;
 
 import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
+import healthcareab.project.healthcare_booking_app.dto.*;
 import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
+import healthcareab.project.healthcare_booking_app.exceptions.ConflictException;
+import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
+import healthcareab.project.healthcare_booking_app.exceptions.UnauthorizedException;
 import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
@@ -55,6 +55,8 @@ class BookingServiceTest {
     private CreateBookingRequest request;
     private Booking savedBooking;
     private CreateBookingResponse expectedResponse;
+    private Booking booking;
+    private PatchBookingResponse expectedPatchResponse;
 
     @BeforeEach
     void setup() {
@@ -81,6 +83,27 @@ class BookingServiceTest {
                 caregiver.getUsername(),
                 request.getStartDateTime(),
                 request.getEndDateTime()
+        );
+
+        // --- ARRANGE COMMON DATA FOR CANCEL BOOKING ---
+
+        booking = new Booking();
+        booking.setPatientId(patient.getId());
+        booking.setCaregiverId(caregiver.getId());
+        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setStartDateTime(request.getStartDateTime());
+        booking.setEndDateTime(request.getEndDateTime());
+        booking.setSymptoms(request.getSymptoms());
+        booking.setReasonForVisit(request.getReasonForVisit());
+        booking.setNotesFromPatient(request.getNotesFromPatient());
+
+        expectedPatchResponse = new PatchBookingResponse(
+                "booking1",
+                caregiver.getUsername(),
+                BookingStatus.CANCELLED,
+                booking.getStartDateTime(),
+                booking.getEndDateTime(),
+                "Booking has been cancelled successfully"
         );
     }
     /*--------------------
@@ -400,5 +423,130 @@ class BookingServiceTest {
         verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBefore(any(), any());
         verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBefore(any(), any());
         verify(bookingConverter, never()).convertToGetBookingHistoryResponse(any(), anyString());
+    }
+
+    @Test
+    void cancelBooking_shouldReturnPatchBookingResponse_whenSuccessful() {
+
+        // --- ARRANGE ---
+        when(bookingRepository.findById("booking1")).thenReturn(Optional.of(booking));
+        when(authService.getAuthenticated()).thenReturn(patient);
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
+        when(bookingRepository.save(booking)).thenReturn(booking);
+        when(bookingConverter.convertToPatchBookingResponse(booking, caregiver)).thenReturn(expectedPatchResponse);
+
+        // --- ACT ---
+        PatchBookingResponse actual = bookingService.cancelBooking("booking1");
+
+        // --- ASSERT ---
+        assertNotNull(actual);
+        assertEquals(expectedPatchResponse, actual);
+        assertEquals(BookingStatus.CANCELLED, booking.getStatus());
+
+        // Verify interactions
+        verify(bookingRepository).findById("booking1");
+        verify(authService).getAuthenticated();
+        verify(userRepository).findById(caregiver.getId());
+        verify(bookingRepository).save(booking);
+        verify(bookingConverter).convertToPatchBookingResponse(booking, caregiver);
+    }
+
+    @Test
+    void cancelBooking_shouldThrowUnauthorizedException_ifPatientNotSameAsInBooking() {
+        // --- ARRANGE ---
+        booking.setPatientId("otherPatientId");
+        when(bookingRepository.findById("booking1")).thenReturn(Optional.of(booking));
+        when(authService.getAuthenticated()).thenReturn(patient);
+
+        // --- ACT & ASSERT ---
+        UnauthorizedException exception = assertThrows(
+                UnauthorizedException.class,
+                () -> bookingService.cancelBooking("booking1")
+        );
+
+        assertEquals("You do not have permission to cancel this booking", exception.getMessage());
+    }
+
+    @Test
+    void cancelBooking_shouldThrowResourceNotFoundException_ifBookingDoesNotExist() {
+        // --- ARRANGE ---
+        when(bookingRepository.findById("nonexistentBooking")).thenReturn(Optional.empty());
+
+        // --- ACT & ASSERT ---
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> bookingService.cancelBooking("nonexistentBooking")
+        );
+
+        assertEquals("Booking not found", exception.getMessage());
+    }
+
+    @Test
+    void cancelBooking_shouldThrowResourceNotFoundException_ifCaregiverNotFound() {
+        // --- ARRANGE ---
+        when(bookingRepository.findById("booking1")).thenReturn(Optional.of(booking));
+        when(authService.getAuthenticated()).thenReturn(patient);
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.empty()); // Caregiver saknas
+
+        // --- ACT & ASSERT ---
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> bookingService.cancelBooking("booking1")
+        );
+
+        assertEquals("Caregiver not found", exception.getMessage());
+    }
+
+    @Test
+    void cancelBooking_shouldThrowConflictException_ifAlreadyCancelled() {
+
+        // --- ARRANGE ---
+        booking.setStatus(BookingStatus.CANCELLED);
+        when(bookingRepository.findById("booking1")).thenReturn(Optional.of(booking));
+        when(authService.getAuthenticated()).thenReturn(patient);
+
+        // --- ACT ---
+        ConflictException exception = assertThrows(
+                ConflictException.class,
+                () -> bookingService.cancelBooking("booking1"));
+
+        // --- ASSERT ---
+        assertEquals("This booking has already been cancelled", exception.getMessage());
+    }
+
+    @Test
+    void cancelBooking_shouldThrowConflictException_ifBookingPassed() {
+
+        // --- ARRANGE ---
+        booking.setEndDateTime(LocalDateTime.now().minusHours(1));
+        when(bookingRepository.findById("booking1")).thenReturn(Optional.of(booking));
+        when(authService.getAuthenticated()).thenReturn(patient);
+
+        // --- ACT ---
+        ConflictException exception = assertThrows(
+                ConflictException.class,
+                () -> bookingService.cancelBooking("booking1")
+        );
+
+        // --- ASSERT ---
+        assertEquals("This booking has already passed", exception.getMessage());
+    }
+
+    @Test
+    void cancelBooking_shouldThrowIllegalArgumentException_ifWithin24Hours() {
+
+        // --- ARRANGE ---
+        booking.setStartDateTime(LocalDateTime.now().plusHours(5));
+        when(bookingRepository.findById("booking1")).thenReturn(Optional.of(booking));
+        when(authService.getAuthenticated()).thenReturn(patient);
+
+        // --- ACT ---
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> bookingService.cancelBooking("booking1")
+        );
+
+        // --- ASSERT ---
+        assertEquals("Booking cannot be cancelled within 24 hours of start time", exception.getMessage());
     }
 }
