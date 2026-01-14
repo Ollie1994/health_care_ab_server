@@ -15,59 +15,61 @@ public class Booking {
     @Id
     private String id;
 
-    private String patient_id;
+    private String patientId;
 
-    private String caregiver_id;
+    private String caregiverId;
 
     private BookingStatus status;
 
-    private LocalDateTime start_date_time;
+    private LocalDateTime startDateTime;
 
-    private LocalDateTime end_date_time;
+    private LocalDateTime endDateTime;
 
     private List<String> symptoms;
 
-    private String reason_for_visit;
+    private String reasonForVisit;
 
-    private String notes_from_patient;
+    private String notesFromPatient;
 
     private String feedback;
 
-    private String notes_from_caregiver;
+    private String notesFromCaregiver;
 
-    private String employee_only_notes;
-
-    private List<String> related_appointment_ids;
+    private String employeeOnlyNotes;
 
     @CreatedDate
-    private LocalDate created_at;
+    private LocalDate createdAt;
 
     @LastModifiedDate
-    private LocalDate updated_at;
+    private LocalDate updatedAt;
 
 
     public Booking() {
     }
 
+    //With ID for testing purposes
+    public Booking(String id) {
+        this.id = id;
+    }
 
     public String getId() {
         return id;
     }
 
-    public String getPatient_id() {
-        return patient_id;
+    public String getPatientId() {
+        return patientId;
     }
 
-    public void setPatient_id(String patient_id) {
-        this.patient_id = patient_id;
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
     }
 
-    public String getCaregiver_id() {
-        return caregiver_id;
+    public String getCaregiverId() {
+        return caregiverId;
     }
 
-    public void setCaregiver_id(String caregiver_id) {
-        this.caregiver_id = caregiver_id;
+    public void setCaregiverId(String caregiverId) {
+        this.caregiverId = caregiverId;
     }
 
     public BookingStatus getStatus() {
@@ -78,20 +80,20 @@ public class Booking {
         this.status = status;
     }
 
-    public LocalDateTime getStart_date_time() {
-        return start_date_time;
+    public LocalDateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setStart_date_time(LocalDateTime start_date_time) {
-        this.start_date_time = start_date_time;
+    public void setStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public LocalDateTime getEnd_date_time() {
-        return end_date_time;
+    public LocalDateTime getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setEnd_date_time(LocalDateTime end_date_time) {
-        this.end_date_time = end_date_time;
+    public void setEndDateTime(LocalDateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public List<String> getSymptoms() {
@@ -102,20 +104,20 @@ public class Booking {
         this.symptoms = symptoms;
     }
 
-    public String getReason_for_visit() {
-        return reason_for_visit;
+    public String getReasonForVisit() {
+        return reasonForVisit;
     }
 
-    public void setReason_for_visit(String reason_for_visit) {
-        this.reason_for_visit = reason_for_visit;
+    public void setReasonForVisit(String reasonForVisit) {
+        this.reasonForVisit = reasonForVisit;
     }
 
-    public String getNotes_from_patient() {
-        return notes_from_patient;
+    public String getNotesFromPatient() {
+        return notesFromPatient;
     }
 
-    public void setNotes_from_patient(String notes_from_patient) {
-        this.notes_from_patient = notes_from_patient;
+    public void setNotesFromPatient(String notesFromPatient) {
+        this.notesFromPatient = notesFromPatient;
     }
 
     public String getFeedback() {
@@ -126,43 +128,35 @@ public class Booking {
         this.feedback = feedback;
     }
 
-    public String getNotes_from_caregiver() {
-        return notes_from_caregiver;
+    public String getNotesFromCaregiver() {
+        return notesFromCaregiver;
     }
 
-    public void setNotes_from_caregiver(String notes_from_caregiver) {
-        this.notes_from_caregiver = notes_from_caregiver;
+    public void setNotesFromCaregiver(String notesFromCaregiver) {
+        this.notesFromCaregiver = notesFromCaregiver;
     }
 
-    public String getEmployee_only_notes() {
-        return employee_only_notes;
+    public String getEmployeeOnlyNotes() {
+        return employeeOnlyNotes;
     }
 
-    public void setEmployee_only_notes(String employee_only_notes) {
-        this.employee_only_notes = employee_only_notes;
+    public void setEmployeeOnlyNotes(String employeeOnlyNotes) {
+        this.employeeOnlyNotes = employeeOnlyNotes;
     }
 
-    public List<String> getRelated_appointment_ids() {
-        return related_appointment_ids;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
-    public void setRelated_appointment_ids(List<String> related_appointment_ids) {
-        this.related_appointment_ids = related_appointment_ids;
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public LocalDate getCreated_at() {
-        return created_at;
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setCreated_at(LocalDate created_at) {
-        this.created_at = created_at;
-    }
-
-    public LocalDate getUpdated_at() {
-        return updated_at;
-    }
-
-    public void setUpdated_at(LocalDate updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(LocalDate updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -1,14 +1,15 @@
 package healthcareab.project.healthcare_booking_app.services;
 
 import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.PatchBookingResponse;
+import healthcareab.project.healthcare_booking_app.dto.*;
+import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
 import healthcareab.project.healthcare_booking_app.exceptions.ConflictException;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
 import healthcareab.project.healthcare_booking_app.exceptions.UnauthorizedException;
+import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
+import healthcareab.project.healthcare_booking_app.models.Role;
 import healthcareab.project.healthcare_booking_app.models.User;
 import healthcareab.project.healthcare_booking_app.repository.BookingRepository;
 import healthcareab.project.healthcare_booking_app.repository.UserRepository;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BookingService {
@@ -23,12 +26,14 @@ public class BookingService {
     private final BookingConverter bookingConverter;
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final SESEmailHelper sesEmailHelper;
 
-    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository) {
+    public BookingService(BookingRepository bookingRepository, BookingConverter bookingConverter, AuthService authService, UserRepository userRepository, SESEmailHelper sesEmailHelper) {
         this.bookingRepository = bookingRepository;
         this.bookingConverter = bookingConverter;
         this.authService = authService;
         this.userRepository = userRepository;
+        this.sesEmailHelper = sesEmailHelper;
     }
 
     public CreateBookingResponse createBooking(CreateBookingRequest request) {
@@ -36,22 +41,87 @@ public class BookingService {
 
         //Set patient to authorized patient.
         User patient = authService.getAuthenticated();
-        User caregiver = userRepository.findById(request.getCaregiver_id()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+        User caregiver = userRepository.findById(request.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
 
 
-
-        booking.setPatient_id(patient.getId());
-        booking.setCaregiver_id(request.getCaregiver_id());
-        booking.setStatus(BookingStatus.PENDING);
-        booking.setStart_date_time(request.getStart_date_time());
-        booking.setEnd_date_time(request.getEnd_date_time());
+        booking.setPatientId(patient.getId());
+        booking.setCaregiverId(request.getCaregiverId());
+        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setStartDateTime(request.getStartDateTime());
+        booking.setEndDateTime(request.getEndDateTime());
         booking.setSymptoms(request.getSymptoms());
-        booking.setReason_for_visit(request.getReason_for_visit());
-        booking.setNotes_from_patient(request.getNotes_from_patient());
+        booking.setReasonForVisit(request.getReasonForVisit());
+        booking.setNotesFromCaregiver(request.getNotesFromPatient());
 
         Booking createdBooking = bookingRepository.save(booking);
+        String message = "Booking confirmed for " + patient.getFirstName() + " " + patient.getLastName() + " at " + booking.getStartDateTime() + " with caregiver " + caregiver.getFirstName() + " " + caregiver.getLastName();
+        sesEmailHelper.sendEmail(message, "Confirmation Email", patient.getEmail());
 
         return bookingConverter.convertToCreateBookingResponse(createdBooking, caregiver);
+    }
+
+    public List<GetBookingsResponse> getMyBookings() {
+        User user = authService.getAuthenticated();
+        user = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.getRoles().contains(Role.PATIENT)) {
+            List<Booking> bookings = bookingRepository.findByPatientId(user.getId());
+            List<GetBookingsResponse> responses = new ArrayList<>();
+            // For each booking, find the caregivers name, convert to DTO and add to response.
+            for (Booking booking : bookings) {
+                User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+                String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
+                responses.add(bookingConverter.convertToGetBookingsResponse(booking, fullName));
+            }
+            return responses;
+
+        } else if (user.getRoles().contains(Role.CAREGIVER)) {
+            List<Booking> bookings = bookingRepository.findByCaregiverId(user.getId());
+            List<GetBookingsResponse> responses = new ArrayList<>();
+            // For each booking, find the patients name, convert to DTO and add to response.
+            for (Booking booking : bookings) {
+                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+                String fullName = patient.getFirstName() + " " + patient.getLastName();
+                responses.add(bookingConverter.convertToGetBookingsResponse(booking, fullName));
+            }
+            return responses;
+
+        } else {
+            throw new AccessDeniedException("You are not authorized to view bookings");
+        }
+    }
+
+    public List<GetBookingHistoryResponse> getMyBookingHistory() {
+        User user = authService.getAuthenticated();
+        user = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.getRoles().contains(Role.PATIENT)) {
+            // Gets only past bookings
+            List<Booking> bookings = bookingRepository.findByPatientIdAndEndDateTimeBefore(user.getId(), LocalDateTime.now());
+            List<GetBookingHistoryResponse> responses = new ArrayList<>();
+            // For each booking, find the caregivers name, convert to DTO and add to response.
+            for (Booking booking : bookings) {
+                User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+                String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
+                responses.add(bookingConverter.convertToGetBookingHistoryResponse(booking, fullName));
+            }
+            return responses;
+
+        } else if (user.getRoles().contains(Role.CAREGIVER)) {
+            // Gets only past bookings
+            List<Booking> bookings = bookingRepository.findByCaregiverIdAndEndDateTimeBefore(user.getId(), LocalDateTime.now());
+            List<GetBookingHistoryResponse> responses = new ArrayList<>();
+            // For each booking, find the patients name, convert to DTO and add to response.
+            for (Booking booking : bookings) {
+                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+                String fullName = patient.getFirstName() + " " + patient.getLastName();
+                responses.add(bookingConverter.convertToGetBookingHistoryResponse(booking, fullName));
+            }
+            return responses;
+
+        } else {
+            throw new AccessDeniedException("You are not authorized to view bookings");
+        }
     }
 
     public PatchBookingResponse cancelBooking(String bookingId) {
@@ -63,7 +133,7 @@ public class BookingService {
         User patient = authService.getAuthenticated();
 
         // Check if current user (patient) is same as patient in booking
-        if (!booking.getPatient_id().equals(patient.getId())) {
+        if (!booking.getPatientId().equals(patient.getId())) {
             throw new UnauthorizedException("You do not have permission to cancel this booking");
         }
 
@@ -73,12 +143,12 @@ public class BookingService {
         }
 
         // Check if booking date has already been
-        if (booking.getEnd_date_time().isBefore(LocalDateTime.now())) {
+        if (booking.getEndDateTime().isBefore(LocalDateTime.now())) {
             throw new ConflictException("This booking has already passed");
         }
 
         // Check if there's a minimum of 24 hours before the appointment
-        Duration durationUntilStart = Duration.between(LocalDateTime.now(), booking.getStart_date_time());
+        Duration durationUntilStart = Duration.between(LocalDateTime.now(), booking.getStartDateTime());
 
         if (durationUntilStart.toHours() < 24) {
             throw new IllegalArgumentException("Booking cannot be cancelled within 24 hours of start time");
@@ -86,7 +156,7 @@ public class BookingService {
         }
 
         // Get caregiver
-        User caregiver = userRepository.findById(booking.getCaregiver_id())
+        User caregiver = userRepository.findById(booking.getCaregiverId())
                 .orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
 
         // Cancel booking and return DTO
@@ -95,5 +165,4 @@ public class BookingService {
         return bookingConverter.convertToPatchBookingResponse(createdBooking, caregiver);
 
     }
-
 }

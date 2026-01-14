@@ -2,6 +2,8 @@ package healthcareab.project.healthcare_booking_app.converters;
 
 import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
 import healthcareab.project.healthcare_booking_app.dto.PatchBookingResponse;
+import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
+import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.User;
 import org.springframework.stereotype.Component;
@@ -9,17 +11,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookingConverter {
 
-
-
-
     public CreateBookingResponse convertToCreateBookingResponse(Booking booking, User user) {
 
         return new CreateBookingResponse(
                 "Booking has been booked successfully",
                 user.getFirstName(),
-                booking.getStart_date_time(),
-                booking.getEnd_date_time()
+                booking.getStartDateTime(),
+                booking.getEndDateTime()
         );
+    }
+
+    public GetBookingsResponse convertToGetBookingsResponse (Booking booking, String fullName) {
+        return new GetBookingsResponse(booking.getStartDateTime(), booking.getEndDateTime(), booking.getStatus(), fullName, booking.getSymptoms(), booking.getId());
+    }
+
+    public GetBookingHistoryResponse convertToGetBookingHistoryResponse (Booking booking, String fullName) {
+        return new GetBookingHistoryResponse(booking.getStartDateTime(), fullName, booking.getId());
     }
 
     public PatchBookingResponse convertToPatchBookingResponse(Booking booking, User user) {
@@ -27,8 +34,8 @@ public class BookingConverter {
                 booking.getId(),
                 user.getFirstName(),
                 booking.getStatus(),
-                booking.getStart_date_time(),
-                booking.getEnd_date_time(),
+                booking.getStartDateTime(),
+                booking.getEndDateTime(),
                 "Booking has been cancelled successfully"
         );
     }
