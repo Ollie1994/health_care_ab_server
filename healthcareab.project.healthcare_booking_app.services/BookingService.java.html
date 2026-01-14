@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookingService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">healthcare_booking_app</a> &gt; <a href="index.source.html" class="el_package">healthcareab.project.healthcare_booking_app.services</a> &gt; <span class="el_source">BookingService.java</span></div><h1>BookingService.java</h1><pre class="source lang-java linenums">package healthcareab.project.healthcare_booking_app.services;
 
 import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
+import healthcareab.project.healthcare_booking_app.dto.*;
 import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
+import healthcareab.project.healthcare_booking_app.exceptions.ConflictException;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
+import healthcareab.project.healthcare_booking_app.exceptions.UnauthorizedException;
 import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
@@ -16,6 +15,7 @@ import healthcareab.project.healthcare_booking_app.repository.BookingRepository;
 import healthcareab.project.healthcare_booking_app.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,6 +122,48 @@ public class BookingService {
         } else {
 <span class="fc" id="L123">            throw new AccessDeniedException(&quot;You are not authorized to view bookings&quot;);</span>
         }
+    }
+
+    public PatchBookingResponse cancelBooking(String bookingId) {
+
+        // Get booking by booking id or else throw exception
+<span class="fc" id="L130">        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Booking not found&quot;));</span>
+
+        // Get current logged-in user (patient)
+<span class="fc" id="L133">        User patient = authService.getAuthenticated();</span>
+
+        // Check if current user (patient) is same as patient in booking
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (!booking.getPatientId().equals(patient.getId())) {</span>
+<span class="fc" id="L137">            throw new UnauthorizedException(&quot;You do not have permission to cancel this booking&quot;);</span>
+        }
+
+        // Throw exception if current status of booking is already cancelled
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if (booking.getStatus() == BookingStatus.CANCELLED) {</span>
+<span class="fc" id="L142">            throw new ConflictException(&quot;This booking has already been cancelled&quot;);</span>
+        }
+
+        // Check if booking date has already been
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        if (booking.getEndDateTime().isBefore(LocalDateTime.now())) {</span>
+<span class="fc" id="L147">            throw new ConflictException(&quot;This booking has already passed&quot;);</span>
+        }
+
+        // Check if there's a minimum of 24 hours before the appointment
+<span class="fc" id="L151">        Duration durationUntilStart = Duration.between(LocalDateTime.now(), booking.getStartDateTime());</span>
+
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (durationUntilStart.toHours() &lt; 24) {</span>
+<span class="fc" id="L154">            throw new IllegalArgumentException(&quot;Booking cannot be cancelled within 24 hours of start time&quot;);</span>
+
+        }
+
+        // Get caregiver
+<span class="fc" id="L159">        User caregiver = userRepository.findById(booking.getCaregiverId())</span>
+<span class="fc" id="L160">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Caregiver not found&quot;));</span>
+
+        // Cancel booking and return DTO
+<span class="fc" id="L163">        booking.setStatus(BookingStatus.CANCELLED);</span>
+<span class="fc" id="L164">        Booking createdBooking = bookingRepository.save(booking);</span>
+<span class="fc" id="L165">        return bookingConverter.convertToPatchBookingResponse(createdBooking, caregiver);</span>
+
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
