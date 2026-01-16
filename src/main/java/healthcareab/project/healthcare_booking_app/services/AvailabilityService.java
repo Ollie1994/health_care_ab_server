@@ -3,8 +3,11 @@ package healthcareab.project.healthcare_booking_app.services;
 import healthcareab.project.healthcare_booking_app.converters.AvailabilityConverter;
 import healthcareab.project.healthcare_booking_app.dto.UpdateAvailabilityRequest;
 import healthcareab.project.healthcare_booking_app.dto.UpdateAvailabilityResponse;
+import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
+import healthcareab.project.healthcare_booking_app.exceptions.ConflictException;
 import healthcareab.project.healthcare_booking_app.helpers.availability.AvailabilityHelper;
 import healthcareab.project.healthcare_booking_app.models.Availability;
+import healthcareab.project.healthcare_booking_app.models.Role;
 import healthcareab.project.healthcare_booking_app.models.User;
 import healthcareab.project.healthcare_booking_app.repository.AvailabilityRepository;
 import org.springframework.stereotype.Service;
@@ -29,16 +32,24 @@ public class AvailabilityService {
     public UpdateAvailabilityResponse updateAvailabilityById(UpdateAvailabilityRequest request, String id) {
 
         User caregiver = authService.getAuthenticated();
+
+        if (!caregiver.getId().equals(request.getCaregiverId()) || !request.getCaregiverId().equals(id) || !id.equals(caregiver.getId())) {
+            throw new ConflictException("Conflicting ids");
+        }
+        if (!caregiver.getRoles().contains(Role.CAREGIVER)) {
+            throw new AccessDeniedException("Access denied");
+        }
+
         Availability availability = availabilityRepository.findById(id).orElse(availabilityHelper.createAvailability(request));
 
 
-        // kolla att request.getCaregiverId och id och caregiver.getId är exakt samma
         // kolla att caregiver har rollen CAREGIVER
 
         // update periods
         // update availa
-        availabilityRepository.save(availability);
-        return availabilityConverter.convertToUpdateAvailabilityResponse(availability);
+
+        Availability updatedAvailability = availabilityRepository.save(availability);
+        return availabilityConverter.convertToUpdateAvailabilityResponse(updatedAvailability);
     }
 
 

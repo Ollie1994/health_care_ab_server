@@ -28,7 +28,6 @@ public class AvailabilityHelper {
 
         Availability availability = new Availability();
 
-
         List<Period> periods = request.getPeriods();
         List<String> ids = new ArrayList<>();
         for (Period period : periods) {
@@ -38,11 +37,7 @@ public class AvailabilityHelper {
         availability.setCaregiverId(request.getCaregiverId());
         availability.setPeriods(ids);
 
-        //Set caregiver to authorized patient.
-        //User caregiver = authService.getAuthenticated();
-
-
-        Availability createdAvailability = availabilityRepository.save(availability);
+        Availability createdAvailability = availability;
 
         return createdAvailability;
     }
