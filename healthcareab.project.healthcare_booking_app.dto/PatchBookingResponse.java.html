@@ -7,74 +7,63 @@ import java.time.LocalDateTime;
 public class PatchBookingResponse {
 
     private String bookingId;
-    private String caregiver_first_name;
+    private String caregiverFirstName;
     private BookingStatus status;
-    private LocalDateTime start_date_time;
-    private LocalDateTime end_date_time;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
     private String message;
 
-    public PatchBookingResponse(
-            String bookingId,
-            String caregiver_first_name,
-            BookingStatus status,
-            LocalDateTime start_date_time,
-            LocalDateTime end_date_time,
-            String message
-<span class="fc" id="L23">    ) {</span>
-<span class="fc" id="L24">        this.bookingId = bookingId;</span>
-<span class="fc" id="L25">        this.caregiver_first_name = caregiver_first_name;</span>
-<span class="fc" id="L26">        this.status = status;</span>
-<span class="fc" id="L27">        this.start_date_time = start_date_time;</span>
-<span class="fc" id="L28">        this.end_date_time = end_date_time;</span>
-<span class="fc" id="L29">        this.message = message;</span>
-<span class="fc" id="L30">    }</span>
+<span class="fc" id="L16">    public PatchBookingResponse(String bookingId, String caregiverFirstName, BookingStatus status, LocalDateTime startDateTime, LocalDateTime endDateTime, String message) {</span>
+<span class="fc" id="L17">        this.bookingId = bookingId;</span>
+<span class="fc" id="L18">        this.caregiverFirstName = caregiverFirstName;</span>
+<span class="fc" id="L19">        this.status = status;</span>
+<span class="fc" id="L20">        this.startDateTime = startDateTime;</span>
+<span class="fc" id="L21">        this.endDateTime = endDateTime;</span>
+<span class="fc" id="L22">        this.message = message;</span>
+<span class="fc" id="L23">    }</span>
 
     public String getBookingId() {
-<span class="fc" id="L33">        return bookingId;</span>
+<span class="fc" id="L26">        return bookingId;</span>
     }
 
-    public void setBookingId(String bookingId) {
-<span class="nc" id="L37">        this.bookingId = bookingId;</span>
-<span class="nc" id="L38">    }</span>
-
-    public String getCaregiver_first_name() {
-<span class="fc" id="L41">        return caregiver_first_name;</span>
+    public String getCaregiverFirstName() {
+<span class="fc" id="L30">        return caregiverFirstName;</span>
     }
 
-    public void setCaregiver_first_name(String caregiver_first_name) {
-<span class="nc" id="L45">        this.caregiver_first_name = caregiver_first_name;</span>
-<span class="nc" id="L46">    }</span>
+    public void setCaregiverFirstName(String caregiverFirstName) {
+<span class="nc" id="L34">        this.caregiverFirstName = caregiverFirstName;</span>
+<span class="nc" id="L35">    }</span>
 
     public BookingStatus getStatus() {
-<span class="fc" id="L49">        return status;</span>
+<span class="fc" id="L38">        return status;</span>
     }
 
     public void setStatus(BookingStatus status) {
-<span class="nc" id="L53">        this.status = status;</span>
-<span class="nc" id="L54">    }</span>
+<span class="nc" id="L42">        this.status = status;</span>
+<span class="nc" id="L43">    }</span>
 
-    public LocalDateTime getStart_date_time() {
-<span class="fc" id="L57">        return start_date_time;</span>
+    public LocalDateTime getStartDateTime() {
+<span class="fc" id="L46">        return startDateTime;</span>
     }
 
-    public void setStart_date_time(LocalDateTime start_date_time) {
-<span class="nc" id="L61">        this.start_date_time = start_date_time;</span>
-<span class="nc" id="L62">    }</span>
+    public void setStartDateTime(LocalDateTime startDateTime) {
+<span class="nc" id="L50">        this.startDateTime = startDateTime;</span>
+<span class="nc" id="L51">    }</span>
 
-    public LocalDateTime getEnd_date_time() {
-<span class="fc" id="L65">        return end_date_time;</span>
+    public LocalDateTime getEndDateTime() {
+<span class="fc" id="L54">        return endDateTime;</span>
     }
 
-    public void setEnd_date_time(LocalDateTime end_date_time) {
-<span class="nc" id="L69">        this.end_date_time = end_date_time;</span>
-<span class="nc" id="L70">    }</span>
+    public void setEndDateTime(LocalDateTime endDateTime) {
+<span class="nc" id="L58">        this.endDateTime = endDateTime;</span>
+<span class="nc" id="L59">    }</span>
 
     public String getMessage() {
-<span class="fc" id="L73">        return message;</span>
+<span class="fc" id="L62">        return message;</span>
     }
 
     public void setMessage(String message) {
-<span class="nc" id="L77">        this.message = message;</span>
-<span class="nc" id="L78">    }</span>
+<span class="nc" id="L66">        this.message = message;</span>
+<span class="nc" id="L67">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
