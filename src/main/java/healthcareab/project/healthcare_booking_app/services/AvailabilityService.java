@@ -50,6 +50,9 @@ public class AvailabilityService {
         if (!caregiver.getRoles().contains(Role.CAREGIVER)) {
             throw new AccessDeniedException("Access denied");
         }
+        if(request.getNewPeriod() == null || request.getNewPeriod().getEndDateTime() == null || request.getNewPeriod().getStartDateTime() == null) {
+            throw new IllegalArgumentException("New period is required");
+        }
 
         Availability availability = availabilityRepository.findByCaregiverId(caregiver.getId()).orElse(availabilityHelper.createAvailability(request));
 
@@ -69,16 +72,23 @@ public class AvailabilityService {
         User user = authService.getAuthenticated();
         Availability availability = availabilityRepository.findByCaregiverId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Availability not found"));
-        Period period = new Period();
+        Period period;
         List<Period> periods = new ArrayList<>();
         for (String id : availability.getPeriods()) {
             period = periodRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Period not found"));
             periods.add(period);
-
         }
-
         return periods;
     }
 
+    public void deleteAvailabilityPeriodById(String id) {
+        User user = authService.getAuthenticated();
+        periodHelper.deletePeriod(id);
+        Availability availability = availabilityRepository.findByCaregiverId(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Availability not found"));
+        availability.getPeriods().remove(id);
+        availabilityRepository.save(availability);
+
+    }
 }

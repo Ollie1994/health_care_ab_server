@@ -27,6 +27,14 @@ public class AvailabilityController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+
+
+    @PatchMapping("/delete/{id}")
+    public ResponseEntity<?> deleteAvailabilityPeriodById(@PathVariable String id) {
+        availabilityService.deleteAvailabilityPeriodById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 //    @GetMapping("/{id}")
 //    public ResponseEntity<GetAvailabilityResponse> GetAvailabilityById(@PathVariable String id) {
 //        GetAvailabilityResponse response = availabilityService.getAvailabilityById(id);

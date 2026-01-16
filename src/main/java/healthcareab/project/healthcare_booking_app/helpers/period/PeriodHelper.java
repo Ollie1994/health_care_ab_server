@@ -1,6 +1,7 @@
 package healthcareab.project.healthcare_booking_app.helpers.period;
 
 import healthcareab.project.healthcare_booking_app.dto.UpdateAvailabilityRequest;
+import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
 import healthcareab.project.healthcare_booking_app.models.Period;
 import healthcareab.project.healthcare_booking_app.repository.PeriodRepository;
 import org.springframework.stereotype.Component;
@@ -14,18 +15,21 @@ public class PeriodHelper {
     }
 
 
-    public String updatePeriods(UpdateAvailabilityRequest request) {
 
+    public void deletePeriod(String id) {
+        periodRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Period not found"));
+
+        periodRepository.deleteById(id);
+    }
+
+    public String updatePeriods(UpdateAvailabilityRequest request) {
 
         Period newPeriod = request.getNewPeriod();
 
-
         // 1 timme period - 10 min break. 60 min lunch 12-13
 
-
         Period period = periodRepository.save(newPeriod);
-        System.out.println("------- " + period.getId());
-
 
         return period.getId();
     }
