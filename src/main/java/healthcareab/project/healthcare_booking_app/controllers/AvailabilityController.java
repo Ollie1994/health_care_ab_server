@@ -19,8 +19,8 @@ public class AvailabilityController {
 
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UpdateAvailabilityResponse> updateAvailabilityById(@PathVariable String id, @Valid @RequestBody UpdateAvailabilityRequest request) {
-        UpdateAvailabilityResponse response = availabilityService.updateAvailabilityById(request, id);
+    public ResponseEntity<UpdateAvailabilityResponse> updateAvailabilityById(@Valid @RequestBody UpdateAvailabilityRequest request) {
+        UpdateAvailabilityResponse response = availabilityService.updateAvailabilityById(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

@@ -29,21 +29,18 @@ public class AvailabilityService {
     }
 
 
-    public UpdateAvailabilityResponse updateAvailabilityById(UpdateAvailabilityRequest request, String id) {
+    public UpdateAvailabilityResponse updateAvailabilityById(UpdateAvailabilityRequest request) {
 
         User caregiver = authService.getAuthenticated();
 
-        if (!caregiver.getId().equals(request.getCaregiverId()) || !request.getCaregiverId().equals(id) || !id.equals(caregiver.getId())) {
+        if (!caregiver.getId().equals(request.getCaregiverId()) && request.getCaregiverId() != null) {
             throw new ConflictException("Conflicting ids");
         }
         if (!caregiver.getRoles().contains(Role.CAREGIVER)) {
             throw new AccessDeniedException("Access denied");
         }
 
-        Availability availability = availabilityRepository.findById(id).orElse(availabilityHelper.createAvailability(request));
-
-
-        // kolla att caregiver har rollen CAREGIVER
+        Availability availability = availabilityRepository.findById(caregiver.getId()).orElse(availabilityHelper.createAvailability(request));
 
         // update periods
         // update availa
