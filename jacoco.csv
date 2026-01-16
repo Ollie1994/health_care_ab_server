@@ -24,7 +24,9 @@ healthcare_booking_app,healthcareab.project.healthcare_booking_app.config,Securi
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.helpers.email,SESEmailHelper,0,13,0,0,0,5,0,2,0,2
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.utils,JwtUtil,0,80,1,3,0,21,1,8,0,7
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,User,0,82,0,0,0,35,0,18,0,18
+healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Log,39,0,0,0,14,0,7,0,7,0
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Role,0,15,0,0,0,3,0,1,0,1
+healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,ActionPerformed,69,0,0,0,12,0,1,0,1,0
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,BookingStatus,0,15,0,0,0,3,0,1,0,1
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Booking,0,103,0,0,0,45,0,29,0,29
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.controllers,AuthController,5,257,4,8,1,77,4,7,0,5
