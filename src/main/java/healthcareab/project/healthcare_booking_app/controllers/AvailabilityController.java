@@ -2,11 +2,14 @@ package healthcareab.project.healthcare_booking_app.controllers;
 
 import healthcareab.project.healthcare_booking_app.dto.UpdateAvailabilityRequest;
 import healthcareab.project.healthcare_booking_app.dto.UpdateAvailabilityResponse;
+import healthcareab.project.healthcare_booking_app.models.Period;
 import healthcareab.project.healthcare_booking_app.services.AvailabilityService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/availability")
@@ -18,9 +21,9 @@ public class AvailabilityController {
     }
 
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<UpdateAvailabilityResponse> updateAvailabilityById(@Valid @RequestBody UpdateAvailabilityRequest request) {
-        UpdateAvailabilityResponse response = availabilityService.updateAvailabilityById(request);
+    @PatchMapping("/update")
+    public ResponseEntity<UpdateAvailabilityResponse> updateAvailability(@Valid @RequestBody UpdateAvailabilityRequest request) {
+        UpdateAvailabilityResponse response = availabilityService.updateAvailability(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -30,9 +33,10 @@ public class AvailabilityController {
 //        return ResponseEntity.status(HttpStatus.OK).body(response);
 //    }
 
-//    @GetMapping
-//    public List<GetMyAvailabilityResponse> getMyAvailability() {
-//        return availabilityService.getMyAvailability();
-//    }
+    @GetMapping
+    public ResponseEntity<List<Period>> getMyAvailability() {
+        List<Period> response = availabilityService.getMyAvailability();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
 }

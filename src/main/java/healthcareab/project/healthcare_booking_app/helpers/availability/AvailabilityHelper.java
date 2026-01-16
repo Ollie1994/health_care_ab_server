@@ -28,11 +28,9 @@ public class AvailabilityHelper {
 
         Availability availability = new Availability();
 
-        List<Period> periods = request.getPeriods();
+        Period period = request.getNewPeriod();
         List<String> ids = new ArrayList<>();
-        for (Period period : periods) {
-            ids.add(period.getId());
-        }
+        ids.add(period.getId());
 
         availability.setCaregiverId(request.getCaregiverId());
         availability.setPeriods(ids);

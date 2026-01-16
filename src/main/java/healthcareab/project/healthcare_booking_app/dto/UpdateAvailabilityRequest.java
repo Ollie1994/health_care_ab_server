@@ -2,20 +2,18 @@ package healthcareab.project.healthcare_booking_app.dto;
 
 import healthcareab.project.healthcare_booking_app.models.Period;
 
-import java.util.List;
-
 public class UpdateAvailabilityRequest {
 
     private String caregiverId;
 
-    private List<Period> periods;
+    private Period newPeriod;
 
     public UpdateAvailabilityRequest() {
     }
 
-    public UpdateAvailabilityRequest(String caregiverId, List<Period> periods) {
+    public UpdateAvailabilityRequest(String caregiverId, Period newPeriod) {
         this.caregiverId = caregiverId;
-        this.periods = periods;
+        this.newPeriod = newPeriod;
     }
 
 
@@ -23,7 +21,7 @@ public class UpdateAvailabilityRequest {
         return caregiverId;
     }
 
-    public List<Period> getPeriods() {
-        return periods;
+    public Period getNewPeriod() {
+        return newPeriod;
     }
 }
