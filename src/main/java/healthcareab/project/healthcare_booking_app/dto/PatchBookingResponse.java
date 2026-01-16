@@ -7,25 +7,18 @@ import java.time.LocalDateTime;
 public class PatchBookingResponse {
 
     private String bookingId;
-    private String caregiver_first_name;
+    private String caregiverFirstName;
     private BookingStatus status;
-    private LocalDateTime start_date_time;
-    private LocalDateTime end_date_time;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
     private String message;
 
-    public PatchBookingResponse(
-            String bookingId,
-            String caregiver_first_name,
-            BookingStatus status,
-            LocalDateTime start_date_time,
-            LocalDateTime end_date_time,
-            String message
-    ) {
+    public PatchBookingResponse(String bookingId, String caregiverFirstName, BookingStatus status, LocalDateTime startDateTime, LocalDateTime endDateTime, String message) {
         this.bookingId = bookingId;
-        this.caregiver_first_name = caregiver_first_name;
+        this.caregiverFirstName = caregiverFirstName;
         this.status = status;
-        this.start_date_time = start_date_time;
-        this.end_date_time = end_date_time;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.message = message;
     }
 
@@ -33,16 +26,12 @@ public class PatchBookingResponse {
         return bookingId;
     }
 
-    public void setBookingId(String bookingId) {
-        this.bookingId = bookingId;
+    public String getCaregiverFirstName() {
+        return caregiverFirstName;
     }
 
-    public String getCaregiver_first_name() {
-        return caregiver_first_name;
-    }
-
-    public void setCaregiver_first_name(String caregiver_first_name) {
-        this.caregiver_first_name = caregiver_first_name;
+    public void setCaregiverFirstName(String caregiverFirstName) {
+        this.caregiverFirstName = caregiverFirstName;
     }
 
     public BookingStatus getStatus() {
@@ -53,20 +42,20 @@ public class PatchBookingResponse {
         this.status = status;
     }
 
-    public LocalDateTime getStart_date_time() {
-        return start_date_time;
+    public LocalDateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setStart_date_time(LocalDateTime start_date_time) {
-        this.start_date_time = start_date_time;
+    public void setStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public LocalDateTime getEnd_date_time() {
-        return end_date_time;
+    public LocalDateTime getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setEnd_date_time(LocalDateTime end_date_time) {
-        this.end_date_time = end_date_time;
+    public void setEndDateTime(LocalDateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public String getMessage() {
