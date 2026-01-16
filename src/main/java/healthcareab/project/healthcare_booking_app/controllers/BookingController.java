@@ -1,10 +1,6 @@
 package healthcareab.project.healthcare_booking_app.controllers;
 
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.PatchBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
+import healthcareab.project.healthcare_booking_app.dto.*;
 import healthcareab.project.healthcare_booking_app.services.BookingService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -39,6 +35,12 @@ private final BookingService bookingService;
     public List<GetBookingHistoryResponse> getMyBookingHistory() {
         return bookingService.getMyBookingHistory();
     }
+
+    @GetMapping("/upcoming")
+    public GetNextBookingResponse getNextBooking() {
+        return bookingService.getNextBooking();
+    }
+
     // For cancelling a booking
     @PatchMapping("/cancel/{id}")
     public ResponseEntity<PatchBookingResponse> cancelBooking(@PathVariable String id) {

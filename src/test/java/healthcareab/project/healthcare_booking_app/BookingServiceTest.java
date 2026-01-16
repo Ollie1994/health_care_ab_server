@@ -162,7 +162,7 @@ class BookingServiceTest {
 
         when(authService.getAuthenticated()).thenReturn(patient);
         when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
-        when(bookingRepository.findByPatientId(patient.getId())).thenReturn(List.of(bookingOne, bookingTwo));
+        when(bookingRepository.findByPatientIdOrderByStartDateTimeDesc(patient.getId())).thenReturn(List.of(bookingOne, bookingTwo));
         when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
 
         when(bookingConverter.convertToGetBookingsResponse(any(Booking.class), anyString()))
@@ -186,13 +186,13 @@ class BookingServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        verify(bookingRepository).findByPatientId(patient.getId());
+        verify(bookingRepository).findByPatientIdOrderByStartDateTimeDesc(patient.getId());
         verify(userRepository).findById(patient.getId());
         verify(userRepository, times(2)).findById(caregiver.getId());
         verify(bookingConverter, times(2))
                 .convertToGetBookingsResponse(any(Booking.class), eq("Dr McCaregiver"));
         verify(bookingRepository, never()).save(any(Booking.class));
-        verify(bookingRepository, never()).findByCaregiverId(any());
+        verify(bookingRepository, never()).findByCaregiverIdOrderByStartDateTimeDesc(any());
     }
 
     @Test
@@ -224,7 +224,7 @@ class BookingServiceTest {
 
         when(authService.getAuthenticated()).thenReturn(caregiver);
         when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
-        when(bookingRepository.findByCaregiverId(caregiver.getId())).thenReturn(List.of(bookingOne, bookingTwo));
+        when(bookingRepository.findByCaregiverIdOrderByStartDateTimeDesc(caregiver.getId())).thenReturn(List.of(bookingOne, bookingTwo));
         when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
 
         when(bookingConverter.convertToGetBookingsResponse(any(Booking.class), anyString()))
@@ -249,13 +249,13 @@ class BookingServiceTest {
         assertEquals(2, result.size());
 
         // --- VERIFY branch behavior ---
-        verify(bookingRepository).findByCaregiverId(caregiver.getId());
+        verify(bookingRepository).findByCaregiverIdOrderByStartDateTimeDesc(caregiver.getId());
         verify(userRepository).findById(caregiver.getId());
         verify(userRepository, times(2)).findById(patient.getId()); // once per booking
         verify(bookingConverter, times(2))
                 .convertToGetBookingsResponse(any(Booking.class), eq("John Doe"));
         verify(bookingRepository, never()).save(any(Booking.class));
-        verify(bookingRepository, never()).findByPatientId(any());
+        verify(bookingRepository, never()).findByPatientIdOrderByStartDateTimeDesc(any());
     }
 
     @Test
@@ -288,7 +288,7 @@ class BookingServiceTest {
         when(authService.getAuthenticated()).thenReturn(patient);
         when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
 
-        when(bookingRepository.findByPatientIdAndEndDateTimeBefore(eq(patient.getId()), any(LocalDateTime.class)))
+        when(bookingRepository.findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(eq(patient.getId()), any(LocalDateTime.class)))
                 .thenReturn(List.of(bookingOne, bookingTwo));
         when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
 
@@ -310,12 +310,12 @@ class BookingServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        verify(bookingRepository).findByPatientIdAndEndDateTimeBefore(eq(patient.getId()), any(LocalDateTime.class));
+        verify(bookingRepository).findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(eq(patient.getId()), any(LocalDateTime.class));
         verify(userRepository).findById(patient.getId());
         verify(userRepository, times(2)).findById(caregiver.getId());
         verify(bookingConverter, times(2))
                 .convertToGetBookingHistoryResponse(any(Booking.class), eq("Dr McCaregiver"));
-        verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBefore(any(), any());
+        verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
     }
 
     @Test
@@ -348,7 +348,7 @@ class BookingServiceTest {
         when(authService.getAuthenticated()).thenReturn(caregiver);
         when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
 
-        when(bookingRepository.findByCaregiverIdAndEndDateTimeBefore(eq(caregiver.getId()), any(LocalDateTime.class)))
+        when(bookingRepository.findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(eq(caregiver.getId()), any(LocalDateTime.class)))
                 .thenReturn(List.of(bookingOne, bookingTwo));
         when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
 
@@ -370,12 +370,12 @@ class BookingServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        verify(bookingRepository).findByCaregiverIdAndEndDateTimeBefore(eq(caregiver.getId()), any(LocalDateTime.class));
+        verify(bookingRepository).findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(eq(caregiver.getId()), any(LocalDateTime.class));
         verify(userRepository).findById(caregiver.getId());
         verify(userRepository, times(2)).findById(patient.getId());
         verify(bookingConverter, times(2))
                 .convertToGetBookingHistoryResponse(any(Booking.class), eq("John Doe"));
-        verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBefore(any(), any());
+        verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
     }
 
     /*--------------------
@@ -398,8 +398,8 @@ class BookingServiceTest {
         assertEquals("You are not authorized to view bookings", exception.getMessage());
 
         // --- VERIFY ---
-        verify(bookingRepository, never()).findByPatientId(any());
-        verify(bookingRepository, never()).findByCaregiverId(any());
+        verify(bookingRepository, never()).findByPatientIdOrderByStartDateTimeDesc(any());
+        verify(bookingRepository, never()).findByCaregiverIdOrderByStartDateTimeDesc(any());
         verify(bookingConverter, never()).convertToGetBookingsResponse(any(), anyString());
     }
 
@@ -420,8 +420,8 @@ class BookingServiceTest {
         assertEquals("You are not authorized to view bookings", exception.getMessage());
 
         // --- VERIFY ---
-        verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBefore(any(), any());
-        verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBefore(any(), any());
+        verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
+        verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
         verify(bookingConverter, never()).convertToGetBookingHistoryResponse(any(), anyString());
     }
 

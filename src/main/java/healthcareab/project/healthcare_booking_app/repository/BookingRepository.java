@@ -8,8 +8,16 @@ import java.util.List;
 
 
 public interface BookingRepository extends MongoRepository<Booking, String> {
-    List<Booking> findByPatientId(String id);
-    List<Booking> findByCaregiverId(String id);
-    List<Booking> findByPatientIdAndEndDateTimeBefore(String patientId, LocalDateTime endTime);
-    List<Booking> findByCaregiverIdAndEndDateTimeBefore(String patientId, LocalDateTime endTime);
+    List<Booking> findByPatientIdOrderByStartDateTimeDesc(String id);
+    List<Booking> findByCaregiverIdOrderByStartDateTimeDesc(String id);
+    List<Booking> findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(String patientId, LocalDateTime endTime);
+    List<Booking> findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(String patientId, LocalDateTime endTime);
+    Booking findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+            String patientId,
+            LocalDateTime now
+    );
+    Booking findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+            String caregiverId,
+            LocalDateTime now
+    );
 }
