@@ -1,0 +1,24 @@
+package healthcareab.project.healthcare_booking_app.helpers.period;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class PeriodHelper {
+    // create new period (return to avail and gets added to list)
+    // validate period cant exist more than 4 weeks ahead of time max
+    // validate period exist already
+    // patch existing period (no need to return)
+    // delete period (remove id from avail)
+    // 10 or 15 min break
+
+    // getMy avail -> get myPeriods
+    // upDate avail -> patchPeriods
+    // getAvail -> get periods by id
+
+
+
+    // ifall 26/01/10 period 08:00 - 12:00
+    // 13:00-17:00
+    // ifall vi introducerar bokar en appointment 10:00-11:00 måste vi in i period och uppdatera
+    // 08:00-10:00 och skapa en ny period 11:00-12:00
+}

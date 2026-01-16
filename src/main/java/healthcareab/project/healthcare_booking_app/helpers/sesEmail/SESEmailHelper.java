@@ -1,4 +1,4 @@
-package healthcareab.project.healthcare_booking_app.helpers.email;
+package healthcareab.project.healthcare_booking_app.helpers.sesEmail;
 
 import healthcareab.project.healthcare_booking_app.config.SESEmailConfig;
 import org.springframework.stereotype.Component;
