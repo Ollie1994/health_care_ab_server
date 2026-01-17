@@ -44,6 +44,7 @@ public class AvailabilityService {
      Göra om imorgon:
      1. Ändra dto request så det bara är (caregiverId, startDateTime, endDateTime) NO newPeriod Obj Wrapper
      2. Fixa validering för ifall lunch och inte får vara 10 min i närheten av varandra
+        10 min validering går säkert att fixa genom stegvis validering, if samma dag jämför tiden, if inte jämför inte
      3. Dubbel kolla ordningen saker sker i updateAvailability ->  Avail måste vara före period, så att vi kan använda avails
         period id´n för att validera emot nya perioden i periodHelper
      4. TESTER och DUBBELKOLLA ALL VALIDERING
