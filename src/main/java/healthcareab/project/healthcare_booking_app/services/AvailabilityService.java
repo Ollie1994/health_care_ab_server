@@ -60,18 +60,17 @@ public class AvailabilityService {
             throw new AccessDeniedException("Access denied");
         }
 
-        System.out.println("Request - " + request);
-
         Availability availability = availabilityRepository.findByCaregiverId(user.getId()).orElse(availabilityHelper.createAvailability(request));
         List<String> periodIds = availability.getPeriods();
-        String periodId = periodHelper.createPeriod(request, periodIds);
 
+        String periodId = periodHelper.createPeriod(request, periodIds);
         periodIds.add(periodId);
 
         availability.setCaregiverId(request.getCaregiverId());
         availability.setPeriods(periodIds);
 
         Availability updatedAvailability = availabilityRepository.save(availability);
+
         return availabilityConverter.convertToUpdateAvailabilityResponse(updatedAvailability);
     }
 

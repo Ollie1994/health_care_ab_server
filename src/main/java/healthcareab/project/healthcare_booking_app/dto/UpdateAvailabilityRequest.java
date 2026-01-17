@@ -1,19 +1,22 @@
 package healthcareab.project.healthcare_booking_app.dto;
 
-import healthcareab.project.healthcare_booking_app.models.Period;
+import java.time.LocalDateTime;
 
 public class UpdateAvailabilityRequest {
 
     private String caregiverId;
 
-    private Period newPeriod;
+    private LocalDateTime startDateTime;
+
+    private LocalDateTime endDateTime;
 
     public UpdateAvailabilityRequest() {
     }
 
-    public UpdateAvailabilityRequest(String caregiverId, Period newPeriod) {
+    public UpdateAvailabilityRequest(String caregiverId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.caregiverId = caregiverId;
-        this.newPeriod = newPeriod;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
     }
 
 
@@ -21,7 +24,11 @@ public class UpdateAvailabilityRequest {
         return caregiverId;
     }
 
-    public Period getNewPeriod() {
-        return newPeriod;
+    public LocalDateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public LocalDateTime getEndDateTime() {
+        return endDateTime;
     }
 }
