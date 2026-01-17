@@ -40,6 +40,14 @@ public class AvailabilityService {
     }
 
 
+    /*
+     Göra om imorgon:
+     1. Ändra dto request så det bara är (caregiverId, startDateTime, endDateTime) NO newPeriod Obj Wrapper
+     2. Fixa validering för ifall lunch och inte får vara 10 min i närheten av varandra
+     3. Dubbel kolla ordningen saker sker i updateAvailability kanske bör vi skapa den nya perioden för så vi har
+        tillgång till id innan vi skapar ny avail eller uppdaterar den+??????
+     4. TESTER och DUBBELKOLLA ALL VALIDERING
+     */
     public UpdateAvailabilityResponse updateAvailability(UpdateAvailabilityRequest request) {
 
         User user = authService.getAuthenticated();
@@ -51,11 +59,11 @@ public class AvailabilityService {
             throw new AccessDeniedException("Access denied");
         }
 
+        System.out.println("Request - " + request);
 
         Availability availability = availabilityRepository.findByCaregiverId(user.getId()).orElse(availabilityHelper.createAvailability(request));
         List<String> periodIds = availability.getPeriods();
-
-        String periodId = periodHelper.updatePeriods(request, periodIds);
+        String periodId = periodHelper.createPeriod(request, periodIds);
 
         periodIds.add(periodId);
 
@@ -91,7 +99,7 @@ public class AvailabilityService {
         }
         Availability availability = availabilityRepository.findByCaregiverId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Availability not found"));
-        if(!availability.getPeriods().contains(id)){
+        if (!availability.getPeriods().contains(id)) {
             throw new ResourceNotFoundException("Period not found in the availability");
         }
         periodHelper.deletePeriod(id);
