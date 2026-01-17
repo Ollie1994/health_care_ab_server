@@ -19,7 +19,6 @@ public class PeriodHelper {
     public void deletePeriod(String id) {
         periodRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Period not found"));
-
         periodRepository.deleteById(id);
     }
 

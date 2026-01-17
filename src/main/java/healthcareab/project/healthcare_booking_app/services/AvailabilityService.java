@@ -42,19 +42,19 @@ public class AvailabilityService {
 
     public UpdateAvailabilityResponse updateAvailability(UpdateAvailabilityRequest request) {
 
-        User caregiver = authService.getAuthenticated();
+        User user = authService.getAuthenticated();
 
-        if (!caregiver.getId().equals(request.getCaregiverId()) && request.getCaregiverId() != null) {
+        if (!user.getId().equals(request.getCaregiverId()) && request.getCaregiverId() != null) {
             throw new ConflictException("Conflicting ids");
         }
-        if (!caregiver.getRoles().contains(Role.CAREGIVER)) {
+        if (!user.getRoles().contains(Role.CAREGIVER)) {
             throw new AccessDeniedException("Access denied");
         }
-        if(request.getNewPeriod() == null || request.getNewPeriod().getEndDateTime() == null || request.getNewPeriod().getStartDateTime() == null) {
+        if (request.getNewPeriod() == null || request.getNewPeriod().getEndDateTime() == null || request.getNewPeriod().getStartDateTime() == null) {
             throw new IllegalArgumentException("New period is required");
         }
 
-        Availability availability = availabilityRepository.findByCaregiverId(caregiver.getId()).orElse(availabilityHelper.createAvailability(request));
+        Availability availability = availabilityRepository.findByCaregiverId(user.getId()).orElse(availabilityHelper.createAvailability(request));
 
         String periodId = periodHelper.updatePeriods(request);
         List<String> updatedPeriodIds = availability.getPeriods();
@@ -70,6 +70,9 @@ public class AvailabilityService {
 
     public List<Period> getMyAvailability() {
         User user = authService.getAuthenticated();
+        if (!user.getRoles().contains(Role.CAREGIVER)) {
+            throw new AccessDeniedException("Access denied");
+        }
         Availability availability = availabilityRepository.findByCaregiverId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Availability not found"));
         Period period;
@@ -84,9 +87,15 @@ public class AvailabilityService {
 
     public void deleteAvailabilityPeriodById(String id) {
         User user = authService.getAuthenticated();
-        periodHelper.deletePeriod(id);
+        if (!user.getRoles().contains(Role.CAREGIVER)) {
+            throw new AccessDeniedException("Access denied");
+        }
         Availability availability = availabilityRepository.findByCaregiverId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Availability not found"));
+        if(!availability.getPeriods().contains(id)){
+            throw new ResourceNotFoundException("Period not found in the availability");
+        }
+        periodHelper.deletePeriod(id);
         availability.getPeriods().remove(id);
         availabilityRepository.save(availability);
 
