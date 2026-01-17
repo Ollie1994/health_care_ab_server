@@ -25,9 +25,13 @@ public class PeriodHelper {
 
     public String updatePeriods(UpdateAvailabilityRequest request) {
         Period newPeriod = request.getNewPeriod();
+        LocalDate today = LocalDate.now();
 
         if (request.getNewPeriod() == null || request.getNewPeriod().getEndDateTime() == null || request.getNewPeriod().getStartDateTime() == null) {
             throw new IllegalArgumentException("New period is required");
+        }
+        if (newPeriod.getStartDateTime().toLocalDate().isBefore(today) || newPeriod.getEndDateTime().toLocalDate().isBefore(today)) {
+            throw new IllegalArgumentException("Period cant be before today's date");
         }
 
         if (newPeriod.getStartDateTime().isAfter(newPeriod.getEndDateTime())) {
@@ -46,7 +50,6 @@ public class PeriodHelper {
 //        System.out.println("After formatting: " + formattedToday + ",  " + formattedStartDate + " - " + formattedEndDate);
 //
 
-        LocalDate today = LocalDate.now();
         java.time.Period result = java.time.Period.between(today, newPeriod.getStartDateTime().toLocalDate());
         System.out.println("Days between today and this availability: " + result.getDays());
         if (result.getDays() > 28) {
