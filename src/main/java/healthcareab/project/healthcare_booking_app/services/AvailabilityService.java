@@ -53,13 +53,14 @@ public class AvailabilityService {
 
 
         Availability availability = availabilityRepository.findByCaregiverId(user.getId()).orElse(availabilityHelper.createAvailability(request));
+        List<String> periodIds = availability.getPeriods();
 
-        String periodId = periodHelper.updatePeriods(request);
-        List<String> updatedPeriodIds = availability.getPeriods();
-        updatedPeriodIds.add(periodId);
+        String periodId = periodHelper.updatePeriods(request, periodIds);
+
+        periodIds.add(periodId);
 
         availability.setCaregiverId(request.getCaregiverId());
-        availability.setPeriods(updatedPeriodIds);
+        availability.setPeriods(periodIds);
 
         Availability updatedAvailability = availabilityRepository.save(availability);
         return availabilityConverter.convertToUpdateAvailabilityResponse(updatedAvailability);
