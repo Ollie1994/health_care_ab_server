@@ -6,6 +6,8 @@ import healthcareab.project.healthcare_booking_app.models.Period;
 import healthcareab.project.healthcare_booking_app.repository.PeriodRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class PeriodHelper {
     private final PeriodRepository periodRepository;
@@ -15,7 +17,6 @@ public class PeriodHelper {
     }
 
 
-
     public void deletePeriod(String id) {
         periodRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Period not found"));
@@ -23,8 +24,34 @@ public class PeriodHelper {
     }
 
     public String updatePeriods(UpdateAvailabilityRequest request) {
-
         Period newPeriod = request.getNewPeriod();
+
+        if (request.getNewPeriod() == null || request.getNewPeriod().getEndDateTime() == null || request.getNewPeriod().getStartDateTime() == null) {
+            throw new IllegalArgumentException("New period is required");
+        }
+
+        if (newPeriod.getStartDateTime().isAfter(newPeriod.getEndDateTime())) {
+            throw new IllegalArgumentException("New period start date should be before end date");
+        }
+        if (newPeriod.getStartDateTime().isEqual(newPeriod.getEndDateTime())) {
+            throw new IllegalArgumentException("New period start date cant be equal to end date");
+        }
+
+
+//        System.out.println("Before formatting: " + today);
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        String formattedToday = today.format(formatter);
+//        String formattedStartDate = newPeriod.getStartDateTime().format(formatter);
+//        String formattedEndDate = newPeriod.getEndDateTime().format(formatter);
+//        System.out.println("After formatting: " + formattedToday + ",  " + formattedStartDate + " - " + formattedEndDate);
+//
+
+        LocalDate today = LocalDate.now();
+        java.time.Period result = java.time.Period.between(today, newPeriod.getStartDateTime().toLocalDate());
+        System.out.println("Days between today and this availability: " + result.getDays());
+        if (result.getDays() > 28) {
+            throw new IllegalArgumentException("New period cant be added that is more than 28 days in the future");
+        }
 
         // 1 timme period - 10 min break. 60 min lunch 12-13
 

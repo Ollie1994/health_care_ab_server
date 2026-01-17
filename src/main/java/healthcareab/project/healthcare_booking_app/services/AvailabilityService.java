@@ -50,9 +50,7 @@ public class AvailabilityService {
         if (!user.getRoles().contains(Role.CAREGIVER)) {
             throw new AccessDeniedException("Access denied");
         }
-        if (request.getNewPeriod() == null || request.getNewPeriod().getEndDateTime() == null || request.getNewPeriod().getStartDateTime() == null) {
-            throw new IllegalArgumentException("New period is required");
-        }
+
 
         Availability availability = availabilityRepository.findByCaregiverId(user.getId()).orElse(availabilityHelper.createAvailability(request));
 
