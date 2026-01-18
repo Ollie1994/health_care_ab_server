@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AvailabilityControllerTest {
@@ -79,6 +79,20 @@ class AvailabilityControllerTest {
     }
 
 
+    @Test
+    void deleteAvailabilityPeriodById_shouldReturn_204NoContent() {
 
+        // Arrange
+        String periodId = "period123";
+        doNothing().when(availabilityService).deleteAvailabilityPeriodById(periodId);
+
+        // Act
+        ResponseEntity<?> response =
+                availabilityController.deleteAvailabilityPeriodById(periodId);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(availabilityService).deleteAvailabilityPeriodById(periodId);
+    }
 
 }
