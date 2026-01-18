@@ -28,6 +28,13 @@ public class Period {
     public Period() {
     }
 
+    public Period(String id, LocalDateTime startDateTime, LocalDateTime endDateTime, LocalDate createdAt, LocalDate updatedAt) {
+        this.id = id;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     public String getId() {
         return id;
