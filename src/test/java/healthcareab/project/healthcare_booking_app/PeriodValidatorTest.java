@@ -35,7 +35,7 @@ class PeriodValidatorTest {
     @BeforeEach
     void setup() {
         baseStart = LocalDate.now().plusDays(1).atTime(9, 0);
-        baseEnd   = baseStart.plusHours(1);
+        baseEnd = baseStart.plusHours(1);
     }
 
     // ---------- ✅ POSITIVE ----------
@@ -45,8 +45,9 @@ class PeriodValidatorTest {
         UpdateAvailabilityRequest request =
                 new UpdateAvailabilityRequest("CAREGIVER_ID", baseStart, baseEnd);
 
+        List<String> periodIds = List.of();
         assertDoesNotThrow(() ->
-                periodValidator.validateUpdatePeriod(request, List.of()));
+                periodValidator.validateUpdatePeriod(request, periodIds));
     }
 
     // ---------- ❌ NEGATIVES ----------
@@ -56,8 +57,10 @@ class PeriodValidatorTest {
         UpdateAvailabilityRequest request =
                 new UpdateAvailabilityRequest("CAREGIVER_ID", baseStart, null);
 
+        List<String> periodIds = List.of(); // moved outside
+
         assertThrows(IllegalArgumentException.class,
-                () -> periodValidator.validateUpdatePeriod(request, List.of()));
+                () -> periodValidator.validateUpdatePeriod(request, periodIds));
     }
 
     @Test
@@ -68,9 +71,10 @@ class PeriodValidatorTest {
                         baseEnd.plusHours(1),
                         baseEnd
                 );
+        List<String> periodIds = List.of(); // moved outside
 
         assertThrows(IllegalArgumentException.class,
-                () -> periodValidator.validateUpdatePeriod(request, List.of()));
+                () -> periodValidator.validateUpdatePeriod(request, periodIds));
     }
 
     @Test
@@ -78,8 +82,10 @@ class PeriodValidatorTest {
         UpdateAvailabilityRequest request =
                 new UpdateAvailabilityRequest("CAREGIVER_ID", baseStart, baseStart);
 
+        List<String> periodIds = List.of(); // moved outside
+
         assertThrows(IllegalArgumentException.class,
-                () -> periodValidator.validateUpdatePeriod(request, List.of()));
+                () -> periodValidator.validateUpdatePeriod(request, periodIds));
     }
 
     @Test
@@ -91,8 +97,10 @@ class PeriodValidatorTest {
                         LocalDateTime.now().minusDays(1).plusHours(1)
                 );
 
+        List<String> periodIds = List.of(); // moved outside
+
         assertThrows(IllegalArgumentException.class,
-                () -> periodValidator.validateUpdatePeriod(request, List.of()));
+                () -> periodValidator.validateUpdatePeriod(request, periodIds));
     }
 
     @Test
@@ -106,8 +114,10 @@ class PeriodValidatorTest {
                         start.plusHours(1)
                 );
 
+        List<String> periodIds = List.of(); // moved outside
+
         assertThrows(IllegalArgumentException.class,
-                () -> periodValidator.validateUpdatePeriod(request, List.of()));
+                () -> periodValidator.validateUpdatePeriod(request, periodIds));
     }
 
     @Test
@@ -119,8 +129,10 @@ class PeriodValidatorTest {
                         baseStart.plusMinutes(61)
                 );
 
+        List<String> periodIds = List.of(); // moved outside
+
         assertThrows(IllegalArgumentException.class,
-                () -> periodValidator.validateUpdatePeriod(request, List.of()));
+                () -> periodValidator.validateUpdatePeriod(request, periodIds));
     }
 
     @Test
@@ -131,9 +143,10 @@ class PeriodValidatorTest {
                         baseStart,
                         baseStart.plusMinutes(30)
                 );
+        List<String> periodIds = List.of(); // moved outside
 
         assertThrows(IllegalArgumentException.class,
-                () -> periodValidator.validateUpdatePeriod(request, List.of()));
+                () -> periodValidator.validateUpdatePeriod(request, periodIds));
     }
 
     @Test
@@ -146,9 +159,10 @@ class PeriodValidatorTest {
                         lunchStart,
                         lunchStart.plusHours(1)
                 );
+        List<String> periodIds = List.of(); // moved outside
 
         assertThrows(IllegalArgumentException.class,
-                () -> periodValidator.validateUpdatePeriod(request, List.of()));
+                () -> periodValidator.validateUpdatePeriod(request, periodIds));
     }
 
     @Test
@@ -162,8 +176,10 @@ class PeriodValidatorTest {
                         start.plusHours(1).withHour(12).plusMinutes(30)
                 );
 
+        List<String> periodIds = List.of(); // moved outside
+
         assertThrows(IllegalArgumentException.class,
-                () -> periodValidator.validateUpdatePeriod(request, List.of()));
+                () -> periodValidator.validateUpdatePeriod(request, periodIds));
     }
 
     @Test
@@ -178,8 +194,13 @@ class PeriodValidatorTest {
         UpdateAvailabilityRequest request =
                 new UpdateAvailabilityRequest("CAREGIVER_ID", baseStart, baseEnd);
 
+        List<String> periodIds = List.of("p1"); // moved outside
+
         assertThrows(IllegalArgumentException.class,
-                () -> periodValidator.validateUpdatePeriod(request, List.of("p1")));
+                () -> periodValidator.validateUpdatePeriod(request, periodIds));
+
+
+
     }
 }
 

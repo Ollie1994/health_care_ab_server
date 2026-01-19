@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class AvailabilityConverter {
 
-
-
     public UpdateAvailabilityResponse convertToUpdateAvailabilityResponse(Availability availability) {
         return new UpdateAvailabilityResponse(
                 "Availability has been updated successfully"
