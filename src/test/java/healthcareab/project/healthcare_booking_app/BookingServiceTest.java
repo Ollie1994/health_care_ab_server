@@ -619,8 +619,117 @@ class BookingServiceTest {
     }
 
     @Test
-    void cancelBooking_shouldReturnPatchBookingResponse_whenSuccessful() {
+    void getNextBooking_whenUserIsPatientAndCaregiverIsNotFound_shouldThrowResourceNotFoundException() {
+        // --- ARRANGE ---
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+        patient.setRoles(Set.of(Role.PATIENT));
 
+        caregiver.setFirstName("Dr");
+        caregiver.setLastName("McCaregiver");
+        caregiver.setRoles(Set.of(Role.CAREGIVER));
+
+        Booking nextBooking = new Booking("BOOKING_ID_1");
+        nextBooking.setPatientId(patient.getId());
+        nextBooking.setCaregiverId(caregiver.getId()); // caregiver ID exists
+        nextBooking.setStartDateTime(LocalDateTime.of(2026, 8, 5, 10, 0));
+        nextBooking.setEndDateTime(LocalDateTime.of(2026, 8, 5, 11, 0));
+        nextBooking.setStatus(BookingStatus.CONFIRMED);
+        nextBooking.setSymptoms(List.of("Flu", "Cough"));
+
+        // Authenticated patient
+        when(authService.getAuthenticated()).thenReturn(patient);
+        when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
+
+        // Booking exists
+        when(bookingRepository.findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(patient.getId()), any(LocalDateTime.class)))
+                .thenReturn(nextBooking);
+
+        // Caregiver is NOT found in repository
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.empty());
+
+        // --- ACT & ASSERT ---
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> bookingService.getNextBooking());
+
+        assertEquals("Caregiver not found", exception.getMessage());
+
+        // --- VERIFY ---
+        verify(bookingRepository).findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(patient.getId()), any(LocalDateTime.class));
+        verify(userRepository).findById(patient.getId());
+        verify(userRepository).findById(caregiver.getId());
+    }
+
+    @Test
+    void getNextBooking_whenUserIsCaregiverAndPatientIsNotFound_shouldThrowResourceNotFoundException() {
+        // --- ARRANGE ---
+        caregiver.setFirstName("Dr");
+        caregiver.setLastName("McCaregiver");
+        caregiver.setRoles(Set.of(Role.CAREGIVER));
+
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+        patient.setRoles(Set.of(Role.PATIENT));
+
+        Booking nextBooking = new Booking("BOOKING_ID_1");
+        nextBooking.setPatientId(patient.getId()); // patient ID for booking
+        nextBooking.setCaregiverId(caregiver.getId());
+        nextBooking.setStartDateTime(LocalDateTime.of(2026, 8, 5, 10, 0));
+        nextBooking.setEndDateTime(LocalDateTime.of(2026, 8, 5, 11, 0));
+        nextBooking.setStatus(BookingStatus.CONFIRMED);
+        nextBooking.setSymptoms(List.of("Flu", "Cough"));
+
+        // Authenticated caregiver
+        when(authService.getAuthenticated()).thenReturn(caregiver);
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
+
+        // Booking exists for caregiver
+        when(bookingRepository.findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(caregiver.getId()), any(LocalDateTime.class)))
+                .thenReturn(nextBooking);
+
+        // Patient NOT found
+        when(userRepository.findById(patient.getId())).thenReturn(Optional.empty());
+
+        // --- ACT & ASSERT ---
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> bookingService.getNextBooking());
+
+        assertEquals("Patient not found", exception.getMessage()); // matches your current exception message in service
+
+        // --- VERIFY ---
+        verify(bookingRepository).findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(caregiver.getId()), any(LocalDateTime.class));
+        verify(userRepository).findById(caregiver.getId());
+        verify(userRepository).findById(patient.getId());
+    }
+
+    @Test
+    void getNextBooking_whenUserNotFound_shouldThrowResourceNotFoundException() {
+        User user = new User("PATIENT_ID_123","patient", "password", null);
+
+        // --- Arrange ---
+        user.setRoles(Set.of(Role.PATIENT));
+
+        when(authService.getAuthenticated()).thenReturn(user);
+
+        // Simulate user not found in repository
+        when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+
+        // --- Act & Assert ---
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> bookingService.getNextBooking());
+
+        assertEquals("User not found", exception.getMessage());
+
+        // --- Verify ---
+        verify(userRepository).findById(user.getId());
+    }
+
+    @Test
+    void cancelBooking_shouldReturnPatchBookingResponse_whenSuccessful() {
         // --- ARRANGE ---
         when(bookingRepository.findById("booking1")).thenReturn(Optional.of(booking));
         when(authService.getAuthenticated()).thenReturn(patient);

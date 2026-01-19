@@ -133,7 +133,7 @@ public class BookingService {
         if (user.getRoles().contains(Role.CAREGIVER)) {
             Booking booking = bookingRepository.findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(user.getId(), LocalDateTime.now());
             if (booking != null) {
-                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
                 String dayOfWeek = booking.getStartDateTime().getDayOfWeek().toString();
                 return Optional.of(
                         bookingConverter.convertToGetNextBookingResponse(

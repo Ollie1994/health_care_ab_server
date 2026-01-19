@@ -1,7 +1,5 @@
 package healthcareab.project.healthcare_booking_app.dto;
 
-import healthcareab.project.healthcare_booking_app.models.BookingStatus;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,55 +32,27 @@ public class GetNextBookingResponse {
         return startDateTime;
     }
 
-    public void setStartDateTime(LocalDateTime startDateTime) {
-        this.startDateTime = startDateTime;
-    }
-
     public LocalDateTime getEndDateTime() {
         return endDateTime;
-    }
-
-    public void setEndDateTime(LocalDateTime endDateTime) {
-        this.endDateTime = endDateTime;
     }
 
     public String getDayOfWeek() {
         return dayOfWeek;
     }
 
-    public void setDayOfWeek(String dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
-    }
-
     public String getFullName() {
         return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public List<String> getSymptoms() {
         return symptoms;
     }
 
-    public void setSymptoms(List<String> symptoms) {
-        this.symptoms = symptoms;
-    }
-
     public String getReason() {
         return reason;
     }
 
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
     public String getNote() {
         return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
     }
 }
