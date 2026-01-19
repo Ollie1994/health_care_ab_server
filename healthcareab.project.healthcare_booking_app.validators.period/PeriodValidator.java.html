@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PeriodValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">healthcare_booking_app</a> &gt; <a href="index.source.html" class="el_package">healthcareab.project.healthcare_booking_app.validators.period</a> &gt; <span class="el_source">PeriodValidator.java</span></div><h1>PeriodValidator.java</h1><pre class="source lang-java linenums">package healthcareab.project.healthcare_booking_app.validators.period;
+
+import healthcareab.project.healthcare_booking_app.dto.UpdateAvailabilityRequest;
+import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
+import healthcareab.project.healthcare_booking_app.models.Period;
+import healthcareab.project.healthcare_booking_app.repository.PeriodRepository;
+import org.springframework.stereotype.Component;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+public class PeriodValidator {
+    private final PeriodRepository periodRepository;
+
+<span class="fc" id="L21">    public PeriodValidator(PeriodRepository periodRepository) {</span>
+<span class="fc" id="L22">        this.periodRepository = periodRepository;</span>
+<span class="fc" id="L23">    }</span>
+
+
+    public void validateUpdatePeriod(UpdateAvailabilityRequest request, List&lt;String&gt; periodIds) {
+
+<span class="fc" id="L28">        LocalDate today = LocalDate.now();</span>
+
+        // Standard format validation
+<span class="pc bpc" id="L31" title="2 of 6 branches missed.">        if (request.getEndDateTime() == null || request.getStartDateTime() == null || request.getCaregiverId() == null) {</span>
+<span class="fc" id="L32">            throw new IllegalArgumentException(&quot;Request cant have null values&quot;);</span>
+        }
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (request.getStartDateTime().isAfter(request.getEndDateTime())) {</span>
+<span class="fc" id="L35">            throw new IllegalArgumentException(&quot;Period start date should be before end date&quot;);</span>
+        }
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (request.getStartDateTime().isEqual(request.getEndDateTime())) {</span>
+<span class="fc" id="L38">            throw new IllegalArgumentException(&quot;Period start date cant be equal to end date&quot;);</span>
+        }
+<span class="pc bpc" id="L40" title="1 of 4 branches missed.">        if (request.getStartDateTime().toLocalDate().isBefore(today) || request.getEndDateTime().toLocalDate().isBefore(today)) {</span>
+<span class="fc" id="L41">            throw new IllegalArgumentException(&quot;Period cant be before today's date&quot;);</span>
+        }
+
+        // Validation for how far ahead you can set availability
+<span class="fc" id="L45">        long daysAhead = ChronoUnit.DAYS.between(today, request.getStartDateTime().toLocalDate());</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (daysAhead &gt; 28) {</span>
+<span class="fc" id="L47">            throw new IllegalArgumentException(&quot;Period cant be added that is more than 28 days in the future&quot;);</span>
+        }
+
+        // Validation for availability length
+<span class="fc" id="L51">        Duration duration = Duration.between(request.getStartDateTime(), request.getEndDateTime());</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (duration.toMinutes() &gt; 60) {</span>
+<span class="fc" id="L53">            throw new IllegalArgumentException(&quot;Period cant be longer than 1 hour&quot;);</span>
+        }
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (duration.toMinutes() &lt; 60) {</span>
+<span class="fc" id="L56">            throw new IllegalArgumentException(&quot;Period cant be shorter than 1 hour&quot;);</span>
+        }
+
+        // validation for lunch time
+<span class="fc" id="L60">        LocalTime start = request.getStartDateTime().toLocalTime();</span>
+<span class="fc" id="L61">        LocalTime end = request.getEndDateTime().toLocalTime();</span>
+<span class="pc bpc" id="L62" title="1 of 4 branches missed.">        if (start.compareTo(LocalTime.NOON) &gt;= 0 &amp;&amp; start.compareTo(LocalTime.of(13, 0)) &lt; 0) {</span>
+<span class="fc" id="L63">            throw new IllegalArgumentException(&quot;Start time cannot be during lunch (12:00–13:00)&quot;);</span>
+        }
+<span class="pc bpc" id="L65" title="3 of 4 branches missed.">        if (end.compareTo(LocalTime.NOON) &gt; 0 &amp;&amp; end.compareTo(LocalTime.of(13, 0)) &lt; 0) {</span>
+<span class="nc" id="L66">            throw new IllegalArgumentException(&quot;End time cannot be during lunch (12:00–13:00)&quot;);</span>
+        }
+
+
+        // Validate new period against existing periods
+<span class="pc bpc" id="L71" title="2 of 6 branches missed.">        if (periodIds != null &amp;&amp; !periodIds.isEmpty() &amp;&amp; periodIds.get(0) != null) {</span>
+
+<span class="fc" id="L73">            List&lt;Period&gt; periods = new ArrayList&lt;&gt;();</span>
+            Period period;
+
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            for (String id : periodIds) {</span>
+<span class="fc" id="L77">                period = periodRepository.findById(id)</span>
+<span class="pc" id="L78">                        .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Period not found&quot;));</span>
+<span class="fc" id="L79">                periods.add(period);</span>
+<span class="fc" id="L80">            }</span>
+
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">            for (Period p : periods) {</span>
+<span class="fc" id="L83">                LocalDateTime startDateTime = p.getStartDateTime();</span>
+<span class="fc" id="L84">                LocalDateTime endDateTime = p.getEndDateTime();</span>
+<span class="pc bpc" id="L85" title="2 of 4 branches missed.">                if (request.getStartDateTime().equals(startDateTime) || request.getEndDateTime().equals(endDateTime)) {</span>
+<span class="nc" id="L86">                    throw new IllegalArgumentException(&quot;Period already exists&quot;);</span>
+                }
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                if (Duration.between(endDateTime, request.getStartDateTime()).abs().toMinutes() &lt; 10</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                        || Duration.between(startDateTime, request.getEndDateTime()).abs().toMinutes() &lt; 10) {</span>
+<span class="nc" id="L90">                    throw new IllegalArgumentException(&quot;Period cant be scheduled within 10 minutes of another meeting&quot;);</span>
+                }
+<span class="pc bpc" id="L92" title="5 of 6 branches missed.">                if (request.getStartDateTime().isBefore(startDateTime) &amp;&amp; request.getEndDateTime().isBefore(endDateTime) &amp;&amp; request.getEndDateTime().isAfter(startDateTime)) {</span>
+<span class="nc" id="L93">                    throw new IllegalArgumentException(&quot;Period cant be within an already existing period&quot;);</span>
+                }
+<span class="pc bpc" id="L95" title="3 of 6 branches missed.">                if (request.getStartDateTime().isAfter(startDateTime) &amp;&amp; request.getEndDateTime().isAfter(endDateTime) &amp;&amp; request.getStartDateTime().isBefore(endDateTime)) {</span>
+<span class="fc" id="L96">                    throw new IllegalArgumentException(&quot;Period cant be within an already existing period&quot;);</span>
+                }
+<span class="nc" id="L98">            }</span>
+        }
+<span class="fc" id="L100">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
