@@ -66,24 +66,24 @@ public class BookingService {
         User user = authService.getAuthenticated();
         user = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (user.getRoles().contains(Role.PATIENT)) {
-            List<Booking> bookings = bookingRepository.findByPatientIdOrderByStartDateTimeDesc(user.getId());
-            List<GetBookingsResponse> responses = new ArrayList<>();
-            // For each booking, find the caregivers name, convert to DTO and add to response.
-            for (Booking booking : bookings) {
-                User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
-                String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
-                responses.add(bookingConverter.convertToGetBookingsResponse(booking, fullName));
-            }
-            return responses;
-
-        } else if (user.getRoles().contains(Role.CAREGIVER)) {
+        if (user.getRoles().contains(Role.CAREGIVER)) {
             List<Booking> bookings = bookingRepository.findByCaregiverIdOrderByStartDateTimeDesc(user.getId());
             List<GetBookingsResponse> responses = new ArrayList<>();
             // For each booking, find the patients name, convert to DTO and add to response.
             for (Booking booking : bookings) {
                 User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
                 String fullName = patient.getFirstName() + " " + patient.getLastName();
+                responses.add(bookingConverter.convertToGetBookingsResponse(booking, fullName));
+            }
+            return responses;
+
+        } else if (user.getRoles().contains(Role.PATIENT)) {
+            List<Booking> bookings = bookingRepository.findByPatientIdOrderByStartDateTimeDesc(user.getId());
+            List<GetBookingsResponse> responses = new ArrayList<>();
+            // For each booking, find the caregivers name, convert to DTO and add to response.
+            for (Booking booking : bookings) {
+                User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+                String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
                 responses.add(bookingConverter.convertToGetBookingsResponse(booking, fullName));
             }
             return responses;
@@ -97,19 +97,7 @@ public class BookingService {
         User user = authService.getAuthenticated();
         user = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (user.getRoles().contains(Role.PATIENT)) {
-            // Gets only past bookings
-            List<Booking> bookings = bookingRepository.findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(user.getId(), LocalDateTime.now());
-            List<GetBookingHistoryResponse> responses = new ArrayList<>();
-            // For each booking, find the caregivers name, convert to DTO and add to response.
-            for (Booking booking : bookings) {
-                User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
-                String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
-                responses.add(bookingConverter.convertToGetBookingHistoryResponse(booking, fullName));
-            }
-            return responses;
-
-        } else if (user.getRoles().contains(Role.CAREGIVER)) {
+        if (user.getRoles().contains(Role.CAREGIVER)) {
             // Gets only past bookings
             List<Booking> bookings = bookingRepository.findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(user.getId(), LocalDateTime.now());
             List<GetBookingHistoryResponse> responses = new ArrayList<>();
@@ -117,6 +105,18 @@ public class BookingService {
             for (Booking booking : bookings) {
                 User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
                 String fullName = patient.getFirstName() + " " + patient.getLastName();
+                responses.add(bookingConverter.convertToGetBookingHistoryResponse(booking, fullName));
+            }
+            return responses;
+
+        } else if (user.getRoles().contains(Role.PATIENT)) {
+            // Gets only past bookings
+            List<Booking> bookings = bookingRepository.findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(user.getId(), LocalDateTime.now());
+            List<GetBookingHistoryResponse> responses = new ArrayList<>();
+            // For each booking, find the caregivers name, convert to DTO and add to response.
+            for (Booking booking : bookings) {
+                User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+                String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
                 responses.add(bookingConverter.convertToGetBookingHistoryResponse(booking, fullName));
             }
             return responses;
@@ -130,7 +130,18 @@ public class BookingService {
         User user = authService.getAuthenticated();
         user = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (user.getRoles().contains(Role.PATIENT)) {
+        if (user.getRoles().contains(Role.CAREGIVER)) {
+            Booking booking = bookingRepository.findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(user.getId(), LocalDateTime.now());
+            if (booking != null) {
+                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+                String dayOfWeek = booking.getStartDateTime().getDayOfWeek().toString();
+                return Optional.of(
+                        bookingConverter.convertToGetNextBookingResponse(
+                                booking, dayOfWeek,
+                                patient.getFirstName() + " " +
+                                        patient.getLastName()));
+            }
+        } else if (user.getRoles().contains(Role.PATIENT)) {
             Booking booking = bookingRepository.findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(user.getId(), LocalDateTime.now());
             if (booking != null) {
             User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
@@ -141,17 +152,6 @@ public class BookingService {
                             dayOfWeek,
                             caregiver.getFirstName() + " " +
                                     caregiver.getLastName()));
-            }
-        } else if (user.getRoles().contains(Role.CAREGIVER)) {
-            Booking booking = bookingRepository.findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(user.getId(), LocalDateTime.now());
-            if (booking != null) {
-                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
-                String dayOfWeek = booking.getStartDateTime().getDayOfWeek().toString();
-                return Optional.of(
-                        bookingConverter.convertToGetNextBookingResponse(
-                                booking, dayOfWeek,
-                                patient.getFirstName() + " " +
-                                        patient.getLastName()));
             }
         }
         return Optional.empty();
