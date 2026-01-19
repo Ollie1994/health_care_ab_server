@@ -4,6 +4,7 @@ import healthcareab.project.healthcare_booking_app.converters.AvailabilityConver
 import healthcareab.project.healthcare_booking_app.dto.UpdateAvailabilityRequest;
 import healthcareab.project.healthcare_booking_app.dto.UpdateAvailabilityResponse;
 import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedException;
+import healthcareab.project.healthcare_booking_app.exceptions.ConflictException;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
 import healthcareab.project.healthcare_booking_app.helpers.availability.AvailabilityHelper;
 import healthcareab.project.healthcare_booking_app.helpers.period.PeriodHelper;
@@ -160,12 +161,32 @@ class AvailabilityServiceTest {
 
     // negative tests
     @Test
-    void getMyAvailability_shouldThrowAccessDenied_whenNotCaregiver() {
+    void getMyAvailability_shouldThrowAccessDenied_whenNotCaregiverRole() {
         caregiver.setRoles(Set.of(Role.PATIENT));
         when(authService.getAuthenticated()).thenReturn(caregiver);
 
         assertThrows(AccessDeniedException.class,
                 () -> availabilityService.getMyAvailability());
+    }
+
+    @Test
+    void updateAvailability_shouldThrow_ConflictException_whenAuthenticatedIdDoesNotMatchRequest() {
+        // Arrange
+        User authenticatedUser = new User("AUTH_ID");
+        UpdateAvailabilityRequest request =
+                new UpdateAvailabilityRequest(
+                        "DIFFERENT_ID", // mismatching caregiverId
+                        LocalDateTime.now().plusDays(1).withHour(9),
+                        LocalDateTime.now().plusDays(1).withHour(10)
+                );
+
+        when(authService.getAuthenticated()).thenReturn(authenticatedUser);
+
+        // Act + Assert
+        ConflictException exception = assertThrows(ConflictException.class,
+                () -> availabilityService.updateAvailability(request));
+
+        assertEquals("Conflicting ids", exception.getMessage());
     }
 
     @Test
