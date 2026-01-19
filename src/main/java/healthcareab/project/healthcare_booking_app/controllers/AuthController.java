@@ -54,6 +54,8 @@ public class AuthController {
         user.setFirstName(registerRequest.getFirstName());
         user.setLastName(registerRequest.getLastName());
         user.setSocialSecurityNumber(registerRequest.getSocialSecurityNumber());
+        // ADDING isANO
+        user.setIsAnonymous(false);
 
         if(registerRequest.getRoles() == null || registerRequest.getRoles().isEmpty()) {
             user.setRoles(Set.of(Role.PATIENT));

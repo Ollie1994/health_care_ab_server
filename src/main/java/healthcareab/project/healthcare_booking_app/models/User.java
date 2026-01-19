@@ -31,6 +31,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String socialSecurityNumber;
+    private Boolean isAnonymous;
 
     public User() {
     }
@@ -117,5 +118,13 @@ public class User {
 
     public void setSocialSecurityNumber(String socialSecurityNumber) {
         this.socialSecurityNumber = socialSecurityNumber;
+    }
+
+    public Boolean getIsAnonymous() {
+        return isAnonymous;
+    }
+
+    public void setIsAnonymous(Boolean isAnonymous) {
+        this.isAnonymous = isAnonymous;
     }
 }
