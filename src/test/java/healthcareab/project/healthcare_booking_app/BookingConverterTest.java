@@ -163,10 +163,10 @@ class BookingConverterTest {
         // --- Assert ---
         assertNotNull(response);
         assertEquals("booking1", response.getBookingId());
-        assertEquals("John", response.getCaregiver_first_name());
+        assertEquals("John", response.getCaregiverFirstName());
         assertEquals(BookingStatus.CANCELLED, response.getStatus());
-        assertEquals(booking.getStartDateTime(), response.getStart_date_time());
-        assertEquals(booking.getEndDateTime(), response.getEnd_date_time());
+        assertEquals(booking.getStartDateTime(), response.getStartDateTime());
+        assertEquals(booking.getEndDateTime(), response.getEndDateTime());
         assertEquals("Booking has been cancelled successfully", response.getMessage());
     }
 
@@ -209,10 +209,10 @@ class BookingConverterTest {
 
         assertNotNull(response);
         assertNull(response.getBookingId());
-        assertNull(response.getCaregiver_first_name());
+        assertNull(response.getCaregiverFirstName());
         assertNull(response.getStatus());
-        assertNull(response.getStart_date_time());
-        assertNull(response.getEnd_date_time());
+        assertNull(response.getStartDateTime());
+        assertNull(response.getEndDateTime());
         assertEquals("Booking has been cancelled successfully", response.getMessage());
     }
 }
