@@ -167,7 +167,6 @@ class BookingConverterTest {
         assertEquals(booking.getNotesFromPatient(), response.getNote());
     }
 
-
     // -------------------- PATCH BOOKING TESTS --------------------
     @Test
     void testConvertToPatchBookingResponse_Success() {

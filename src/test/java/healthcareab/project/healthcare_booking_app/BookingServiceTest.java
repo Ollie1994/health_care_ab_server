@@ -729,6 +729,24 @@ class BookingServiceTest {
     }
 
     @Test
+    void getNextBooking_whenUserUnauthorized_shouldThrowAccessDeniedException() {
+        // --- Arrange ---
+        // Simulate unauthorized request
+        when(authService.getAuthenticated()).thenThrow(new AccessDeniedException("Forbidden"));
+
+        // --- Act & Assert ---
+        AccessDeniedException exception = assertThrows(AccessDeniedException.class,
+                () -> bookingService.getNextBooking());
+
+        assertEquals("Forbidden", exception.getMessage());
+
+        // --- Verify ---
+        verify(authService).getAuthenticated();
+        verifyNoMoreInteractions(userRepository, bookingRepository, bookingConverter);
+    }
+
+
+    @Test
     void cancelBooking_shouldReturnPatchBookingResponse_whenSuccessful() {
         // --- ARRANGE ---
         when(bookingRepository.findById("booking1")).thenReturn(Optional.of(booking));
