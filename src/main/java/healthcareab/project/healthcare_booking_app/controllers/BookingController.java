@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/booking")
@@ -37,8 +38,10 @@ private final BookingService bookingService;
     }
 
     @GetMapping("/upcoming")
-    public GetNextBookingResponse getNextBooking() {
-        return bookingService.getNextBooking();
+    public ResponseEntity<GetNextBookingResponse> getNextBooking() {
+        return bookingService.getNextBooking()
+                .map(ResponseEntity::ok)// 200 OK if booking exists
+                .orElseGet(() -> ResponseEntity.noContent().build()); // 204 No Content if no booking exists (empty)
     }
 
     // For cancelling a booking

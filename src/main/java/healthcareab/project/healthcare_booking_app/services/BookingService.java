@@ -15,10 +15,12 @@ import healthcareab.project.healthcare_booking_app.repository.BookingRepository;
 import healthcareab.project.healthcare_booking_app.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -124,27 +126,35 @@ public class BookingService {
         }
     }
 
-    public GetNextBookingResponse getNextBooking() {
+    public Optional<GetNextBookingResponse> getNextBooking() {
         User user = authService.getAuthenticated();
         user = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Booking booking = null;
-        String fullName;
 
         if (user.getRoles().contains(Role.PATIENT)) {
-            booking = bookingRepository.findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(user.getId(), LocalDateTime.now());
+            Booking booking = bookingRepository.findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(user.getId(), LocalDateTime.now());
+            if (booking != null) {
             User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
-            fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
-
-        } else if (user.getRoles().contains(Role.CAREGIVER)) {
-            booking = bookingRepository.findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(user.getId(), LocalDateTime.now());
-            User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
-            fullName = patient.getFirstName() + " " + patient.getLastName();
-        }
-        if (booking != null) {
             String dayOfWeek = booking.getStartDateTime().getDayOfWeek().toString();
-            return bookingConverter.convertToGetNextBookingResponse(booking, dayOfWeek, fullName);
+            return Optional.of(
+                    bookingConverter.convertToGetNextBookingResponse(
+                            booking,
+                            dayOfWeek,
+                            caregiver.getFirstName() + " " +
+                                    caregiver.getLastName()));
+            }
+        } else if (user.getRoles().contains(Role.CAREGIVER)) {
+            Booking booking = bookingRepository.findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(user.getId(), LocalDateTime.now());
+            if (booking != null) {
+                User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+                String dayOfWeek = booking.getStartDateTime().getDayOfWeek().toString();
+                return Optional.of(
+                        bookingConverter.convertToGetNextBookingResponse(
+                                booking, dayOfWeek,
+                                patient.getFirstName() + " " +
+                                        patient.getLastName()));
+            }
         }
-        return null;
+        return Optional.empty();
     }
 
     public PatchBookingResponse cancelBooking(String bookingId) {

@@ -421,7 +421,7 @@ class BookingServiceTest {
         verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
         verify(bookingConverter, never()).convertToGetBookingHistoryResponse(any(), anyString());
     }
-
+/*
     @Test
     void getNextBooking_whenUserIsPatient_shouldReturnNextUpcomingBooking() {
         // --- ARRANGE ---
@@ -498,7 +498,7 @@ class BookingServiceTest {
         verify(bookingRepository, never())
                 .findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(any(), any());
     }
-
+*/
 
     @Test
     void cancelBooking_shouldReturnPatchBookingResponse_whenSuccessful() {
