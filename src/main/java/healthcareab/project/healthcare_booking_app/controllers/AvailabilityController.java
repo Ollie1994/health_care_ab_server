@@ -20,14 +20,11 @@ public class AvailabilityController {
         this.availabilityService = availabilityService;
     }
 
-
     @PatchMapping("/update")
     public ResponseEntity<UpdateAvailabilityResponse> updateAvailability(@Valid @RequestBody UpdateAvailabilityRequest request) {
         UpdateAvailabilityResponse response = availabilityService.updateAvailability(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
-
 
     @PatchMapping("/delete/{id}")
     public ResponseEntity<?> deleteAvailabilityPeriodById(@PathVariable String id) {
@@ -35,16 +32,9 @@ public class AvailabilityController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<GetAvailabilityResponse> GetAvailabilityById(@PathVariable String id) {
-//        GetAvailabilityResponse response = availabilityService.getAvailabilityById(id);
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
-//    }
-
     @GetMapping
     public ResponseEntity<List<Period>> getMyAvailability() {
         List<Period> response = availabilityService.getMyAvailability();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
 }

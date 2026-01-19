@@ -39,9 +39,4 @@ public class PeriodHelper {
 
         return savedperiod.getId();
     }
-
-    // getMy avail -> get myPeriods
-    // getAvail -> get periods by id
-
-
 }
