@@ -6,6 +6,7 @@ import healthcareab.project.healthcare_booking_app.repository.AvailabilityReposi
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class AvailabilityHelper {
@@ -20,13 +21,22 @@ public class AvailabilityHelper {
     public Availability createAvailability(User user) {
 
         Availability availability = new Availability();
-
         availability.setCaregiverId(user.getId());
         availability.setPeriods(new ArrayList<>());
 
-        Availability createdAvailability = availability;
+        Availability savedAvailability = availabilityRepository.save(availability);
 
-        return createdAvailability;
+        return savedAvailability;
+    }
+
+    public Availability updateAvailability(Availability availability, List<String> periodIds, User user) {
+
+        availability.setCaregiverId(user.getId());
+        availability.setPeriods(periodIds);
+
+        Availability savedAvailability = availabilityRepository.save(availability);
+
+        return savedAvailability;
     }
 
 }

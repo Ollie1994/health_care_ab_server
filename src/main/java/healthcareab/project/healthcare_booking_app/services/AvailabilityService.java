@@ -40,7 +40,6 @@ public class AvailabilityService {
     }
 
 
-
     public UpdateAvailabilityResponse updateAvailability(UpdateAvailabilityRequest request) {
 
         User user = authService.getAuthenticated();
@@ -53,16 +52,15 @@ public class AvailabilityService {
         }
 
         Availability availability = availabilityRepository.findByCaregiverId(user.getId()).orElseGet(() -> availabilityHelper.createAvailability(user));
-        List<String> periodIds = availability.getPeriods();
 
+        List<String> periodIds = availability.getPeriods();
         String periodId = periodHelper.createPeriod(request, periodIds);
+
         periodIds.add(periodId);
 
-        availability.setCaregiverId(request.getCaregiverId());
-        availability.setPeriods(periodIds);
-        Availability savedAvailability = availabilityRepository.save(availability);
+        Availability updatedAvailability = availabilityHelper.updateAvailability(availability, periodIds, user);
 
-        return availabilityConverter.convertToUpdateAvailabilityResponse(savedAvailability);
+        return availabilityConverter.convertToUpdateAvailabilityResponse(updatedAvailability);
     }
 
     public List<Period> getMyAvailability() {
@@ -71,7 +69,6 @@ public class AvailabilityService {
             throw new AccessDeniedException("Access denied");
         }
         Availability availability = availabilityRepository.findByCaregiverId(user.getId()).orElseGet(() -> availabilityHelper.createAvailability(user));
-        availabilityRepository.save(availability);
         Period period;
         List<Period> periods = new ArrayList<>();
         for (String id : availability.getPeriods()) {
