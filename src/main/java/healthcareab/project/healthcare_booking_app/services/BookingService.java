@@ -128,18 +128,20 @@ public class BookingService {
         User user = authService.getAuthenticated();
         user = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Booking booking = null;
+        String fullName;
 
         if (user.getRoles().contains(Role.PATIENT)) {
             booking = bookingRepository.findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(user.getId(), LocalDateTime.now());
-
+            User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+            fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
 
         } else if (user.getRoles().contains(Role.CAREGIVER)) {
             booking = bookingRepository.findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(user.getId(), LocalDateTime.now());
+            User patient = userRepository.findById(booking.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
+            fullName = patient.getFirstName() + " " + patient.getLastName();
         }
         if (booking != null) {
             String dayOfWeek = booking.getStartDateTime().getDayOfWeek().toString();
-            User caregiver = userRepository.findById(booking.getCaregiverId()).orElseThrow(() -> new ResourceNotFoundException("Caregiver not found"));
-            String fullName = caregiver.getFirstName() + " " + caregiver.getLastName();
             return bookingConverter.convertToGetNextBookingResponse(booking, dayOfWeek, fullName);
         }
         return null;

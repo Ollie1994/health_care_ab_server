@@ -378,9 +378,6 @@ class BookingServiceTest {
         verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
     }
 
-    /*--------------------
-    NEGATIVE SCENARIOS
-    --------------------*/
     @Test
     void getMyBookings_whenUserHasNoRoles_shouldThrowAccessDeniedException() {
         // --- ARRANGE ---
@@ -424,6 +421,84 @@ class BookingServiceTest {
         verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
         verify(bookingConverter, never()).convertToGetBookingHistoryResponse(any(), anyString());
     }
+
+    @Test
+    void getNextBooking_whenUserIsPatient_shouldReturnNextUpcomingBooking() {
+        // --- ARRANGE ---
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+        patient.setRoles(Set.of(Role.PATIENT));
+
+        caregiver.setFirstName("Dr");
+        caregiver.setLastName("McCaregiver");
+        caregiver.setRoles(Set.of(Role.CAREGIVER));
+
+        Booking nextBooking = new Booking("BOOKING_ID_NEXT");
+        nextBooking.setPatientId(patient.getId());
+        nextBooking.setCaregiverId(caregiver.getId());
+        nextBooking.setStartDateTime(LocalDateTime.now().plusDays(1));
+        nextBooking.setEndDateTime(LocalDateTime.now().plusDays(1).plusMinutes(30));
+        nextBooking.setStatus(BookingStatus.CONFIRMED);
+        nextBooking.setSymptoms(List.of("Cough"));
+        nextBooking.setReasonForVisit("Checkup");
+        nextBooking.setNotesFromPatient("Feeling better");
+
+        GetNextBookingResponse converterResponse = new GetNextBookingResponse(
+                nextBooking.getId(),
+                nextBooking.getStartDateTime(),
+                nextBooking.getEndDateTime(),
+                nextBooking.getStartDateTime().getDayOfWeek().toString(),
+                "Dr McCaregiver",
+                nextBooking.getSymptoms(),
+                nextBooking.getReasonForVisit(),
+                nextBooking.getNotesFromPatient()
+        );
+
+        when(authService.getAuthenticated()).thenReturn(patient);
+        when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
+
+        when(bookingRepository
+                .findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                        eq(patient.getId()), any(LocalDateTime.class)))
+                .thenReturn(nextBooking);
+
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
+
+        when(bookingConverter.convertToGetNextBookingResponse(
+                any(Booking.class),
+                anyString(),
+                anyString()
+        )).thenReturn(converterResponse);
+
+        // --- ACT ---
+        GetNextBookingResponse result = bookingService.getNextBooking();
+
+        // --- ASSERT ---
+        assertNotNull(result);
+        assertEquals("BOOKING_ID_NEXT", result.getBookingId());
+        assertEquals(nextBooking.getStartDateTime(), result.getStartDateTime());
+        assertEquals(nextBooking.getEndDateTime(), result.getEndDateTime());
+        assertEquals("Dr McCaregiver", result.getFullName());
+        assertEquals("Checkup", result.getReason());
+        assertEquals("Feeling better", result.getNote());
+        assertEquals(List.of("Cough"), result.getSymptoms());
+
+        verify(authService).getAuthenticated();
+        verify(userRepository).findById(patient.getId());
+        verify(bookingRepository)
+                .findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                        eq(patient.getId()), any(LocalDateTime.class));
+        verify(userRepository).findById(caregiver.getId());
+        verify(bookingConverter).convertToGetNextBookingResponse(
+                eq(nextBooking),
+                eq(nextBooking.getStartDateTime().getDayOfWeek().toString()),
+                eq("Dr McCaregiver")
+        );
+
+        verify(bookingRepository, never())
+                .findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(any(), any());
+    }
+
 
     @Test
     void cancelBooking_shouldReturnPatchBookingResponse_whenSuccessful() {
