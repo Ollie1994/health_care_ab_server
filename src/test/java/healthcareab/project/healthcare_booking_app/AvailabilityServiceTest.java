@@ -97,11 +97,10 @@ class AvailabilityServiceTest {
         assertNotNull(result);
         assertEquals(result.getMessage(), updateAvailabilityResponse.getMessage());
         assertEquals(caregiver.getId(), request.getCaregiverId());
-        assertEquals(updatedAvailability.getPeriods().size(), 2);
+        assertEquals(2, updatedAvailability.getPeriods().size());
 
         verify(availabilityRepository, times(1)).findByCaregiverId(caregiver.getId());
         verify(availabilityConverter, times(1)).convertToUpdateAvailabilityResponse(updatedAvailability);
-//        verify(periodHelper, times(1)).createPeriod(request, updatedAvailability.getPeriods());
         verify(periodHelper, times(1)).createPeriod(
                 eq(request),
                 argThat(list -> list.containsAll(List.of("old_id_1", "new_id_2")) && list.size() == 2)
