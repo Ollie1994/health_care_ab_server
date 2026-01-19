@@ -40,15 +40,7 @@ public class AvailabilityService {
     }
 
 
-    /*
-     Göra om imorgon:
-     1. Ändra dto request så det bara är (caregiverId, startDateTime, endDateTime) NO newPeriod Obj Wrapper
-     2. Fixa validering för ifall lunch och inte får vara 10 min i närheten av varandra
-        10 min validering går säkert att fixa genom stegvis validering, if samma dag jämför tiden, if inte jämför inte
-     3. Dubbel kolla ordningen saker sker i updateAvailability ->  Avail måste vara före period, så att vi kan använda avails
-        period id´n för att validera emot nya perioden i periodHelper
-     4. TESTER och DUBBELKOLLA ALL VALIDERING
-     */
+
     public UpdateAvailabilityResponse updateAvailability(UpdateAvailabilityRequest request) {
 
         User user = authService.getAuthenticated();
@@ -60,7 +52,7 @@ public class AvailabilityService {
             throw new AccessDeniedException("Access denied");
         }
 
-        Availability availability = availabilityRepository.findByCaregiverId(user.getId()).orElse(availabilityHelper.createAvailability(request));
+        Availability availability = availabilityRepository.findByCaregiverId(user.getId()).orElseGet(() -> availabilityHelper.createAvailability(user));
         List<String> periodIds = availability.getPeriods();
 
         String periodId = periodHelper.createPeriod(request, periodIds);
@@ -68,20 +60,18 @@ public class AvailabilityService {
 
         availability.setCaregiverId(request.getCaregiverId());
         availability.setPeriods(periodIds);
+        Availability savedAvailability = availabilityRepository.save(availability);
 
-        Availability updatedAvailability = availabilityRepository.save(availability);
-
-        return availabilityConverter.convertToUpdateAvailabilityResponse(updatedAvailability);
+        return availabilityConverter.convertToUpdateAvailabilityResponse(savedAvailability);
     }
-
 
     public List<Period> getMyAvailability() {
         User user = authService.getAuthenticated();
         if (!user.getRoles().contains(Role.CAREGIVER)) {
             throw new AccessDeniedException("Access denied");
         }
-        Availability availability = availabilityRepository.findByCaregiverId(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Availability not found"));
+        Availability availability = availabilityRepository.findByCaregiverId(user.getId()).orElseGet(() -> availabilityHelper.createAvailability(user));
+        availabilityRepository.save(availability);
         Period period;
         List<Period> periods = new ArrayList<>();
         for (String id : availability.getPeriods()) {
@@ -91,6 +81,7 @@ public class AvailabilityService {
         }
         return periods;
     }
+
 
     public void deleteAvailabilityPeriodById(String id) {
         User user = authService.getAuthenticated();

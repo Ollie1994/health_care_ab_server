@@ -1,7 +1,8 @@
 package healthcareab.project.healthcare_booking_app.helpers.availability;
 
-import healthcareab.project.healthcare_booking_app.dto.UpdateAvailabilityRequest;
 import healthcareab.project.healthcare_booking_app.models.Availability;
+import healthcareab.project.healthcare_booking_app.models.User;
+import healthcareab.project.healthcare_booking_app.repository.AvailabilityRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,11 +10,18 @@ import java.util.ArrayList;
 @Component
 public class AvailabilityHelper {
 
-    public Availability createAvailability(UpdateAvailabilityRequest request) {
+    private final AvailabilityRepository availabilityRepository;
+
+    public AvailabilityHelper(AvailabilityRepository availabilityRepository) {
+        this.availabilityRepository = availabilityRepository;
+    }
+
+
+    public Availability createAvailability(User user) {
 
         Availability availability = new Availability();
 
-        availability.setCaregiverId(request.getCaregiverId());
+        availability.setCaregiverId(user.getId());
         availability.setPeriods(new ArrayList<>());
 
         Availability createdAvailability = availability;
