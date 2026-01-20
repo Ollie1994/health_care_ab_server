@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,4 +49,5 @@ private final BookingService bookingService;
         PatchBookingResponse response = bookingService.cancelBooking(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
 }
