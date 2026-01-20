@@ -50,37 +50,36 @@ public class SecurityConfig {
 <span class="fc" id="L50">                        .requestMatchers(&quot;/auth/**&quot;).permitAll()</span>
 <span class="fc" id="L51">                        .requestMatchers(&quot;/booking/**&quot;).hasAnyRole(&quot;PATIENT&quot;, &quot;CAREGIVER&quot;)</span>
 <span class="fc" id="L52">                        .requestMatchers(&quot;/availability/**&quot;).hasAnyRole(&quot;CAREGIVER&quot;)</span>
-<span class="fc" id="L53">                        .requestMatchers(&quot;/user/**&quot;).hasAnyRole(&quot;PATIENT&quot;)</span>
                         // any other requests the user need to be logged
-<span class="fc" id="L55">                        .anyRequest().authenticated()</span>
+<span class="fc" id="L54">                        .anyRequest().authenticated()</span>
                 )
                 // disable session due to jwt statelessness
-<span class="fc" id="L58">                .sessionManagement(session -&gt; session</span>
-<span class="fc" id="L59">                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)</span>
+<span class="fc" id="L57">                .sessionManagement(session -&gt; session</span>
+<span class="fc" id="L58">                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)</span>
                 )
                 // add jwt filter before standard filter
-<span class="fc" id="L62">                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);</span>
-<span class="fc" id="L63">        return  http.build();</span>
+<span class="fc" id="L61">                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);</span>
+<span class="fc" id="L62">        return  http.build();</span>
     }
 
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-<span class="fc" id="L69">        CorsConfiguration configuration = new CorsConfiguration();</span>
-<span class="fc" id="L70">        configuration.setAllowedOrigins(Arrays.asList(&quot;http://localhost:5173&quot;));</span>
-<span class="fc" id="L71">        configuration.setAllowedMethods(Arrays.asList(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;PATCH&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;));</span>
-<span class="fc" id="L72">        configuration.setAllowedHeaders(Arrays.asList(&quot;Authorization&quot;, &quot;Content-Type&quot;, &quot;Cookie&quot;));</span>
+<span class="fc" id="L68">        CorsConfiguration configuration = new CorsConfiguration();</span>
+<span class="fc" id="L69">        configuration.setAllowedOrigins(Arrays.asList(&quot;http://localhost:5173&quot;));</span>
+<span class="fc" id="L70">        configuration.setAllowedMethods(Arrays.asList(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;PATCH&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;));</span>
+<span class="fc" id="L71">        configuration.setAllowedHeaders(Arrays.asList(&quot;Authorization&quot;, &quot;Content-Type&quot;, &quot;Cookie&quot;));</span>
 
-<span class="fc" id="L74">        configuration.setAllowCredentials(true);</span>
+<span class="fc" id="L73">        configuration.setAllowCredentials(true);</span>
 
-<span class="fc" id="L76">        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
-<span class="fc" id="L77">        source.registerCorsConfiguration(&quot;/**&quot;, configuration);</span>
+<span class="fc" id="L75">        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
+<span class="fc" id="L76">        source.registerCorsConfiguration(&quot;/**&quot;, configuration);</span>
 
-<span class="fc" id="L79">        return source;</span>
+<span class="fc" id="L78">        return source;</span>
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
-<span class="fc" id="L83">        return new BCryptPasswordEncoder(12);</span>
+<span class="fc" id="L82">        return new BCryptPasswordEncoder(12);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
