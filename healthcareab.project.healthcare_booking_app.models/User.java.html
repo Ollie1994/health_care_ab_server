@@ -31,36 +31,39 @@ public class User {
     private String firstName;
     private String lastName;
     private String socialSecurityNumber;
-    private Boolean isAnonymous;
 
-<span class="fc" id="L36">    public User() {</span>
-<span class="fc" id="L37">    }</span>
+<span class="fc" id="L35">    public User() {</span>
+<span class="fc" id="L36">    }</span>
 
-<span class="fc" id="L39">    public User(String username, String password, Set&lt;Role&gt; roles) {</span>
-<span class="fc" id="L40">        this.username = username;</span>
-<span class="fc" id="L41">        this.password = password;</span>
-<span class="fc" id="L42">        this.roles = roles;</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L38">    public User(String id) {</span>
+<span class="fc" id="L39">        this.id = id;</span>
+<span class="fc" id="L40">    }</span>
+
+<span class="fc" id="L42">    public User(String username, String password, Set&lt;Role&gt; roles) {</span>
+<span class="fc" id="L43">        this.username = username;</span>
+<span class="fc" id="L44">        this.password = password;</span>
+<span class="fc" id="L45">        this.roles = roles;</span>
+<span class="fc" id="L46">    }</span>
 
     // Constructor with ID for testing!
-<span class="fc" id="L46">    public User(String id, String username, String password, Set&lt;Role&gt; roles) {</span>
-<span class="fc" id="L47">        this.id = id;</span>
-<span class="fc" id="L48">        this.username = username;</span>
-<span class="fc" id="L49">        this.password = password;</span>
-<span class="fc" id="L50">        this.roles = roles;</span>
-<span class="fc" id="L51">    }</span>
+<span class="fc" id="L49">    public User(String id, String username, String password, Set&lt;Role&gt; roles) {</span>
+<span class="fc" id="L50">        this.id = id;</span>
+<span class="fc" id="L51">        this.username = username;</span>
+<span class="fc" id="L52">        this.password = password;</span>
+<span class="fc" id="L53">        this.roles = roles;</span>
+<span class="fc" id="L54">    }</span>
 
     public String getId() {
-<span class="fc" id="L54">        return id;</span>
+<span class="fc" id="L57">        return id;</span>
     }
 
     public @NotEmpty(message = &quot;Username cannot be empty&quot;) String getUsername() {
-<span class="fc" id="L58">        return username;</span>
+<span class="fc" id="L61">        return username;</span>
     }
 
     public void setUsername(@NotEmpty(message = &quot;Username cannot be empty&quot;) String username) {
-<span class="fc" id="L62">        this.username = username;</span>
-<span class="fc" id="L63">    }</span>
+<span class="fc" id="L65">        this.username = username;</span>
+<span class="fc" id="L66">    }</span>
 
     public @Pattern(
             regexp = &quot;^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&amp;*()\\-_=+{};:,&lt;.&gt;])(?=.{8,})&quot; +
@@ -68,7 +71,7 @@ public class User {
             message = &quot;Password must be at least 8 characters long and contain at least &quot; +
                     &quot;one uppercase letter, one number, and one special character&quot;
     ) String getPassword() {
-<span class="fc" id="L71">        return password;</span>
+<span class="fc" id="L74">        return password;</span>
     }
 
     public void setPassword(@Pattern(
@@ -77,55 +80,47 @@ public class User {
             message = &quot;Password must be at least 8 characters long and contain at least &quot; +
                     &quot;one uppercase letter, one number, and one special character&quot;
     ) String password) {
-<span class="fc" id="L80">        this.password = password;</span>
-<span class="fc" id="L81">    }</span>
+<span class="fc" id="L83">        this.password = password;</span>
+<span class="fc" id="L84">    }</span>
 
     public Set&lt;Role&gt; getRoles() {
-<span class="fc" id="L84">        return roles;</span>
+<span class="fc" id="L87">        return roles;</span>
     }
 
     public void setRoles(Set&lt;Role&gt; roles) {
-<span class="fc" id="L88">        this.roles = roles;</span>
-<span class="fc" id="L89">    }</span>
+<span class="fc" id="L91">        this.roles = roles;</span>
+<span class="fc" id="L92">    }</span>
 
     public String getEmail() {
-<span class="fc" id="L92">        return email;</span>
+<span class="fc" id="L95">        return email;</span>
     }
 
     public void setEmail(String email) {
-<span class="fc" id="L96">        this.email = email;</span>
-<span class="fc" id="L97">    }</span>
+<span class="fc" id="L99">        this.email = email;</span>
+<span class="fc" id="L100">    }</span>
 
     public String getFirstName() {
-<span class="fc" id="L100">        return firstName;</span>
+<span class="fc" id="L103">        return firstName;</span>
     }
 
     public void setFirstName(String firstName) {
-<span class="fc" id="L104">        this.firstName = firstName;</span>
-<span class="fc" id="L105">    }</span>
+<span class="fc" id="L107">        this.firstName = firstName;</span>
+<span class="fc" id="L108">    }</span>
 
     public String getLastName() {
-<span class="fc" id="L108">        return lastName;</span>
+<span class="fc" id="L111">        return lastName;</span>
     }
 
     public void setLastName(String lastName) {
-<span class="fc" id="L112">        this.lastName = lastName;</span>
-<span class="fc" id="L113">    }</span>
+<span class="fc" id="L115">        this.lastName = lastName;</span>
+<span class="fc" id="L116">    }</span>
 
     public String getSocialSecurityNumber() {
-<span class="fc" id="L116">        return socialSecurityNumber;</span>
+<span class="fc" id="L119">        return socialSecurityNumber;</span>
     }
 
     public void setSocialSecurityNumber(String socialSecurityNumber) {
-<span class="fc" id="L120">        this.socialSecurityNumber = socialSecurityNumber;</span>
-<span class="fc" id="L121">    }</span>
-
-    public Boolean getIsAnonymous() {
-<span class="nc" id="L124">        return isAnonymous;</span>
-    }
-
-    public void setIsAnonymous(Boolean isAnonymous) {
-<span class="fc" id="L128">        this.isAnonymous = isAnonymous;</span>
-<span class="fc" id="L129">    }</span>
+<span class="fc" id="L123">        this.socialSecurityNumber = socialSecurityNumber;</span>
+<span class="fc" id="L124">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

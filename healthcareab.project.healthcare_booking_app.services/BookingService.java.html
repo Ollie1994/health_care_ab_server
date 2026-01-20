@@ -6,7 +6,7 @@ import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedExcept
 import healthcareab.project.healthcare_booking_app.exceptions.ConflictException;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
 import healthcareab.project.healthcare_booking_app.exceptions.UnauthorizedException;
-import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
+import healthcareab.project.healthcare_booking_app.helpers.sesEmail.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
 import healthcareab.project.healthcare_booking_app.models.Role;
