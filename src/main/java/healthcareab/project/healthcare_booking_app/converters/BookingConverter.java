@@ -1,10 +1,8 @@
 package healthcareab.project.healthcare_booking_app.converters;
 
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.PatchBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
+import healthcareab.project.healthcare_booking_app.dto.*;
 import healthcareab.project.healthcare_booking_app.models.Booking;
+import healthcareab.project.healthcare_booking_app.models.BookingStatus;
 import healthcareab.project.healthcare_booking_app.models.User;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +25,10 @@ public class BookingConverter {
 
     public GetBookingHistoryResponse convertToGetBookingHistoryResponse (Booking booking, String fullName) {
         return new GetBookingHistoryResponse(booking.getStartDateTime(), fullName, booking.getId());
+    }
+
+    public GetNextBookingResponse convertToGetNextBookingResponse (Booking booking, String dayOfWeek, String fullName) {
+        return new GetNextBookingResponse(booking.getId(), booking.getStartDateTime(), booking.getEndDateTime(), dayOfWeek, fullName, booking.getSymptoms(), booking.getReasonForVisit(), booking.getNotesFromPatient());
     }
 
     public PatchBookingResponse convertToPatchBookingResponse(Booking booking, User user) {
