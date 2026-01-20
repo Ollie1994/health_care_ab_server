@@ -4,7 +4,7 @@ healthcare_booking_app,healthcareab.project.healthcare_booking_app.converters,Av
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.filters,JwtAuthenticationFilter,2,113,5,13,0,29,5,7,0,3
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.validators.period,PeriodValidator,42,236,22,36,5,42,20,12,1,2
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Period,14,44,0,0,6,19,4,8,4,8
-healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,User,0,88,0,0,0,38,0,19,0,19
+healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,User,3,92,0,0,1,40,1,20,1,20
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Availability,17,17,0,0,7,8,5,5,5,5
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Log,39,0,0,0,14,0,7,0,7,0
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Role,0,15,0,0,0,3,0,1,0,1
@@ -12,7 +12,7 @@ healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Action
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,BookingStatus,0,15,0,0,0,3,0,1,0,1
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.models,Booking,0,103,0,0,0,45,0,29,0,29
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.controllers,AvailabilityController,0,33,0,0,0,9,0,4,0,4
-healthcare_booking_app,healthcareab.project.healthcare_booking_app.controllers,AuthController,5,257,4,8,1,77,4,7,0,5
+healthcare_booking_app,healthcareab.project.healthcare_booking_app.controllers,AuthController,5,261,4,8,1,78,4,7,0,5
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.controllers,BookingController,0,46,0,0,0,12,0,7,0,7
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.dto,UpdateAvailabilityRequest,3,21,0,0,2,8,1,4,1,4
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.dto,GetBookingHistoryResponse,0,21,0,0,0,8,0,4,0,4

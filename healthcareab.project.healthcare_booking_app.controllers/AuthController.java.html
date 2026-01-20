@@ -54,110 +54,112 @@ public class AuthController {
 <span class="fc" id="L54">        user.setFirstName(registerRequest.getFirstName());</span>
 <span class="fc" id="L55">        user.setLastName(registerRequest.getLastName());</span>
 <span class="fc" id="L56">        user.setSocialSecurityNumber(registerRequest.getSocialSecurityNumber());</span>
+        // ADDING isANO
+<span class="fc" id="L58">        user.setIsAnonymous(false);</span>
 
-<span class="pc bpc" id="L58" title="2 of 4 branches missed.">        if(registerRequest.getRoles() == null || registerRequest.getRoles().isEmpty()) {</span>
-<span class="nc" id="L59">            user.setRoles(Set.of(Role.PATIENT));</span>
+<span class="pc bpc" id="L60" title="2 of 4 branches missed.">        if(registerRequest.getRoles() == null || registerRequest.getRoles().isEmpty()) {</span>
+<span class="nc" id="L61">            user.setRoles(Set.of(Role.PATIENT));</span>
         } else {
-<span class="fc" id="L61">            user.setRoles(registerRequest.getRoles());</span>
+<span class="fc" id="L63">            user.setRoles(registerRequest.getRoles());</span>
         }
 
-<span class="fc" id="L64">        authService.registerUser(user);</span>
+<span class="fc" id="L66">        authService.registerUser(user);</span>
 
-<span class="fc" id="L66">        RegisterResponse response = new RegisterResponse(</span>
+<span class="fc" id="L68">        RegisterResponse response = new RegisterResponse(</span>
                 &quot;User registered successfully&quot;,
-<span class="fc" id="L68">                user.getUsername(),</span>
-<span class="fc" id="L69">                user.getRoles(),</span>
-<span class="fc" id="L70">                user.getEmail(),</span>
-<span class="fc" id="L71">                user.getFirstName(),</span>
-<span class="fc" id="L72">                user.getLastName(),</span>
-<span class="fc" id="L73">                user.getSocialSecurityNumber()</span>
+<span class="fc" id="L70">                user.getUsername(),</span>
+<span class="fc" id="L71">                user.getRoles(),</span>
+<span class="fc" id="L72">                user.getEmail(),</span>
+<span class="fc" id="L73">                user.getFirstName(),</span>
+<span class="fc" id="L74">                user.getLastName(),</span>
+<span class="fc" id="L75">                user.getSocialSecurityNumber()</span>
         );
 
-<span class="fc" id="L76">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+<span class="fc" id="L78">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
     }
 
     @PostMapping(&quot;/login&quot;)
     public ResponseEntity&lt;?&gt; login (@Valid @RequestBody AuthRequest authRequest, HttpServletResponse response) {
 
         try {
-<span class="fc" id="L83">            Authentication authentication = authenticationManager.authenticate(</span>
+<span class="fc" id="L85">            Authentication authentication = authenticationManager.authenticate(</span>
                     new UsernamePasswordAuthenticationToken(
-<span class="fc" id="L85">                            authRequest.getUsername(),</span>
-<span class="fc" id="L86">                            authRequest.getPassword()</span>
+<span class="fc" id="L87">                            authRequest.getUsername(),</span>
+<span class="fc" id="L88">                            authRequest.getPassword()</span>
                     )
             );
 
-<span class="fc" id="L90">            SecurityContextHolder.getContext().setAuthentication(authentication);</span>
+<span class="fc" id="L92">            SecurityContextHolder.getContext().setAuthentication(authentication);</span>
 
-<span class="fc" id="L92">            UserDetails userDetails = (UserDetails) authentication.getPrincipal();</span>
+<span class="fc" id="L94">            UserDetails userDetails = (UserDetails) authentication.getPrincipal();</span>
 
-<span class="fc" id="L94">            String jwt = jwtUtil.generateToken(userDetails);</span>
-<span class="fc" id="L95">            ResponseCookie jwtCookie = ResponseCookie.from(&quot;jwt&quot;, jwt)</span>
-<span class="fc" id="L96">                    .httpOnly(true) // prevents javascript to get cookie</span>
-<span class="fc" id="L97">                    .secure(false) //IMPORTANT TO CHANGE IN PRODUCTION TO TRUE</span>
-<span class="fc" id="L98">                    .path(&quot;/&quot;)  // cookies is available in all application</span>
-<span class="fc" id="L99">                    .maxAge(10 * 60 * 60) // valid for 10h</span>
-<span class="fc" id="L100">                    .sameSite(&quot;Strict&quot;) // Lax &amp; None</span>
-<span class="fc" id="L101">                    .build();</span>
+<span class="fc" id="L96">            String jwt = jwtUtil.generateToken(userDetails);</span>
+<span class="fc" id="L97">            ResponseCookie jwtCookie = ResponseCookie.from(&quot;jwt&quot;, jwt)</span>
+<span class="fc" id="L98">                    .httpOnly(true) // prevents javascript to get cookie</span>
+<span class="fc" id="L99">                    .secure(false) //IMPORTANT TO CHANGE IN PRODUCTION TO TRUE</span>
+<span class="fc" id="L100">                    .path(&quot;/&quot;)  // cookies is available in all application</span>
+<span class="fc" id="L101">                    .maxAge(10 * 60 * 60) // valid for 10h</span>
+<span class="fc" id="L102">                    .sameSite(&quot;Strict&quot;) // Lax &amp; None</span>
+<span class="fc" id="L103">                    .build();</span>
 
-<span class="fc" id="L103">            AuthResponse authResponse = new AuthResponse(</span>
+<span class="fc" id="L105">            AuthResponse authResponse = new AuthResponse(</span>
                     &quot;Login successful&quot;,
-<span class="fc" id="L105">                    userDetails.getUsername(),</span>
-<span class="fc" id="L106">                    authService.findByUsername(userDetails.getUsername()).getRoles(),</span>
-<span class="fc" id="L107">                    authService.findByUsername(userDetails.getUsername()).getEmail(),</span>
-<span class="fc" id="L108">                    authService.findByUsername(userDetails.getUsername()).getFirstName(),</span>
-<span class="fc" id="L109">                    authService.findByUsername(userDetails.getUsername()).getLastName(),</span>
-<span class="fc" id="L110">                    authService.findByUsername(userDetails.getUsername()).getSocialSecurityNumber()</span>
+<span class="fc" id="L107">                    userDetails.getUsername(),</span>
+<span class="fc" id="L108">                    authService.findByUsername(userDetails.getUsername()).getRoles(),</span>
+<span class="fc" id="L109">                    authService.findByUsername(userDetails.getUsername()).getEmail(),</span>
+<span class="fc" id="L110">                    authService.findByUsername(userDetails.getUsername()).getFirstName(),</span>
+<span class="fc" id="L111">                    authService.findByUsername(userDetails.getUsername()).getLastName(),</span>
+<span class="fc" id="L112">                    authService.findByUsername(userDetails.getUsername()).getSocialSecurityNumber()</span>
 
             );
 
-<span class="fc" id="L114">            return ResponseEntity.ok()</span>
-<span class="fc" id="L115">                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())</span>
-<span class="fc" id="L116">                    .body(authResponse);</span>
+<span class="fc" id="L116">            return ResponseEntity.ok()</span>
+<span class="fc" id="L117">                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())</span>
+<span class="fc" id="L118">                    .body(authResponse);</span>
 
-<span class="fc" id="L118">        } catch (AuthenticationException e) {</span>
-<span class="fc" id="L119">            return ResponseEntity</span>
-<span class="fc" id="L120">                    .status(HttpStatus.UNAUTHORIZED)</span>
-<span class="fc" id="L121">                    .body(&quot;Incorrect username or password&quot;);</span>
+<span class="fc" id="L120">        } catch (AuthenticationException e) {</span>
+<span class="fc" id="L121">            return ResponseEntity</span>
+<span class="fc" id="L122">                    .status(HttpStatus.UNAUTHORIZED)</span>
+<span class="fc" id="L123">                    .body(&quot;Incorrect username or password&quot;);</span>
         }
     }
 
     @PostMapping(&quot;/logout&quot;)
     public ResponseEntity&lt;?&gt; logout(HttpServletResponse response) {
-<span class="fc" id="L127">        ResponseCookie jwtCookie = ResponseCookie.from(&quot;jwt&quot;, &quot;&quot;)</span>
-<span class="fc" id="L128">                .httpOnly(true)</span>
-<span class="fc" id="L129">                .secure(false) // VIKTIGT! ändra i production</span>
-<span class="fc" id="L130">                .path(&quot;/&quot;)</span>
-<span class="fc" id="L131">                .maxAge(0)</span>
-<span class="fc" id="L132">                .sameSite(&quot;Strict&quot;)</span>
-<span class="fc" id="L133">                .build();</span>
+<span class="fc" id="L129">        ResponseCookie jwtCookie = ResponseCookie.from(&quot;jwt&quot;, &quot;&quot;)</span>
+<span class="fc" id="L130">                .httpOnly(true)</span>
+<span class="fc" id="L131">                .secure(false) // VIKTIGT! ändra i production</span>
+<span class="fc" id="L132">                .path(&quot;/&quot;)</span>
+<span class="fc" id="L133">                .maxAge(0)</span>
+<span class="fc" id="L134">                .sameSite(&quot;Strict&quot;)</span>
+<span class="fc" id="L135">                .build();</span>
 
-<span class="fc" id="L135">        SecurityContextHolder.clearContext();</span>
+<span class="fc" id="L137">        SecurityContextHolder.clearContext();</span>
 
-<span class="fc" id="L137">        return ResponseEntity.ok()</span>
-<span class="fc" id="L138">                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())</span>
-<span class="fc" id="L139">                .body(&quot;Logout successful!&quot;);</span>
+<span class="fc" id="L139">        return ResponseEntity.ok()</span>
+<span class="fc" id="L140">                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())</span>
+<span class="fc" id="L141">                .body(&quot;Logout successful!&quot;);</span>
     }
 
     @GetMapping(&quot;/check&quot;)
     public ResponseEntity&lt;?&gt; checkAuthentication() {
-<span class="fc" id="L144">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L146">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
 
-<span class="pc bpc" id="L146" title="2 of 6 branches missed.">        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {</span>
-<span class="fc" id="L147">            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Not authenticated!&quot;);</span>
+<span class="pc bpc" id="L148" title="2 of 6 branches missed.">        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {</span>
+<span class="fc" id="L149">            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Not authenticated!&quot;);</span>
         }
 
-<span class="fc" id="L150">        UserDetails userDetails = (UserDetails) authentication.getPrincipal();</span>
-<span class="fc" id="L151">        User user = authService.findByUsername(userDetails.getUsername());</span>
+<span class="fc" id="L152">        UserDetails userDetails = (UserDetails) authentication.getPrincipal();</span>
+<span class="fc" id="L153">        User user = authService.findByUsername(userDetails.getUsername());</span>
 
-<span class="fc" id="L153">        return ResponseEntity.ok(new AuthResponse(</span>
+<span class="fc" id="L155">        return ResponseEntity.ok(new AuthResponse(</span>
                 &quot;Authenticated&quot;,
-<span class="fc" id="L155">                user.getUsername(),</span>
-<span class="fc" id="L156">                user.getRoles(),</span>
-<span class="fc" id="L157">                user.getEmail(),</span>
-<span class="fc" id="L158">                user.getFirstName(),</span>
-<span class="fc" id="L159">                user.getLastName(),</span>
-<span class="fc" id="L160">                user.getSocialSecurityNumber()</span>
+<span class="fc" id="L157">                user.getUsername(),</span>
+<span class="fc" id="L158">                user.getRoles(),</span>
+<span class="fc" id="L159">                user.getEmail(),</span>
+<span class="fc" id="L160">                user.getFirstName(),</span>
+<span class="fc" id="L161">                user.getLastName(),</span>
+<span class="fc" id="L162">                user.getSocialSecurityNumber()</span>
         ));
     }
 
