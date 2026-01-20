@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(&quot;/booking&quot;)
@@ -15,30 +16,38 @@ public class BookingController {
 
 private final BookingService bookingService;
 
-<span class="fc" id="L18">    public BookingController(BookingService bookingService) {</span>
-<span class="fc" id="L19">        this.bookingService = bookingService;</span>
-<span class="fc" id="L20">    }</span>
+<span class="fc" id="L19">    public BookingController(BookingService bookingService) {</span>
+<span class="fc" id="L20">        this.bookingService = bookingService;</span>
+<span class="fc" id="L21">    }</span>
 
     @PostMapping
     public ResponseEntity&lt;CreateBookingResponse&gt; createBooking(@Valid @RequestBody CreateBookingRequest request) {
-<span class="fc" id="L24">        CreateBookingResponse response = bookingService.createBooking(request);</span>
-<span class="fc" id="L25">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+<span class="fc" id="L25">        CreateBookingResponse response = bookingService.createBooking(request);</span>
+<span class="fc" id="L26">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
     }
 
     @GetMapping
     public List&lt;GetBookingsResponse&gt; getMyBookings() {
-<span class="fc" id="L30">        return bookingService.getMyBookings();</span>
+<span class="fc" id="L31">        return bookingService.getMyBookings();</span>
     }
 
     @GetMapping(&quot;/history&quot;)
     public List&lt;GetBookingHistoryResponse&gt; getMyBookingHistory() {
-<span class="fc" id="L35">        return bookingService.getMyBookingHistory();</span>
+<span class="fc" id="L36">        return bookingService.getMyBookingHistory();</span>
     }
+
+    @GetMapping(&quot;/upcoming&quot;)
+    public ResponseEntity&lt;GetNextBookingResponse&gt; getNextBooking() {
+<span class="fc" id="L41">        return bookingService.getNextBooking()</span>
+<span class="fc" id="L42">                .map(ResponseEntity::ok)// 200 OK if booking exists</span>
+<span class="fc" id="L43">                .orElseGet(() -&gt; ResponseEntity.noContent().build()); // 204 No Content if no booking exists (empty)</span>
+    }
+
     // For cancelling a booking
     @PatchMapping(&quot;/cancel/{id}&quot;)
     public ResponseEntity&lt;PatchBookingResponse&gt; cancelBooking(@PathVariable String id) {
-<span class="fc" id="L40">        PatchBookingResponse response = bookingService.cancelBooking(id);</span>
-<span class="fc" id="L41">        return ResponseEntity.status(HttpStatus.OK).body(response);</span>
+<span class="fc" id="L49">        PatchBookingResponse response = bookingService.cancelBooking(id);</span>
+<span class="fc" id="L50">        return ResponseEntity.status(HttpStatus.OK).body(response);</span>
     }
 
 }
