@@ -1,7 +1,7 @@
 package healthcareab.project.healthcare_booking_app;
 
 import healthcareab.project.healthcare_booking_app.config.SESEmailConfig;
-import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
+import healthcareab.project.healthcare_booking_app.helpers.sesEmail.SESEmailHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

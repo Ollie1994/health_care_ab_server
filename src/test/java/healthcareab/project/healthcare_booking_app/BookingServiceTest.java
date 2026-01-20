@@ -6,7 +6,7 @@ import healthcareab.project.healthcare_booking_app.exceptions.AccessDeniedExcept
 import healthcareab.project.healthcare_booking_app.exceptions.ConflictException;
 import healthcareab.project.healthcare_booking_app.exceptions.ResourceNotFoundException;
 import healthcareab.project.healthcare_booking_app.exceptions.UnauthorizedException;
-import healthcareab.project.healthcare_booking_app.helpers.email.SESEmailHelper;
+import healthcareab.project.healthcare_booking_app.helpers.sesEmail.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
 import healthcareab.project.healthcare_booking_app.models.Role;
@@ -162,7 +162,7 @@ class BookingServiceTest {
 
         when(authService.getAuthenticated()).thenReturn(patient);
         when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
-        when(bookingRepository.findByPatientId(patient.getId())).thenReturn(List.of(bookingOne, bookingTwo));
+        when(bookingRepository.findByPatientIdOrderByStartDateTimeDesc(patient.getId())).thenReturn(List.of(bookingOne, bookingTwo));
         when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
 
         when(bookingConverter.convertToGetBookingsResponse(any(Booking.class), anyString()))
@@ -186,13 +186,13 @@ class BookingServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        verify(bookingRepository).findByPatientId(patient.getId());
+        verify(bookingRepository).findByPatientIdOrderByStartDateTimeDesc(patient.getId());
         verify(userRepository).findById(patient.getId());
         verify(userRepository, times(2)).findById(caregiver.getId());
         verify(bookingConverter, times(2))
                 .convertToGetBookingsResponse(any(Booking.class), eq("Dr McCaregiver"));
         verify(bookingRepository, never()).save(any(Booking.class));
-        verify(bookingRepository, never()).findByCaregiverId(any());
+        verify(bookingRepository, never()).findByCaregiverIdOrderByStartDateTimeDesc(any());
     }
 
     @Test
@@ -224,7 +224,7 @@ class BookingServiceTest {
 
         when(authService.getAuthenticated()).thenReturn(caregiver);
         when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
-        when(bookingRepository.findByCaregiverId(caregiver.getId())).thenReturn(List.of(bookingOne, bookingTwo));
+        when(bookingRepository.findByCaregiverIdOrderByStartDateTimeDesc(caregiver.getId())).thenReturn(List.of(bookingOne, bookingTwo));
         when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
 
         when(bookingConverter.convertToGetBookingsResponse(any(Booking.class), anyString()))
@@ -249,13 +249,13 @@ class BookingServiceTest {
         assertEquals(2, result.size());
 
         // --- VERIFY branch behavior ---
-        verify(bookingRepository).findByCaregiverId(caregiver.getId());
+        verify(bookingRepository).findByCaregiverIdOrderByStartDateTimeDesc(caregiver.getId());
         verify(userRepository).findById(caregiver.getId());
         verify(userRepository, times(2)).findById(patient.getId()); // once per booking
         verify(bookingConverter, times(2))
                 .convertToGetBookingsResponse(any(Booking.class), eq("John Doe"));
         verify(bookingRepository, never()).save(any(Booking.class));
-        verify(bookingRepository, never()).findByPatientId(any());
+        verify(bookingRepository, never()).findByPatientIdOrderByStartDateTimeDesc(any());
     }
 
     @Test
@@ -288,7 +288,7 @@ class BookingServiceTest {
         when(authService.getAuthenticated()).thenReturn(patient);
         when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
 
-        when(bookingRepository.findByPatientIdAndEndDateTimeBefore(eq(patient.getId()), any(LocalDateTime.class)))
+        when(bookingRepository.findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(eq(patient.getId()), any(LocalDateTime.class)))
                 .thenReturn(List.of(bookingOne, bookingTwo));
         when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
 
@@ -310,12 +310,12 @@ class BookingServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        verify(bookingRepository).findByPatientIdAndEndDateTimeBefore(eq(patient.getId()), any(LocalDateTime.class));
+        verify(bookingRepository).findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(eq(patient.getId()), any(LocalDateTime.class));
         verify(userRepository).findById(patient.getId());
         verify(userRepository, times(2)).findById(caregiver.getId());
         verify(bookingConverter, times(2))
                 .convertToGetBookingHistoryResponse(any(Booking.class), eq("Dr McCaregiver"));
-        verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBefore(any(), any());
+        verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
     }
 
     @Test
@@ -348,7 +348,7 @@ class BookingServiceTest {
         when(authService.getAuthenticated()).thenReturn(caregiver);
         when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
 
-        when(bookingRepository.findByCaregiverIdAndEndDateTimeBefore(eq(caregiver.getId()), any(LocalDateTime.class)))
+        when(bookingRepository.findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(eq(caregiver.getId()), any(LocalDateTime.class)))
                 .thenReturn(List.of(bookingOne, bookingTwo));
         when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
 
@@ -370,17 +370,14 @@ class BookingServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        verify(bookingRepository).findByCaregiverIdAndEndDateTimeBefore(eq(caregiver.getId()), any(LocalDateTime.class));
+        verify(bookingRepository).findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(eq(caregiver.getId()), any(LocalDateTime.class));
         verify(userRepository).findById(caregiver.getId());
         verify(userRepository, times(2)).findById(patient.getId());
         verify(bookingConverter, times(2))
                 .convertToGetBookingHistoryResponse(any(Booking.class), eq("John Doe"));
-        verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBefore(any(), any());
+        verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
     }
 
-    /*--------------------
-    NEGATIVE SCENARIOS
-    --------------------*/
     @Test
     void getMyBookings_whenUserHasNoRoles_shouldThrowAccessDeniedException() {
         // --- ARRANGE ---
@@ -398,8 +395,8 @@ class BookingServiceTest {
         assertEquals("You are not authorized to view bookings", exception.getMessage());
 
         // --- VERIFY ---
-        verify(bookingRepository, never()).findByPatientId(any());
-        verify(bookingRepository, never()).findByCaregiverId(any());
+        verify(bookingRepository, never()).findByPatientIdOrderByStartDateTimeDesc(any());
+        verify(bookingRepository, never()).findByCaregiverIdOrderByStartDateTimeDesc(any());
         verify(bookingConverter, never()).convertToGetBookingsResponse(any(), anyString());
     }
 
@@ -420,14 +417,337 @@ class BookingServiceTest {
         assertEquals("You are not authorized to view bookings", exception.getMessage());
 
         // --- VERIFY ---
-        verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBefore(any(), any());
-        verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBefore(any(), any());
+        verify(bookingRepository, never()).findByPatientIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
+        verify(bookingRepository, never()).findByCaregiverIdAndEndDateTimeBeforeOrderByStartDateTimeDesc(any(), any());
         verify(bookingConverter, never()).convertToGetBookingHistoryResponse(any(), anyString());
     }
 
     @Test
-    void cancelBooking_shouldReturnPatchBookingResponse_whenSuccessful() {
+    void getNextBooking_whenUserIsPatientAndHasUpcomingBooking_shouldReturnNextUpcomingBooking() {
+        // --- ARRANGE ---
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+        patient.setRoles(Set.of(Role.PATIENT));
 
+        caregiver.setFirstName("Dr");
+        caregiver.setLastName("McCaregiver");
+        caregiver.setRoles(Set.of(Role.CAREGIVER));
+
+        Booking nextBooking = new Booking("BOOKING_ID_1");
+        nextBooking.setPatientId(patient.getId());
+        nextBooking.setCaregiverId(caregiver.getId());
+        nextBooking.setStartDateTime(LocalDateTime.of(2026, 8, 5, 10, 0));
+        nextBooking.setEndDateTime(LocalDateTime.of(2026, 8, 5, 11, 0));
+        nextBooking.setStatus(BookingStatus.CONFIRMED);
+        nextBooking.setSymptoms(List.of("Flu", "Cough"));
+
+        when(authService.getAuthenticated()).thenReturn(patient);
+        when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
+
+        when(bookingRepository.findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(patient.getId()), any(LocalDateTime.class)))
+                .thenReturn(nextBooking);
+
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
+
+        // Mock booking conversion
+        when(bookingConverter.convertToGetNextBookingResponse(any(Booking.class), anyString(), anyString()))
+                .thenAnswer(invocation -> {
+                    Booking booking = invocation.getArgument(0);
+                    String dayOfWeek = invocation.getArgument(1);
+                    String fullName = invocation.getArgument(2);
+                    return new GetNextBookingResponse(
+                            booking.getId(),
+                            booking.getStartDateTime(),
+                            booking.getEndDateTime(),
+                            dayOfWeek,
+                            fullName,
+                            booking.getSymptoms(),
+                            booking.getReasonForVisit(),
+                            booking.getId()
+                    );
+                });
+
+        // --- ACT ---
+        Optional<GetNextBookingResponse> result = bookingService.getNextBooking();
+
+        // --- ASSERT ---
+        assertTrue(patient.getRoles().contains(Role.PATIENT), "Authenticated user must have PATIENT role");
+        assertTrue(result.isPresent());
+        GetNextBookingResponse response = result.get();
+        assertEquals("BOOKING_ID_1", response.getBookingId());
+        assertEquals(nextBooking.getStartDateTime(), response.getStartDateTime());
+        assertEquals(nextBooking.getEndDateTime(), response.getEndDateTime());
+        assertEquals("WEDNESDAY", response.getDayOfWeek());
+        assertEquals("Dr McCaregiver", response.getFullName());
+        assertEquals(nextBooking.getSymptoms(), response.getSymptoms());
+        assertEquals(nextBooking.getReasonForVisit(), response.getReason());
+
+
+        // --- VERIFY ---
+        verify(bookingRepository).findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(patient.getId()), any(LocalDateTime.class));
+        verify(userRepository).findById(patient.getId());
+        verify(userRepository).findById(caregiver.getId());
+        verify(bookingConverter).convertToGetNextBookingResponse(nextBooking, "WEDNESDAY", "Dr McCaregiver");
+    }
+
+    @Test
+    void getNextBooking_whenUserIsCaregiverAndHasUpcomingBooking_shouldReturnNextUpcomingBooking() {
+        // --- ARRANGE ---
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+        patient.setRoles(Set.of(Role.PATIENT));
+
+        caregiver.setFirstName("Dr");
+        caregiver.setLastName("McCaregiver");
+        caregiver.setRoles(Set.of(Role.CAREGIVER));
+
+        Booking nextBooking = new Booking("BOOKING_ID_1");
+        nextBooking.setPatientId(patient.getId());
+        nextBooking.setCaregiverId(caregiver.getId());
+        nextBooking.setStartDateTime(LocalDateTime.of(2026, 8, 5, 10, 0));
+        nextBooking.setEndDateTime(LocalDateTime.of(2026, 8, 5, 11, 0));
+        nextBooking.setStatus(BookingStatus.CONFIRMED);
+        nextBooking.setSymptoms(List.of("Flu", "Cough"));
+
+        when(authService.getAuthenticated()).thenReturn(caregiver);
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
+
+        when(bookingRepository.findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(caregiver.getId()), any(LocalDateTime.class)))
+                .thenReturn(nextBooking);
+
+        when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
+
+        // Mock booking conversion
+        when(bookingConverter.convertToGetNextBookingResponse(any(Booking.class), anyString(), anyString()))
+                .thenAnswer(invocation -> {
+                    Booking booking = invocation.getArgument(0);
+                    String dayOfWeek = invocation.getArgument(1);
+                    String fullName = invocation.getArgument(2);
+                    return new GetNextBookingResponse(
+                            booking.getId(),
+                            booking.getStartDateTime(),
+                            booking.getEndDateTime(),
+                            dayOfWeek,
+                            fullName,
+                            booking.getSymptoms(),
+                            booking.getReasonForVisit(),
+                            booking.getId()
+                    );
+                });
+
+        // --- ACT ---
+        Optional<GetNextBookingResponse> result = bookingService.getNextBooking();
+
+        // --- ASSERT ---
+        assertTrue(caregiver.getRoles().contains(Role.CAREGIVER), "Authenticated user must have CAREGIVER role");
+        assertTrue(result.isPresent());
+        GetNextBookingResponse response = result.get();
+        assertEquals("BOOKING_ID_1", response.getBookingId());
+        assertEquals(nextBooking.getStartDateTime(), response.getStartDateTime());
+        assertEquals(nextBooking.getEndDateTime(), response.getEndDateTime());
+        assertEquals("WEDNESDAY", response.getDayOfWeek());
+        assertEquals("John Doe", response.getFullName());
+        assertEquals(nextBooking.getSymptoms(), response.getSymptoms());
+        assertEquals(nextBooking.getReasonForVisit(), response.getReason());
+
+
+        // --- VERIFY ---
+        verify(bookingRepository).findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(caregiver.getId()), any(LocalDateTime.class));
+        verify(userRepository).findById(patient.getId());
+        verify(userRepository).findById(caregiver.getId());
+        verify(bookingConverter).convertToGetNextBookingResponse(nextBooking, "WEDNESDAY", "John Doe");
+    }
+
+    @Test
+    void getNextBooking_whenUserIsPatientAndNoUpcomingBooking_shouldReturnEmptyOptional() {
+        // --- ARRANGE ---
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+        patient.setRoles(Set.of(Role.PATIENT));
+
+        when(authService.getAuthenticated()).thenReturn(patient);
+        when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
+
+        // Mock repository to return null (no upcoming booking)
+        when(bookingRepository.findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(patient.getId()), any(LocalDateTime.class)))
+                .thenReturn(null);
+
+        // --- ACT ---
+        Optional<GetNextBookingResponse> result = bookingService.getNextBooking();
+
+        // --- ASSERT ---
+        assertNotNull(result);
+        assertTrue(result.isEmpty(), "Expected Optional.empty() when no upcoming booking exists for patient");
+
+        // --- VERIFY ---
+        verify(bookingRepository).findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(patient.getId()), any(LocalDateTime.class));
+        verify(userRepository).findById(patient.getId());
+    }
+
+    @Test
+    void getNextBooking_whenUserIsCaregiverAndNoUpcomingBooking_shouldReturnEmptyOptional() {
+        // --- ARRANGE ---
+        caregiver.setFirstName("Dr");
+        caregiver.setLastName("McCaregiver");
+        caregiver.setRoles(Set.of(Role.CAREGIVER));
+
+        when(authService.getAuthenticated()).thenReturn(caregiver);
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
+
+        // Mock repository to return null (no upcoming booking)
+        when(bookingRepository.findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(caregiver.getId()), any(LocalDateTime.class)))
+                .thenReturn(null);
+
+        // --- ACT ---
+        Optional<GetNextBookingResponse> result = bookingService.getNextBooking();
+
+        // --- ASSERT ---
+        assertNotNull(result);
+        assertTrue(result.isEmpty(), "Expected Optional.empty() when no upcoming booking exists for caregiver");
+
+        // --- VERIFY ---
+        verify(bookingRepository).findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(caregiver.getId()), any(LocalDateTime.class));
+        verify(userRepository).findById(caregiver.getId());
+    }
+
+    @Test
+    void getNextBooking_whenUserIsPatientAndCaregiverIsNotFound_shouldThrowResourceNotFoundException() {
+        // --- ARRANGE ---
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+        patient.setRoles(Set.of(Role.PATIENT));
+
+        caregiver.setFirstName("Dr");
+        caregiver.setLastName("McCaregiver");
+        caregiver.setRoles(Set.of(Role.CAREGIVER));
+
+        Booking nextBooking = new Booking("BOOKING_ID_1");
+        nextBooking.setPatientId(patient.getId());
+        nextBooking.setCaregiverId(caregiver.getId()); // caregiver ID exists
+        nextBooking.setStartDateTime(LocalDateTime.of(2026, 8, 5, 10, 0));
+        nextBooking.setEndDateTime(LocalDateTime.of(2026, 8, 5, 11, 0));
+        nextBooking.setStatus(BookingStatus.CONFIRMED);
+        nextBooking.setSymptoms(List.of("Flu", "Cough"));
+
+        // Authenticated patient
+        when(authService.getAuthenticated()).thenReturn(patient);
+        when(userRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
+
+        // Booking exists
+        when(bookingRepository.findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(patient.getId()), any(LocalDateTime.class)))
+                .thenReturn(nextBooking);
+
+        // Caregiver is NOT found in repository
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.empty());
+
+        // --- ACT & ASSERT ---
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> bookingService.getNextBooking());
+
+        assertEquals("Caregiver not found", exception.getMessage());
+
+        // --- VERIFY ---
+        verify(bookingRepository).findFirstByPatientIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(patient.getId()), any(LocalDateTime.class));
+        verify(userRepository).findById(patient.getId());
+        verify(userRepository).findById(caregiver.getId());
+    }
+
+    @Test
+    void getNextBooking_whenUserIsCaregiverAndPatientIsNotFound_shouldThrowResourceNotFoundException() {
+        // --- ARRANGE ---
+        caregiver.setFirstName("Dr");
+        caregiver.setLastName("McCaregiver");
+        caregiver.setRoles(Set.of(Role.CAREGIVER));
+
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+        patient.setRoles(Set.of(Role.PATIENT));
+
+        Booking nextBooking = new Booking("BOOKING_ID_1");
+        nextBooking.setPatientId(patient.getId()); // patient ID for booking
+        nextBooking.setCaregiverId(caregiver.getId());
+        nextBooking.setStartDateTime(LocalDateTime.of(2026, 8, 5, 10, 0));
+        nextBooking.setEndDateTime(LocalDateTime.of(2026, 8, 5, 11, 0));
+        nextBooking.setStatus(BookingStatus.CONFIRMED);
+        nextBooking.setSymptoms(List.of("Flu", "Cough"));
+
+        // Authenticated caregiver
+        when(authService.getAuthenticated()).thenReturn(caregiver);
+        when(userRepository.findById(caregiver.getId())).thenReturn(Optional.of(caregiver));
+
+        // Booking exists for caregiver
+        when(bookingRepository.findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(caregiver.getId()), any(LocalDateTime.class)))
+                .thenReturn(nextBooking);
+
+        // Patient NOT found
+        when(userRepository.findById(patient.getId())).thenReturn(Optional.empty());
+
+        // --- ACT & ASSERT ---
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> bookingService.getNextBooking());
+
+        assertEquals("Patient not found", exception.getMessage()); // matches your current exception message in service
+
+        // --- VERIFY ---
+        verify(bookingRepository).findFirstByCaregiverIdAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                eq(caregiver.getId()), any(LocalDateTime.class));
+        verify(userRepository).findById(caregiver.getId());
+        verify(userRepository).findById(patient.getId());
+    }
+
+    @Test
+    void getNextBooking_whenUserNotFound_shouldThrowResourceNotFoundException() {
+        User user = new User("PATIENT_ID_123","patient", "password", null);
+
+        // --- Arrange ---
+        user.setRoles(Set.of(Role.PATIENT));
+
+        when(authService.getAuthenticated()).thenReturn(user);
+
+        // Simulate user not found in repository
+        when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+
+        // --- Act & Assert ---
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> bookingService.getNextBooking());
+
+        assertEquals("User not found", exception.getMessage());
+
+        // --- Verify ---
+        verify(userRepository).findById(user.getId());
+    }
+
+    @Test
+    void getNextBooking_whenUserUnauthorized_shouldThrowAccessDeniedException() {
+        // --- Arrange ---
+        // Simulate unauthorized request
+        when(authService.getAuthenticated()).thenThrow(new AccessDeniedException("Forbidden"));
+
+        // --- Act & Assert ---
+        AccessDeniedException exception = assertThrows(AccessDeniedException.class,
+                () -> bookingService.getNextBooking());
+
+        assertEquals("Forbidden", exception.getMessage());
+
+        // --- Verify ---
+        verify(authService).getAuthenticated();
+        verifyNoMoreInteractions(userRepository, bookingRepository, bookingConverter);
+    }
+
+
+    @Test
+    void cancelBooking_shouldReturnPatchBookingResponse_whenSuccessful() {
         // --- ARRANGE ---
         when(bookingRepository.findById("booking1")).thenReturn(Optional.of(booking));
         when(authService.getAuthenticated()).thenReturn(patient);

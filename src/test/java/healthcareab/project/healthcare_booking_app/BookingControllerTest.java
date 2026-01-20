@@ -1,11 +1,7 @@
 package healthcareab.project.healthcare_booking_app;
 
 import healthcareab.project.healthcare_booking_app.controllers.BookingController;
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingRequest;
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.PatchBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
+import healthcareab.project.healthcare_booking_app.dto.*;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
 import healthcareab.project.healthcare_booking_app.services.BookingService;
 import org.junit.jupiter.api.Test;
@@ -18,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -108,6 +105,46 @@ class BookingControllerTest {
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(historyResponseList, result);
+    }
+
+    @Test
+    void getNextBooking_whenBookingExists_shouldReturnBooking() {
+        // --- Arrange ---
+        GetNextBookingResponse bookingResponse = new GetNextBookingResponse(
+                "BOOKING_ID_1",
+                LocalDateTime.of(2026, 8, 5, 10, 0),
+                LocalDateTime.of(2026, 8, 5, 11, 0),
+                "WEDNESDAY",
+                "John Doe",
+                List.of("Flu", "Cough"),
+                "Checkup",
+                "Patient notes"
+        );
+
+        when(bookingService.getNextBooking()).thenReturn(Optional.of(bookingResponse));
+
+        // --- Act ---
+        ResponseEntity<GetNextBookingResponse> result = bookingController.getNextBooking();
+
+        // --- Assert ---
+        assertNotNull(result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals(bookingResponse, result.getBody());
+    }
+
+    @Test
+    void getNextBooking_whenNoBookingExists_shouldReturnNoContent() {
+        // --- Arrange ---
+        when(bookingService.getNextBooking()).thenReturn(Optional.empty());
+
+        // --- Act ---
+        ResponseEntity<GetNextBookingResponse> result = bookingController.getNextBooking();
+
+        // --- Assert ---
+        assertNotNull(result);
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+        assertNull(result.getBody());
     }
 
 

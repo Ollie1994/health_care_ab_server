@@ -49,6 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/booking/**").hasAnyRole("PATIENT", "CAREGIVER")
+                        .requestMatchers("/availability/**").hasAnyRole("CAREGIVER")
                         // any other requests the user need to be logged
                         .anyRequest().authenticated()
                 )

@@ -1,10 +1,7 @@
 package healthcareab.project.healthcare_booking_app;
 
 import healthcareab.project.healthcare_booking_app.converters.BookingConverter;
-import healthcareab.project.healthcare_booking_app.dto.CreateBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.PatchBookingResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingHistoryResponse;
-import healthcareab.project.healthcare_booking_app.dto.GetBookingsResponse;
+import healthcareab.project.healthcare_booking_app.dto.*;
 import healthcareab.project.healthcare_booking_app.models.Booking;
 import healthcareab.project.healthcare_booking_app.models.BookingStatus;
 import healthcareab.project.healthcare_booking_app.models.User;
@@ -138,6 +135,36 @@ class BookingConverterTest {
         assertEquals(booking.getStartDateTime(), response.getStartDateTime());
         assertEquals("John Doe", response.getFullName());
         assertEquals(booking.getId(), response.getBookingId());
+    }
+
+    // -------------------- GET UPCOMING BOOKING TESTS --------------------
+    @Test
+    void testConvertToGetNextBookingResponse() {
+        // --- Arrange ---
+        Booking booking = new Booking("BOOKING_ID_1");
+        booking.setStartDateTime(LocalDateTime.of(2026, 1, 12, 10, 0));
+        booking.setEndDateTime(LocalDateTime.of(2026, 1, 12, 11, 0));
+        booking.setSymptoms(List.of("Flu", "Cough"));
+        booking.setReasonForVisit("Checkup");
+        booking.setNotesFromPatient("Patient notes");
+
+        String dayOfWeek = "MONDAY";
+        String fullName = "John Doe";
+
+        // --- Act ---
+        GetNextBookingResponse response =
+                bookingConverter.convertToGetNextBookingResponse(booking, dayOfWeek, fullName);
+
+        // --- Assert ---
+        assertNotNull(response);
+        assertEquals(booking.getId(), response.getBookingId());
+        assertEquals(booking.getStartDateTime(), response.getStartDateTime());
+        assertEquals(booking.getEndDateTime(), response.getEndDateTime());
+        assertEquals(dayOfWeek, response.getDayOfWeek());
+        assertEquals(fullName, response.getFullName());
+        assertEquals(booking.getSymptoms(), response.getSymptoms());
+        assertEquals(booking.getReasonForVisit(), response.getReason());
+        assertEquals(booking.getNotesFromPatient(), response.getNote());
     }
 
     // -------------------- PATCH BOOKING TESTS --------------------
