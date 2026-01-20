@@ -1,9 +1,11 @@
 package healthcareab.project.healthcare_booking_app;
 
+import healthcareab.project.healthcare_booking_app.models.ActionPerformed;
 import healthcareab.project.healthcare_booking_app.models.Role;
 import healthcareab.project.healthcare_booking_app.models.User;
 import healthcareab.project.healthcare_booking_app.repository.UserRepository;
 import healthcareab.project.healthcare_booking_app.services.AuthService;
+import healthcareab.project.healthcare_booking_app.services.LogService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +28,9 @@ class AuthServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private LogService logService;
 
     @InjectMocks
     private AuthService authService;
@@ -133,4 +138,47 @@ class AuthServiceTest {
         verify(passwordEncoder, times(1)).encode("plainPassword");
     }
 
+    @Test
+    void testRegisterUser_ShouldLogCreatedAccount_WhenSuccess() {
+        // --- Arrange ---
+        User newUser = new User();
+        newUser.setUsername("newUser");
+        newUser.setPassword("plainPassword");
+        newUser.setRoles(null); // simulate missing roles
+
+        // Mock passwordEncoder
+        when(passwordEncoder.encode("plainPassword")).thenReturn("encodedPassword");
+
+        // Mock save() so it sets an ID as Mongo would do
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User u = invocation.getArgument(0);
+            // Reflect over private field id
+            try {
+                java.lang.reflect.Field idField = User.class.getDeclaredField("id");
+                idField.setAccessible(true);
+                idField.set(u, "USER123"); // set ID
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return u;
+        });
+
+        // --- Act ---
+        authService.registerUser(newUser);
+
+        // --- Assert ---
+        assertEquals("encodedPassword", newUser.getPassword());
+        assertNotNull(newUser.getRoles());
+        assertTrue(newUser.getRoles().contains(Role.PATIENT));
+
+        // --- Verify ---
+        verify(userRepository).save(newUser);
+        verify(logService).log(
+                eq(ActionPerformed.CREATED_ACCOUNT),
+                eq("USER123"), // nu matchar ID
+                eq("USER123"),
+                eq(true)
+        );
+        verify(passwordEncoder).encode("plainPassword");
+    }
 }

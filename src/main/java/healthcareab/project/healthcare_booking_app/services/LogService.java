@@ -19,8 +19,15 @@ public class LogService {
     public void log(ActionPerformed actionPerformed, String userExposed, String performedBy, boolean success) {
 
         // Salt user id's before saving
-        String saltedUserExposed = UserIdSalter.salt(userExposed);
-        String saltedPerformedBy = UserIdSalter.salt(performedBy);
+        String saltedUserExposed = null;
+        String saltedPerformedBy = null;
+
+        if (userExposed != null) {
+            saltedUserExposed = UserIdSalter.salt(userExposed);
+        }
+        if (performedBy != null) {
+            saltedPerformedBy = UserIdSalter.salt(performedBy);
+        }
 
         Log log = new Log(
                 null,
@@ -32,6 +39,4 @@ public class LogService {
         );
         logRepository.save(log);
     }
-
-
 }

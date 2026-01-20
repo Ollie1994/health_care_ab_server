@@ -2,6 +2,8 @@ package healthcareab.project.healthcare_booking_app.utils;
 
 public class UserIdSalter {
 
+    //https://chatgpt.com/share/696f9b62-e534-8013-b527-fd8bbbd62c07
+
     private static final String SALT = "_x9_";
     private static final int INSERT_INDEX = 2;
 
