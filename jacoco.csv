@@ -36,7 +36,7 @@ healthcare_booking_app,healthcareab.project.healthcare_booking_app.exceptions,Re
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.helpers.period,PeriodHelper,0,52,0,0,0,14,0,4,0,4
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.services,BookingService,35,542,1,31,0,101,8,26,7,11
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.services,CustomUserDetailsService,0,46,0,0,0,12,0,5,0,5
-healthcare_booking_app,healthcareab.project.healthcare_booking_app.services,AuthService,29,50,9,1,5,13,6,5,1,5
+healthcare_booking_app,healthcareab.project.healthcare_booking_app.services,AuthService,40,56,10,2,7,15,7,5,1,5
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.services,UserService,0,90,1,3,0,24,1,3,0,2
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.services,AvailabilityService,25,183,3,11,2,39,6,9,3,5
 healthcare_booking_app,healthcareab.project.healthcare_booking_app.config,SESEmailConfig,75,0,0,0,16,0,5,0,5,0
