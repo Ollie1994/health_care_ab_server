@@ -1,6 +1,7 @@
 package healthcareab.project.healthcare_booking_app.services;
 
 import healthcareab.project.healthcare_booking_app.exceptions.UnauthorizedException;
+import healthcareab.project.healthcare_booking_app.models.ActionPerformed;
 import healthcareab.project.healthcare_booking_app.helpers.sesEmail.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Role;
 import healthcareab.project.healthcare_booking_app.models.User;
@@ -20,22 +21,25 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final SESEmailHelper sesEmailHelper;
+    private final LogService logService;
 
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, SESEmailHelper sesEmailHelper) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, SESEmailHelper sesEmailHelper, LogService logService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.sesEmailHelper = sesEmailHelper;
+        this.logService = logService;
     }
 
     // register user
     public void registerUser(User user) {
+        try {
         // hash password
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
         // ensure the user has at least default role USER
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+        if(user.getRoles() == null || user.getRoles().isEmpty()) {
             user.setRoles(Set.of(Role.PATIENT));
         }
 
@@ -46,6 +50,28 @@ public class AuthService {
 
 
         userRepository.save(user);
+
+        // Log successful CREATED_ACCOUNT
+        logService.log(
+                ActionPerformed.CREATED_ACCOUNT,
+                user.getId(),
+                user.getId(),
+                true
+        );
+
+    } catch (Exception e) {
+
+        // Log failed CREATED_ACCOUNT
+        logService.log(
+                ActionPerformed.CREATED_ACCOUNT,
+                null,
+                null,
+                false
+        );
+        throw e;
+
+      }
+
     }
 
     // find user by username
