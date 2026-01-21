@@ -2,6 +2,7 @@ package healthcareab.project.healthcare_booking_app.services;
 
 import healthcareab.project.healthcare_booking_app.exceptions.UnauthorizedException;
 import healthcareab.project.healthcare_booking_app.models.ActionPerformed;
+import healthcareab.project.healthcare_booking_app.helpers.sesEmail.SESEmailHelper;
 import healthcareab.project.healthcare_booking_app.models.Role;
 import healthcareab.project.healthcare_booking_app.models.User;
 import healthcareab.project.healthcare_booking_app.repository.UserRepository;
@@ -19,12 +20,14 @@ import java.util.Set;
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SESEmailHelper sesEmailHelper;
     private final LogService logService;
 
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, LogService logService) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, SESEmailHelper sesEmailHelper, LogService logService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.sesEmailHelper = sesEmailHelper;
         this.logService = logService;
     }
 
@@ -36,9 +39,15 @@ public class AuthService {
         user.setPassword(encodedPassword);
 
         // ensure the user has at least default role USER
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+        if(user.getRoles() == null || user.getRoles().isEmpty()) {
             user.setRoles(Set.of(Role.PATIENT));
         }
+
+        if (user.getEmail() != null) {
+            String message = "You have created an account with the username - " + user.getUsername();
+            sesEmailHelper.sendEmail(message, "Registration Confirmation Email", user.getEmail());
+        }
+
 
         userRepository.save(user);
 
@@ -77,7 +86,7 @@ public class AuthService {
     }
 
 
-    public User getAuthenticated(){
+    public User getAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
             throw new UnauthorizedException("User is not authenticated");

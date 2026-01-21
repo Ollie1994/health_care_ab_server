@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/booking/**").hasAnyRole("PATIENT", "CAREGIVER")
                         .requestMatchers("/availability/**").hasAnyRole("CAREGIVER")
+                        .requestMatchers("/user/**").hasAnyRole("PATIENT")
                         // any other requests the user need to be logged
                         .anyRequest().authenticated()
                 )
